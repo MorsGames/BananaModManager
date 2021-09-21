@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BananaModManager.Loader", "BananaModManager.Loader\BananaModManager.Loader.csproj", "{6F89DD11-195B-4638-9553-36196B584397}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BananaModManager.Shared", "BananaModManager.Shared\BananaModManager.Shared.csproj", "{EB2B9278-9A27-470B-88C8-20432ABAF4F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BananaModManager", "BananaModManager\BananaModManager.csproj", "{A590571C-6341-4DA0-8D8A-3952081CF181}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BananaModManager.Controls", "BananaModManager.Controls\BananaModManager.Controls.csproj", "{68EE0743-A6E1-4569-9472-CEA3DF37DA5A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6F89DD11-195B-4638-9553-36196B584397}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F89DD11-195B-4638-9553-36196B584397}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F89DD11-195B-4638-9553-36196B584397}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F89DD11-195B-4638-9553-36196B584397}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB2B9278-9A27-470B-88C8-20432ABAF4F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB2B9278-9A27-470B-88C8-20432ABAF4F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB2B9278-9A27-470B-88C8-20432ABAF4F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB2B9278-9A27-470B-88C8-20432ABAF4F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A590571C-6341-4DA0-8D8A-3952081CF181}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A590571C-6341-4DA0-8D8A-3952081CF181}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A590571C-6341-4DA0-8D8A-3952081CF181}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A590571C-6341-4DA0-8D8A-3952081CF181}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68EE0743-A6E1-4569-9472-CEA3DF37DA5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68EE0743-A6E1-4569-9472-CEA3DF37DA5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68EE0743-A6E1-4569-9472-CEA3DF37DA5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68EE0743-A6E1-4569-9472-CEA3DF37DA5A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3CF16CC2-CE2B-4D7B-94D8-F72ECD88C74A}
+	EndGlobalSection
+EndGlobal
