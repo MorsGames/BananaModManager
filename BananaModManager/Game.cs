@@ -29,6 +29,11 @@ namespace BananaModManager
         public string Title = "Unnamed Game";
 
         /// <summary>
+        ///     Whether if the game uses Mono or IL2CPP.
+        /// </summary>
+        public bool Managed = false;
+
+        /// <summary>
         ///     If the game is installed or not.
         /// </summary>
         public bool Status => Steam.CheckGame(ExecutablePath);

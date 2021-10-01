@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -16,10 +17,19 @@ namespace BananaModManager
             InitializeComponent();
 
             // Load the games
-            foreach (var game in Games.List) ComboGames.Items.Add(game);
+            foreach (var game in Games.List)
+            {
+                if (File.Exists(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), game.ExecutableName + ".exe")))
+                {
+                    CurrentGame = game;
+                }
+                ComboGames.Items.Add(game);
+            }
 
             // Set the currently selected game
-            ComboGames.Text = ComboGames.Items[0].ToString();
+            ComboGames.SelectedItem = CurrentGame;
+            SetupGame(CurrentGame);
+            ComboGames.SelectedIndexChanged += SetupCurrentGame;
 
             // Load the mods as well as the mod order
             LoadMods();
@@ -30,12 +40,22 @@ namespace BananaModManager
 
             // Set the text stuff
             var version = Assembly.GetExecutingAssembly().GetName().Version;
-            var versionString = "v" + version.Major + "." + version.Minor + "." + version.Revision;
+            var versionString = "v" + version.Major + "." + version.Minor + "." + version.Build;
             LabelAboutVersion.Text = "Version " + versionString;
             Text = "BananaModManager " + versionString;
         }
 
-        private Game CurrentGame => (Game) ComboGames.SelectedItem;
+        private void SetupCurrentGame(object sender, EventArgs e)
+        {
+            var game = (Game) ComboGames.SelectedItem;
+            if (CurrentGame == game)
+                return;
+
+            CurrentGame = game;
+            SetupGame(CurrentGame);
+        }
+
+        private Game CurrentGame { get; set; }
 
         public Mod SelectedMod => Mods.List[ListMods.SelectedItems[0].Name];
 
@@ -71,6 +91,31 @@ namespace BananaModManager
             });
         }
 
+        private void SetupGame(Game game)
+        {
+            // TODO: Don't hardcode the names like this...
+            File.Copy(game.Managed ? "doorstop_config_mono.ini" : "doorstop_config_il2cpp.ini", "doorstop_config.ini", true);
+
+            // Check if the game is managed or already decompiled.
+            if (game.Managed || Directory.Exists("cpp2il_out")) return;
+
+            // Decompile
+            if (MessageBox.Show("Game files need to be decompiled to enable mod support. This might take a few minutes. Continue?", 
+                    "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+            {
+                var process = Process.Start("Cpp2IL.exe", "--game-path=\"" + Path.GetDirectoryName(Application.ExecutablePath) 
+                                                                           + "\" --exe-name=" + game.ExecutableName);
+                process.WaitForExit();
+
+                // Overwrite dummy mono files with actual ones
+                foreach (var path in Directory.GetFiles("mono\\Managed", "*.dll", SearchOption.AllDirectories))
+                {
+                    var newPath = path.Replace("mono\\Managed", "cpp2il_out");
+                    File.Copy(path, newPath, true);
+                }
+            }
+        }
+
         private void BtnPlay_Click(object sender, EventArgs e)
         {
             // Start the game
@@ -102,13 +147,6 @@ namespace BananaModManager
                 ContainerMain.Panel2Collapsed = true;
                 ContainerList.Panel2Collapsed = true;
             }
-        }
-
-        private void BoolOnCheckedChanged(object sender, EventArgs e)
-        {
-            var checkBox = (CheckBox) sender;
-            checkBox.Font = new Font(Font, FontStyle.Bold);
-            checkBox.Text = checkBox.Checked ? "Enabled" : "Disabled";
         }
 
         private void BtnSave_Click(object sender, EventArgs e)
