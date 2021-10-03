@@ -33,11 +33,6 @@ namespace BananaModManager
         /// </summary>
         public bool Managed = false;
 
-        /// <summary>
-        ///     If the game is installed or not.
-        /// </summary>
-        public bool Status => Steam.CheckGame(ExecutablePath);
-
         public override string ToString()
         {
             return Title;

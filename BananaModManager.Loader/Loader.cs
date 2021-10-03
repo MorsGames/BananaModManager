@@ -41,6 +41,16 @@ namespace BananaModManager.Loader
 
                 Console.WriteLine("BananaModManager by Mors!");
 
+                // Get the current game
+                Game currentGame = null;
+                foreach (var game in Games.List)
+                {
+                    if (game.ExecutableName == System.Diagnostics.Process.GetCurrentProcess().ProcessName)
+                        currentGame = game;
+                }
+
+                Console.WriteLine("Detected " + currentGame.Title);
+
                 Mods.Load(out var activeMods);
 
                 Console.WriteLine("Found " + activeMods.Count + " active mods out of " + Mods.List.Count + ".");
@@ -72,42 +82,39 @@ namespace BananaModManager.Loader
                         // TODO: Asset bundles could be made use of maybe?
                     }
                 }
+
                 // TODO: Referring to Unity stuff here makes Banana Mania crash?
-                // For now let's disable that in the hackiest possible way.
-                if (System.Diagnostics.Process.GetCurrentProcess().ProcessName != "smbmm")
+                new Thread(() =>
                 {
-                    new Thread(() =>
+                    Thread.Sleep(4000);
+                    Console.WriteLine("Initializing the mods...");
+
+                    // Create the CodeRunner GameObject
+                    var obj = new GameObject();
+                    var runner = obj.AddComponent<CodeRunner>();
+                    Object.DontDestroyOnLoad(obj);
+
+                    foreach (var type in mods.SelectMany(mod => mod.GetAssembly().GetTypes()))
                     {
-                        Thread.Sleep(4000);
-                        Console.WriteLine("Initializing the mods...");
+                        type.GetMethod("OnModStart")?.Invoke(null, null);
 
-                        // Create the CodeRunner GameObject
-                        var obj = new GameObject();
-                        var runner = obj.AddComponent<CodeRunner>();
-                        Object.DontDestroyOnLoad(obj);
+                        var update = type.GetMethod("OnModUpdate");
+                        if (update != null)
+                            runner.UpdateMethods.Add(update);
 
-                        foreach (var type in mods.SelectMany(mod => mod.GetAssembly().GetTypes()))
-                        {
-                            type.GetMethod("OnModStart")?.Invoke(null, null);
+                        var fixedUpdate = type.GetMethod("OnModFixedUpdate");
+                        if (fixedUpdate != null)
+                            runner.FixedUpdateMethods.Add(fixedUpdate);
 
-                            var update = type.GetMethod("OnModUpdate");
-                            if (update != null)
-                                runner.UpdateMethods.Add(update);
+                        var lateUpdate = type.GetMethod("OnModLateUpdate");
+                        if (lateUpdate != null)
+                            runner.LateUpdateMethods.Add(lateUpdate);
 
-                            var fixedUpdate = type.GetMethod("OnModFixedUpdate");
-                            if (fixedUpdate != null)
-                                runner.FixedUpdateMethods.Add(fixedUpdate);
-
-                            var lateUpdate = type.GetMethod("OnModLateUpdate");
-                            if (lateUpdate != null)
-                                runner.LateUpdateMethods.Add(lateUpdate);
-
-                            var gui = type.GetMethod("OnModGUI");
-                            if (gui != null)
-                                runner.GUIMethods.Add(gui);
-                        }
-                    }).Start();
-                }
+                        var gui = type.GetMethod("OnModGUI");
+                        if (gui != null)
+                            runner.GUIMethods.Add(gui);
+                    }
+                }).Start();
                 Console.WriteLine("Running the game now.");
             }
             catch (Exception e)

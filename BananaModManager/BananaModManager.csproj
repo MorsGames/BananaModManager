@@ -82,8 +82,6 @@
   <ItemGroup>
     <Compile Include="ConfigPropertyDescriptor.cs" />
     <Compile Include="ConfigPropertyGridAdapter.cs" />
-    <Compile Include="Game.cs" />
-    <Compile Include="Games.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

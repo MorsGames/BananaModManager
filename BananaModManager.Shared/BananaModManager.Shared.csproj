@@ -77,6 +77,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigItem.cs" />
+    <Compile Include="Game.cs" />
+    <Compile Include="Games.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="ModInfo.cs" />
     <Compile Include="UserConfig.cs" />
