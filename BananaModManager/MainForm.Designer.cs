@@ -275,7 +275,7 @@ namespace BananaModManager
             // 
             this.BtnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.BtnRemove.Location = new System.Drawing.Point(10, 478);
-            this.BtnRemove.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BtnRemove.Margin = new System.Windows.Forms.Padding(4);
             this.BtnRemove.Name = "BtnRemove";
             this.BtnRemove.Size = new System.Drawing.Size(128, 32);
             this.BtnRemove.TabIndex = 11;
@@ -285,7 +285,7 @@ namespace BananaModManager
             // 
             this.BtnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.BtnAdd.Location = new System.Drawing.Point(9, 439);
-            this.BtnAdd.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BtnAdd.Margin = new System.Windows.Forms.Padding(4);
             this.BtnAdd.Name = "BtnAdd";
             this.BtnAdd.Size = new System.Drawing.Size(128, 32);
             this.BtnAdd.TabIndex = 10;
@@ -296,7 +296,7 @@ namespace BananaModManager
             this.BtnSaveAndPlay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.BtnSaveAndPlay.Location = new System.Drawing.Point(145, 439);
-            this.BtnSaveAndPlay.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BtnSaveAndPlay.Margin = new System.Windows.Forms.Padding(4);
             this.BtnSaveAndPlay.Name = "BtnSaveAndPlay";
             this.BtnSaveAndPlay.Size = new System.Drawing.Size(485, 72);
             this.BtnSaveAndPlay.TabIndex = 9;
@@ -307,7 +307,7 @@ namespace BananaModManager
             // 
             this.BtnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.BtnSave.Location = new System.Drawing.Point(639, 439);
-            this.BtnSave.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BtnSave.Margin = new System.Windows.Forms.Padding(4);
             this.BtnSave.Name = "BtnSave";
             this.BtnSave.Size = new System.Drawing.Size(128, 32);
             this.BtnSave.TabIndex = 8;
@@ -318,7 +318,7 @@ namespace BananaModManager
             // 
             this.BtnPlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.BtnPlay.Location = new System.Drawing.Point(639, 479);
-            this.BtnPlay.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BtnPlay.Margin = new System.Windows.Forms.Padding(4);
             this.BtnPlay.Name = "BtnPlay";
             this.BtnPlay.Size = new System.Drawing.Size(128, 32);
             this.BtnPlay.TabIndex = 6;
@@ -343,7 +343,7 @@ namespace BananaModManager
             this.PanelSettings.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PanelSettings.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.PanelSettings.Location = new System.Drawing.Point(2, 2);
-            this.PanelSettings.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.PanelSettings.Margin = new System.Windows.Forms.Padding(8);
             this.PanelSettings.Name = "PanelSettings";
             this.PanelSettings.Size = new System.Drawing.Size(772, 525);
             this.PanelSettings.TabIndex = 0;
@@ -384,10 +384,11 @@ namespace BananaModManager
             // TextInfo
             // 
             this.TextInfo.Location = new System.Drawing.Point(9, 155);
-            this.TextInfo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.TextInfo.Margin = new System.Windows.Forms.Padding(4);
             this.TextInfo.Multiline = true;
             this.TextInfo.Name = "TextInfo";
             this.TextInfo.ReadOnly = true;
+            this.TextInfo.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.TextInfo.Size = new System.Drawing.Size(756, 353);
             this.TextInfo.TabIndex = 5;
             this.TextInfo.Text = resources.GetString("TextInfo.Text");

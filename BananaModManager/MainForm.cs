@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
 using BananaModManager.Shared;
@@ -93,27 +95,70 @@ namespace BananaModManager
 
         private void SetupGame(Game game)
         {
+            // No game, no setup.
+            if (game == null)
+                return;
+
             // TODO: Don't hardcode the names like this...
             File.Copy(game.Managed ? "doorstop_config_mono.ini" : "doorstop_config_il2cpp.ini", "doorstop_config.ini", true);
 
             // Check if the game is managed or already decompiled.
-            if (game.Managed || Directory.Exists("cpp2il_out")) return;
+            if (game.Managed || Directory.Exists("managed")) return;
 
-            // Decompile
-            if (MessageBox.Show("Game files need to be decompiled to enable mod support. This might take a few minutes. Continue?", 
-                    "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+            // Ask if the user wants to do it
+            if (MessageBox.Show("Game files need to be extracted to enable mod support. This might take a few minutes, and some extra files might get downloaded. Do you want to continue?",
+                    "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, 
+                    MessageBoxDefaultButton.Button1) != DialogResult.Yes) 
+                return;
+
+            var tempPath = Path.Combine(Path.GetTempPath(), "BananaModManager");
+            Directory.CreateDirectory(tempPath);
+
+            // Download the necessary tools
+            if (!Directory.Exists("Il2CppDumper"))
             {
-                var process = Process.Start("Cpp2IL.exe", "--game-path=\"" + Path.GetDirectoryName(Application.ExecutablePath) 
-                                                                           + "\" --exe-name=" + game.ExecutableName);
-                process.WaitForExit();
-
-                // Overwrite dummy mono files with actual ones
-                foreach (var path in Directory.GetFiles("mono\\Managed", "*.dll", SearchOption.AllDirectories))
-                {
-                    var newPath = path.Replace("mono\\Managed", "cpp2il_out");
-                    File.Copy(path, newPath, true);
-                }
+                var zipPath = Path.Combine(tempPath + "Il2CppDumper-v6.6.5.zip");
+                using var client = new WebClient();
+                client.DownloadFile("https://github.com/Perfare/Il2CppDumper/releases/download/v6.6.5/Il2CppDumper-v6.6.5.zip", zipPath);
+                ZipFile.ExtractToDirectory(zipPath, "Il2CppDumper");
             }
+            if (!Directory.Exists("Il2CppAssemblyUnhollower"))
+            {
+                var zipPath = Path.Combine(tempPath + "Il2CppAssemblyUnhollower.0.4.15.4.zip");
+                using var client = new WebClient();
+                client.DownloadFile("https://github.com/knah/Il2CppAssemblyUnhollower/releases/download/v0.4.15.4/Il2CppAssemblyUnhollower.0.4.15.4.zip", zipPath);
+                ZipFile.ExtractToDirectory(zipPath, "Il2CppAssemblyUnhollower");
+            }
+
+            // Run the tools if needed
+            if (!Directory.Exists("Il2CppDumper\\DummyDll"))
+            {
+                var process = Process.Start("Il2CppDumper\\Il2CppDumper.exe",
+                    "\"GameAssembly.dll\" " + game.ExecutableName
+                                            + "\"_Data\\il2cpp_data\\Metadata\\global-metadata.dat\"");
+                process.WaitForExit();
+            }
+
+            var process2 = Process.Start("Il2CppAssemblyUnhollower\\AssemblyUnhollower.exe",
+                "--input=\"Il2CppDumper\\DummyDll\" --output=\"managed\" --mscorlib=\"mono\\Managed\\mscorlib.dll\"");
+            process2.WaitForExit();
+
+            // Overwrite dummy mono files with actual ones
+            foreach (var path in Directory.GetFiles("mono\\Managed", "*.dll", SearchOption.AllDirectories))
+            {
+                var newPath = path.Replace("mono\\Managed", "managed");
+                File.Copy(path, newPath, true);
+            }
+            /*foreach (var path in Directory.GetFiles("Il2CppAssemblyUnhollower", "*.dll", SearchOption.AllDirectories))
+            {
+                var newPath = path.Replace("Il2CppAssemblyUnhollower", "managed");
+                File.Copy(path, newPath, true);
+            }*/
+
+            // Delete stuff we don't need
+            Directory.Delete("Il2CppDumper", true);
+            Directory.Delete("Il2CppAssemblyUnhollower", true);
+            Directory.Delete(tempPath, true);
         }
 
         private void BtnPlay_Click(object sender, EventArgs e)
