@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
@@ -38,6 +39,11 @@ namespace BananaModManager.Shared
         ///     All the basic information about the mod.
         /// </summary>
         public ModInfo Info { get; set; }
+
+        /// <summary>
+        /// A list of types that should be registered in the mod. Only used in IL2Cpp mods.
+        /// </summary>
+        public List<Type> Types { get; set; }
 
         /// <summary>
         ///     Returns the internal ID string of the mod.

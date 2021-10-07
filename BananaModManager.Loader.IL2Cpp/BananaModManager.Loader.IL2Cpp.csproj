@@ -80,9 +80,11 @@
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>E:\Steam\steamapps\common\smbbm\unhollowed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>E:\Steam\steamapps\common\smbbm\unhollowed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>

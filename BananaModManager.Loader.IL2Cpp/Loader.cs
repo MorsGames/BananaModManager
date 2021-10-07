@@ -1,25 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using BananaModManager.Shared;
+using Il2CppSystem;
 using UnhollowerBaseLib;
 using UnhollowerBaseLib.Runtime;
 using UnhollowerRuntimeLib;
+using UnityEngine;
+using Console = System.Console;
+using ConsoleColor = System.ConsoleColor;
+using Exception = System.Exception;
+using Math = System.Math;
+using Object = UnityEngine.Object;
+using Version = System.Version;
 
 namespace BananaModManager.Loader.IL2Cpp
 {
     public static class Loader
     {
         public static List<Mod> Mods { get; private set; }
+        public static List<MethodInfo> UpdateMethods { get; set; } = new List<MethodInfo>();
+        public static List<MethodInfo> FixedUpdateMethods { get; set; } = new List<MethodInfo>();
+        public static List<MethodInfo> LateUpdateMethods { get; set; } = new List<MethodInfo>();
+        public static List<MethodInfo> GUIMethods { get; set; } = new List<MethodInfo>();
 
         public static void Main()
         {
-            var logFile = $"logs\\bmmlog_{DateTime.Now:yyyyMMdd_HHmmss_fff}.txt";
-
             try
             {
                 Mods = Startup.StartModLoader();
@@ -56,26 +67,95 @@ namespace BananaModManager.Loader.IL2Cpp
 
                 ClassInjector.Detour = new UnhollowerDetour();
 
-                ClassInjector.RegisterTypeInIl2Cpp<CodeRunner>(true);
+                Console.WriteLine("All done!");
 
                 new Thread(() =>
                 {
-                    Thread.Sleep(4000);
-                    Console.WriteLine("Initializing the mods...");
+                    try
+                    {
+                        Thread.Sleep(4000);
+                        Console.WriteLine("Initializing the mods...");
 
-                    CodeRunner.Create();
+                        CreateCodeRunner();
+                    }
+                    catch (Exception e)
+                    {
+                        Startup.ExceptionHandler(e);
+                    }
+                
                 }).Start();
 
                 Console.WriteLine("Running the game now.");
             }
             catch (Exception e)
             {
-                Console.BackgroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine("[BMM Error] " + e);
-                Console.BackgroundColor = ConsoleColor.Black;
-                File.WriteAllText(logFile, e.ToString());
-                MessageBox.Show(e.ToString(), "BananaModManager Error!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
+                Startup.ExceptionHandler(e);
             }
+        }
+
+        private static void CreateCodeRunner()
+        {
+            var obj = new GameObject("BananaModManagerCodeRunner");
+            Object.DontDestroyOnLoad(obj);
+
+            ClassInjector.RegisterTypeInIl2Cpp<CodeRunner>();
+
+            var runner = new CodeRunner(obj.AddComponent(Il2CppType.Of<CodeRunner>()).Pointer);
+
+            foreach (var mod in Mods)
+            {
+                if (mod.Types != null)
+                {
+                    foreach (var usedType in mod.Types)
+                    {
+                        ClassInjector.RegisterTypeInIl2Cpp(usedType);
+                    }
+                }
+
+                foreach (var type in mod.GetAssembly().GetTypes())
+                {
+                    if (type.Name != "Main")
+                        continue;
+
+                    type.GetMethod("OnModStart")?.Invoke(null, null);
+
+                    var update = type.GetMethod("OnModUpdate");
+                    if (update != null)
+                        UpdateMethods.Add(update);
+
+                    var fixedUpdate = type.GetMethod("OnModFixedUpdate");
+                    if (fixedUpdate != null)
+                        FixedUpdateMethods.Add(fixedUpdate);
+
+                    var lateUpdate = type.GetMethod("OnModLateUpdate");
+                    if (lateUpdate != null)
+                        LateUpdateMethods.Add(lateUpdate);
+
+                    var gui = type.GetMethod("OnModGUI");
+                    if (gui != null)
+                        GUIMethods.Add(gui);
+                }
+            }
+        }
+
+        public static void InvokeUpdate()
+        {
+            foreach (var method in UpdateMethods) method.Invoke(null, null);
+        }
+
+        public static void InvokeFixedUpdate()
+        {
+            foreach (var method in FixedUpdateMethods) method.Invoke(null, null);
+        }
+
+        public static void InvokeLateUpdate()
+        {
+            foreach (var method in LateUpdateMethods) method.Invoke(null, null);
+        }
+
+        public static void InvokeGUI()
+        {
+            foreach (var method in GUIMethods) method.Invoke(null, null);
         }
     }
 }

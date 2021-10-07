@@ -11,40 +11,43 @@ namespace BananaModManager.Loader.Mono
 {
     public static class Loader
     {
+        public static List<Mod> Mods { get; private set; }
+
         public static void Main()
         {
-            var logFile = $"logs\\bmmlog_{DateTime.Now:yyyyMMdd_HHmmss_fff}.txt";
-
             try
             {
-                var mods = Startup.StartModLoader();
+                Mods = Startup.StartModLoader();
 
                 new Thread(() =>
                 {
-                    Thread.Sleep(4000);
-                    Console.WriteLine("Initializing the mods...");
+                    try
+                    {
+                        Thread.Sleep(4000);
+                        Console.WriteLine("Initializing the mods...");
 
-                    CreateCodeRunner(mods);
+                        CreateCodeRunner();
+                    }
+                    catch (Exception e)
+                    {
+                        Startup.ExceptionHandler(e);
+                    }
                 }).Start();
                 Console.WriteLine("Running the game now.");
             }
             catch (Exception e)
             {
-                Console.BackgroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine("[BMM Error] " + e);
-                Console.BackgroundColor = ConsoleColor.Black;
-                File.WriteAllText(logFile, e.ToString());
-                MessageBox.Show(e.ToString(), "BananaModManager Error!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
+                Startup.ExceptionHandler(e);
             }
         }
 
-        private static void CreateCodeRunner(IEnumerable<Mod> mods)
+        private static void CreateCodeRunner()
         {
             var obj = new GameObject("BananaModManagerCodeRunner");
             var runner = obj.AddComponent<CodeRunner>();
             Object.DontDestroyOnLoad(obj);
 
-            foreach (var type in mods.SelectMany(mod => mod.GetAssembly().GetTypes()))
+            foreach (var type in Mods.SelectMany(mod => mod.GetAssembly().GetTypes()))
             {
                 type.GetMethod("OnModStart")?.Invoke(null, null);
 

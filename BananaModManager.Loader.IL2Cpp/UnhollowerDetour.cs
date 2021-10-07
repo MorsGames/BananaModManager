@@ -16,12 +16,9 @@ namespace BananaModManager.Loader.IL2Cpp
         public unsafe T Detour<T>(IntPtr from, T to) where T : Delegate
         {
             var fromPtr = &from;
-            var fromDel = Marshal.GetDelegateForFunctionPointer<T>(from);
-            var toPtr = Marshal.GetFunctionPointerForDelegate(to);
+            hook_attach((IntPtr)fromPtr, Marshal.GetFunctionPointerForDelegate(to));
 
-            hook_attach((IntPtr) fromPtr, toPtr);
-
-            return fromDel;
+            return Marshal.GetDelegateForFunctionPointer<T>(from);
         }
     }
 }

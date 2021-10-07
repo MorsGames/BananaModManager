@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using HarmonyLib;
+using BananaModManager.Loader;
 
 namespace BananaModManager.Shared
 {
@@ -61,27 +60,36 @@ namespace BananaModManager.Shared
 
                 Console.WriteLine("Loading " + mod.Info.Title + " (" + mod + ")");
 
+                // Load the config dictionary
+                var config = Mods.LoadModConfig(mod.Info, Mods.LoadUserConfig(),
+                    Mods.LoadDefaultModConfig(mod.Directory));
+
+                // We need to convert it before we can pass it on
+                var converted = Mods.ConvertConfig(config);
+
+                // We add the directory as a config.
+                converted.Add("Directory", mod.Directory.FullName);
+
+                // Time to invoke
                 foreach (var type in mod.GetAssembly().GetTypes())
                 {
-                    // Load the config dictionary
-                    var config = Mods.LoadModConfig(mod.Info, Mods.LoadUserConfig(),
-                        Mods.LoadDefaultModConfig(mod.Directory));
-
-                    // We need to convert it before we can pass it on
-                    var converted = Mods.ConvertConfig(config);
-
-                    // We add the directory as a config.
-                    converted.Add("Directory", mod.Directory.FullName);
-
-                    // Time to invoke
-                    type.GetMethod("OnModLoad")?.Invoke(null, new object[] { converted });
+                    mod.Types = (List<Type>)type.GetMethod("OnModLoad")?.Invoke(null, new object[] { converted });
                 }
             }
 
-            var harmony = new Harmony("bmm.mors.bananamodmanager");
-            harmony.PatchAll();
-
             return mods;
+        }
+        public static void ExceptionHandler(Exception e)
+        {
+            var logFile = $"logs\\bmmlog_{DateTime.Now:yyyyMMdd_HHmmss_fff}.txt";
+
+            Console.BackgroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine("[BMM Error] " + e);
+            Console.BackgroundColor = ConsoleColor.Black;
+
+            File.WriteAllText(logFile, e.ToString());
+            MessageBox.Show(e.ToString(), "BananaModManager Error!", MessageBoxButtons.Ok,
+                MessageBoxIcon.Error);
         }
     }
 }
