@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.Json;
+using BananaModManager.Loader;
 
 namespace BananaModManager.Shared
 {
@@ -86,13 +89,25 @@ namespace BananaModManager.Shared
                 for (var i = 0; i < defaultConfig.Count; i++)
                 {
                     var defaultElement = defaultConfig.ElementAt(i);
-                    var value = userConfig.ModConfigs[modInfo.ToString()].ElementAt(i).Value;
-                    var item = new ConfigItem
+                    var modConfig = userConfig.ModConfigs[modInfo.ToString()];
+
+                    ConfigItem item;
+                    // If the config exists, load
+                    if (modConfig.ContainsKey(defaultElement.Key))
                     {
-                        Value = ConvertJsonValue(value),
-                        Description = defaultElement.Value.Description,
-                        Category = defaultElement.Value.Category
-                    };
+                        item = new ConfigItem
+                        {
+                            Value = ConvertJsonValue(modConfig[defaultElement.Key]),
+                            Description = defaultElement.Value.Description,
+                            Category = defaultElement.Value.Category
+                        };
+                    }
+                    // Otherwise resort to the default
+                    else
+                    {
+                        item = defaultElement.Value;
+                    }
+
                     newConfig.Add(defaultElement.Key, item);
                 }
 
@@ -131,11 +146,20 @@ namespace BananaModManager.Shared
             UserConfig userConfig;
             // Load and deserialize the mod loader config file if it exists
             // If it doesn't just create an empty one
-            if (File.Exists(Folder + ConfigFile))
-                userConfig = JsonSerializer.Deserialize<UserConfig>(File.ReadAllText(Folder + ConfigFile)) ??
-                             new UserConfig();
-            else
+            try
+            {
+                if (File.Exists(Folder + ConfigFile))
+                    userConfig = JsonSerializer.Deserialize<UserConfig>(File.ReadAllText(Folder + ConfigFile)) ??
+                                 new UserConfig();
+                else
+                    userConfig = new UserConfig();
+            }
+            // At any error it's better to start fresh then to silently crash.
+            catch
+            {
+                MessageBox.Show("An error occured when reading your settings.", "Error!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
                 userConfig = new UserConfig();
+            }
             return userConfig;
         }
 

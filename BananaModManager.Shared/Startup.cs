@@ -67,7 +67,7 @@ namespace BananaModManager.Shared
                 // We need to convert it before we can pass it on
                 var converted = Mods.ConvertConfig(config);
 
-                // We add the directory as a config.
+                // We add the directory as a config
                 converted.Add("Directory", mod.Directory.FullName);
 
                 // Time to invoke
@@ -82,6 +82,9 @@ namespace BananaModManager.Shared
         public static void ExceptionHandler(Exception e)
         {
             var logFile = $"logs\\bmmlog_{DateTime.Now:yyyyMMdd_HHmmss_fff}.txt";
+
+            if (!Directory.Exists("logs"))
+                Directory.CreateDirectory("logs");
 
             Console.BackgroundColor = ConsoleColor.DarkRed;
             Console.WriteLine("[BMM Error] " + e);

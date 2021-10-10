@@ -34,6 +34,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>E:\Steam\steamapps\common\smbbm\managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
     <Reference Include="Il2Cppmscorlib">
       <HintPath>E:\Steam\steamapps\common\smbbm\unhollowed\Il2Cppmscorlib.dll</HintPath>
       <Private>False</Private>

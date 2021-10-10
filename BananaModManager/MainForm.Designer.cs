@@ -51,7 +51,7 @@ namespace BananaModManager
             this.TextDescription = new System.Windows.Forms.TextBox();
             this.GridConfig = new BananaModManager.Controls.PropertyGrid(this.components);
             this.BtnRemove = new System.Windows.Forms.Button();
-            this.BtnAdd = new System.Windows.Forms.Button();
+            this.BtnFindMods = new System.Windows.Forms.Button();
             this.BtnSaveAndPlay = new System.Windows.Forms.Button();
             this.BtnSave = new System.Windows.Forms.Button();
             this.BtnPlay = new System.Windows.Forms.Button();
@@ -117,7 +117,7 @@ namespace BananaModManager
             // 
             this.PageMods.Controls.Add(this.ContainerMain);
             this.PageMods.Controls.Add(this.BtnRemove);
-            this.PageMods.Controls.Add(this.BtnAdd);
+            this.PageMods.Controls.Add(this.BtnFindMods);
             this.PageMods.Controls.Add(this.BtnSaveAndPlay);
             this.PageMods.Controls.Add(this.BtnSave);
             this.PageMods.Controls.Add(this.BtnPlay);
@@ -280,16 +280,18 @@ namespace BananaModManager
             this.BtnRemove.Size = new System.Drawing.Size(128, 32);
             this.BtnRemove.TabIndex = 11;
             this.BtnRemove.Text = "Remove Mod";
+            this.BtnRemove.Click += new System.EventHandler(this.BtnRemove_Click);
             // 
-            // BtnAdd
+            // BtnFindMods
             // 
-            this.BtnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.BtnAdd.Location = new System.Drawing.Point(9, 439);
-            this.BtnAdd.Margin = new System.Windows.Forms.Padding(4);
-            this.BtnAdd.Name = "BtnAdd";
-            this.BtnAdd.Size = new System.Drawing.Size(128, 32);
-            this.BtnAdd.TabIndex = 10;
-            this.BtnAdd.Text = "Add Mod";
+            this.BtnFindMods.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.BtnFindMods.Location = new System.Drawing.Point(9, 439);
+            this.BtnFindMods.Margin = new System.Windows.Forms.Padding(4);
+            this.BtnFindMods.Name = "BtnFindMods";
+            this.BtnFindMods.Size = new System.Drawing.Size(128, 32);
+            this.BtnFindMods.TabIndex = 10;
+            this.BtnFindMods.Text = "Find Mods";
+            this.BtnFindMods.Click += new System.EventHandler(this.BtnFindMods_Click);
             // 
             // BtnSaveAndPlay
             // 
@@ -455,7 +457,7 @@ namespace BananaModManager
         private Controls.TabControl TabControl;
         private System.Windows.Forms.TabPage PageMods;
         private System.Windows.Forms.Button BtnRemove;
-        private System.Windows.Forms.Button BtnAdd;
+        private System.Windows.Forms.Button BtnFindMods;
         private System.Windows.Forms.Button BtnSaveAndPlay;
         private System.Windows.Forms.Button BtnSave;
         private System.Windows.Forms.Button BtnPlay;

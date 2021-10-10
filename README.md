@@ -1,4 +1,4 @@
-# BananaModManager v0.9.1
+# BananaModManager v0.9.2
 
 A mod manager for Super Monkey Ball games that are made in Unity.
 
@@ -47,5 +47,3 @@ Or maybe not.
 - [Il2CppAssemblyUnhollower](https://github.com/knah/Il2CppAssemblyUnhollower)
 - [Detours](https://github.com/microsoft/Detours)
 - [Mono](https://github.com/mono/mono)
-
-A mod manager for Super Monkey Ball games that are made in Unity.

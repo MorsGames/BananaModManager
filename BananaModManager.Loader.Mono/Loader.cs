@@ -23,7 +23,7 @@ namespace BananaModManager.Loader.Mono
                 {
                     try
                     {
-                        Thread.Sleep(4000);
+                        Thread.Sleep(8000);
                         Console.WriteLine("Initializing the mods...");
 
                         CreateCodeRunner();

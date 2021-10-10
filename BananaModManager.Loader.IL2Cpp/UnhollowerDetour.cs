@@ -12,6 +12,8 @@ namespace BananaModManager.Loader.IL2Cpp
     {
         [DllImport("BananaModManager.Detours.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void hook_attach(IntPtr from, IntPtr to);
+        [DllImport("BananaModManager.Detours.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void hook_detach(IntPtr from, IntPtr to);
 
         public unsafe T Detour<T>(IntPtr from, T to) where T : Delegate
         {

@@ -30,7 +30,7 @@ namespace BananaModManager
 
             // Set the currently selected game
             ComboGames.SelectedItem = CurrentGame;
-            SetupGame(CurrentGame);
+            SetUpGame(CurrentGame);
             ComboGames.SelectedIndexChanged += SetupCurrentGame;
 
             // Load the mods as well as the mod order
@@ -54,7 +54,7 @@ namespace BananaModManager
                 return;
 
             CurrentGame = game;
-            SetupGame(CurrentGame);
+            SetUpGame(CurrentGame);
         }
 
         private Game CurrentGame { get; set; }
@@ -93,7 +93,7 @@ namespace BananaModManager
             });
         }
 
-        private void SetupGame(Game game)
+        private void SetUpGame(Game game)
         {
             // No game, no setup.
             if (game == null)
@@ -183,14 +183,16 @@ namespace BananaModManager
                 ContainerList.Panel2Collapsed = false;
                 var mod = SelectedMod;
                 GridConfig.SelectedObject = new ConfigPropertyGridAdapter(mod.Config, mod.DefaultConfig);
-                LabelTitle.Text = mod.Info.Title + " by " + mod.Info.Author + "    ";
-                LabelTitle.LinkArea = new LinkArea(mod.Info.Title.Length + 4, mod.Info.Author.Length);
+                LabelTitle.Text = mod.Info.Title + " by " + mod.Info.Author;
+                if (mod.Info.AuthorURL == "") 
+                    LabelTitle.LinkArea = new LinkArea(0, 0);
+                else
+                {
+                    LabelTitle.Text += "    ";
+                    LabelTitle.LinkArea = new LinkArea(mod.Info.Title.Length + 4, mod.Info.Author.Length);
+                }
+
                 TextDescription.Text = Environment.NewLine + mod.Info.Description;
-            }
-            else
-            {
-                ContainerMain.Panel2Collapsed = true;
-                ContainerList.Panel2Collapsed = true;
             }
         }
 
@@ -243,7 +245,7 @@ namespace BananaModManager
             Process.Start(SelectedMod.Directory.FullName);
         }
 
-        private void deleteModToolStripMenuItem_Click(object sender, EventArgs e)
+        private void DeleteMod()
         {
             if (MessageBox.Show("This will delete the selected mod. Are you sure?\n\nThere will be no way to recover it.",
                 "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
@@ -251,6 +253,22 @@ namespace BananaModManager
             {
                 SelectedMod.Directory.Delete(true);
             }
+        }
+
+        private void deleteModToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DeleteMod();
+        }
+
+
+        private void BtnRemove_Click(object sender, EventArgs e)
+        {
+            DeleteMod();
+        }
+
+        private void BtnFindMods_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://gamebanana.com/mods/games/14135");
         }
     }
 }
