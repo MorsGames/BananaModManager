@@ -8,13 +8,16 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using BananaModManager.Shared;
 using Il2CppSystem;
+using Il2CppSystem.Runtime.Serialization.Formatters.Binary;
 using UnhollowerBaseLib;
 using UnhollowerBaseLib.Runtime;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using Console = System.Console;
 using ConsoleColor = System.ConsoleColor;
+using Delegate = System.Delegate;
 using Exception = System.Exception;
+using IntPtr = System.IntPtr;
 using Math = System.Math;
 using Object = UnityEngine.Object;
 using Version = System.Version;
@@ -23,6 +26,9 @@ namespace BananaModManager.Loader.IL2Cpp
 {
     public static class Loader
     {
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+        public static extern System.IntPtr GetModuleHandle(string lpModuleName);
+
         public static List<Mod> Mods { get; private set; }
         public static List<MethodInfo> UpdateMethods { get; set; } = new List<MethodInfo>();
         public static List<MethodInfo> FixedUpdateMethods { get; set; } = new List<MethodInfo>();
@@ -73,9 +79,27 @@ namespace BananaModManager.Loader.IL2Cpp
                 {
                     try
                     {
-                        Thread.Sleep(4000);
-                        Console.WriteLine("Initializing the mods...");
+                        Thread.Sleep(8000);
 
+                        if (Mods.Count > 0)
+                        {
+                            DelegateInstance = Dummy;
+
+                            ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0xa9d990),
+                                DelegateInstance);
+
+                            /*LeaderboardsPointer = IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0xa9d990);
+                            unsafe
+                            {
+                                fixed (IntPtr* ptr = &LeaderboardsPointer)
+                                {
+                                    UnhollowerDetour.hook_attach((IntPtr) ptr,
+                                        Marshal.GetFunctionPointerForDelegate(DelegateInstance));
+                                }
+                            }*/
+                        }
+
+                        Console.WriteLine("Initializing the mods...");
                         CreateCodeRunner();
                     }
                     catch (Exception e)
@@ -91,6 +115,16 @@ namespace BananaModManager.Loader.IL2Cpp
             {
                 Startup.ExceptionHandler(e);
             }
+        }
+
+        public delegate void LeaderboardsDelegate();
+        public static LeaderboardsDelegate DelegateInstance;
+
+        public static void Dummy()
+        {
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
+            Console.WriteLine("Leaderboards are disabled when mods are used.");
+            Console.BackgroundColor = ConsoleColor.Black;
         }
 
         private static void CreateCodeRunner()

@@ -147,6 +147,9 @@ https://github.com/knah/Il2CppAssemblyUnhollower
 https://github.com/microsoft/Detours
 
 - Mono:
-https://github.com/mono/mono</value>
+https://github.com/mono/mono
+
+- Harmony:
+https://github.com/pardeike/Harmony</value>
   </data>
 </root>
