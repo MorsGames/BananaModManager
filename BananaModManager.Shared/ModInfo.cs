@@ -1,4 +1,6 @@
-﻿namespace BananaModManager.Shared
+﻿using System.Collections.Generic;
+
+namespace BananaModManager.Shared
 {
     /// <summary>
     ///     All the basic information about a mod.
@@ -28,7 +30,12 @@
         /// <summary>
         ///     Name of the DLL file that will be loaded.
         /// </summary>
-        public string DLLFile { get; set; } = "mod.dll";
+        public string DLLFile { get; set; } = "";
+
+        /// <summary>
+        ///     Asset bundles that should be patched in.
+        /// </summary>
+        public List<string> AssetBundles { get; set; } = new();
 
         /// <summary>
         ///     Internal name of the mod in the "game.author.name" format. This name format is not strictly enforced.

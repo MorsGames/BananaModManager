@@ -34,8 +34,7 @@ namespace BananaModManager.Controls
 
             g.Clear(TabBackColor);
 
-            int i;
-            for (i = 0; i <= TabCount - 1; i++)
+            for (var i = 0; i <= TabCount - 1; i++)
             {
                 var header = new Rectangle(new Point(GetTabRect(i).Location.X, GetTabRect(i).Location.Y),
                     new Size(GetTabRect(i).Width, GetTabRect(i).Height));

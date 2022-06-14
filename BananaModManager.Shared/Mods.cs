@@ -22,13 +22,15 @@ namespace BananaModManager.Shared
         ///     Loads all necessary data about all the mods
         /// </summary>
         /// <param name="activeMods">A list of all mods that are currently enabled, in a specific order.</param>
-        public static void Load(out List<string> activeMods)
+        public static void Load(out List<string> activeMods, out bool consoleWindow, out bool speedrunMode)
         {
             // Load the config file
             var userConfig = LoadUserConfig();
 
-            // Set the active mods
+            // Set all the setting values
             activeMods = userConfig.ActiveMods ?? new List<string>();
+            consoleWindow = userConfig.ConsoleWindow;
+            speedrunMode = userConfig.SpeedrunMode;
 
             // Get the mods folder
             var modFolder = new DirectoryInfo(Folder);
@@ -125,9 +127,17 @@ namespace BananaModManager.Shared
         /// <returns>Default config values of the mod.</returns>
         public static Dictionary<string, ConfigItem> LoadDefaultModConfig(DirectoryInfo directory)
         {
+            var file = directory.FullName + "\\config.json";
+
+            // If the file doesn't exist, return an empty dictionary
+            if (!File.Exists(file))
+            {
+                return new Dictionary<string, ConfigItem>();
+            }
+
             var defaultConfig =
                 JsonSerializer.Deserialize<Dictionary<string, ConfigItem>>(
-                    File.ReadAllText(directory.FullName + "\\config.json"));
+                    File.ReadAllText(file));
             foreach (var element in defaultConfig)
             {
                 var configItem = element.Value;
@@ -167,10 +177,15 @@ namespace BananaModManager.Shared
         ///     Saves the user config of the mod manager.
         /// </summary>
         /// <param name="activeMods">A list of enabled mods, in a specific order.</param>
-        public static void Save(List<string> activeMods)
+        public static void Save(List<string> activeMods, bool consoleWindow, bool speedrunMode)
         {
             // Config object used for the user data
-            var loaderConfig = new UserConfig {ActiveMods = activeMods};
+            var loaderConfig = new UserConfig
+            {
+                ActiveMods = activeMods,
+                ConsoleWindow = consoleWindow,
+                SpeedrunMode = speedrunMode
+            };
 
             // Add the configs into it
             foreach (var mod in List.Select(_ => _.Value))

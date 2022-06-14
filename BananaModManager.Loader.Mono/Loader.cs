@@ -11,13 +11,12 @@ namespace BananaModManager.Loader.Mono
 {
     public static class Loader
     {
-        public static List<Mod> Mods { get; private set; }
-
+        private static List<Mod> _mods;
         public static void Main()
         {
             try
             {
-                Mods = Startup.StartModLoader();
+                Startup.StartModLoader(out _mods, out var _);
 
                 new Thread(() =>
                 {
@@ -47,25 +46,21 @@ namespace BananaModManager.Loader.Mono
             var runner = obj.AddComponent<CodeRunner>();
             Object.DontDestroyOnLoad(obj);
 
-            foreach (var type in Mods.SelectMany(mod => mod.GetAssembly().GetTypes()))
+            foreach (var type in _mods.Where(mod => mod.GetAssembly() != null).SelectMany(mod => mod.GetAssembly().GetTypes()))
             {
                 type.GetMethod("OnModStart")?.Invoke(null, null);
 
                 var update = type.GetMethod("OnModUpdate");
-                if (update != null)
-                    runner.UpdateMethods.Add(update);
+                if (update != null) runner.UpdateMethods.Add(update);
 
                 var fixedUpdate = type.GetMethod("OnModFixedUpdate");
-                if (fixedUpdate != null)
-                    runner.FixedUpdateMethods.Add(fixedUpdate);
+                if (fixedUpdate != null) runner.FixedUpdateMethods.Add(fixedUpdate);
 
                 var lateUpdate = type.GetMethod("OnModLateUpdate");
-                if (lateUpdate != null)
-                    runner.LateUpdateMethods.Add(lateUpdate);
+                if (lateUpdate != null) runner.LateUpdateMethods.Add(lateUpdate);
 
                 var gui = type.GetMethod("OnModGUI");
-                if (gui != null)
-                    runner.GUIMethods.Add(gui);
+                if (gui != null) runner.GUIMethods.Add(gui);
             }
         }
     }

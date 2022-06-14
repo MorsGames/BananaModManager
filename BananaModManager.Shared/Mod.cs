@@ -55,12 +55,21 @@ namespace BananaModManager.Shared
         }
 
         /// <summary>
+        ///     Returns the full path for the mod DLL.
+        /// </summary>
+        /// <returns>The full path for the mod DLL.</returns>
+        public string GetFullPath()
+        {
+            return Path.Combine(Directory.FullName, Info.DLLFile);
+        }
+
+        /// <summary>
         ///     Loads the assembly of the mod DLL.
         /// </summary>
         /// <returns>Assembly of the mod DLL.</returns>
         public Assembly GetAssembly()
         {
-            return Assembly.LoadFile(Path.Combine(Directory.FullName, Info.DLLFile));
+            return Info.DLLFile == "" ? null : Assembly.LoadFile(GetFullPath());
         }
     }
 }

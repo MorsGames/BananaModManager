@@ -160,6 +160,7 @@
     </PostBuildEventDependsOn>
     <PostBuildEvent>del "$(TargetDir)*.lib"
 del "$(TargetDir)*.exp"
-powershell "Compress-Archive $(TargetDir) ..\BananaModManager_v@(VersionNumber).zip"</PostBuildEvent>
+powershell "Compress-Archive $(TargetDir) ..\BananaModManager_v@(VersionNumber).zip" || set errorlevel=0
+xcopy /E /Y /R $(TargetDir) E:\Steam\steamapps\common\smbbm\ || set errorlevel=0</PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace BananaModManager
 {
@@ -32,6 +33,11 @@ namespace BananaModManager
         ///     Whether if the game uses Mono or IL2CPP.
         /// </summary>
         public bool Managed = false;
+
+        /// <summary>
+        ///     Names of the allowed mods in the speedrun mode.
+        /// </summary>
+        public List<string> Whitelist = new List<string>();
 
         public override string ToString()
         {

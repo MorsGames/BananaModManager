@@ -1,4 +1,4 @@
-# BananaModManager v0.9.2
+# BananaModManager v0.9.3
 
 A mod manager for Super Monkey Ball games that are made in Unity.
 
@@ -20,9 +20,9 @@ If you need some mods to use this mod manager with, check my [BananaBlitzHDMods]
 - Automatic updates for the mods.
 - GameBanana 1-click install support.
 
-I'm currently rather busy with other projects to maintain this project on a regular basis, so I cannot guarentee when these features will arrive (if ever).
+I'm currently busy with other projects to maintain this project on a regular basis, so I cannot guarantee when these features will arrive (if ever).
 
-If you'd wanna help, you can create pull requests, or just reach out to me on Discord (Mors#3278).
+If you have a question, or want to help please reach out to me on the [Banana Mania Modding Discord](https://discord.gg/vuZWDMzzye). Make sure to ping `@Mors#3278` so I see your message!
 
 This project is licensed under GPLv3.
 

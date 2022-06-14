@@ -117,12 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="MenuConfig.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="MenuConfig.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 17</value>
-  </metadata>
-  <metadata name="MenuMods.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="MenuMods.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>136, 17</value>
-  </metadata>
+  </data>
   <data name="TextInfo.Text" xml:space="preserve">
     <value>A mod manager for Super Monkey Ball games that are made in Unity.
 
@@ -149,7 +150,7 @@ https://github.com/microsoft/Detours
 - Mono:
 https://github.com/mono/mono
 
-- Harmony:
-https://github.com/pardeike/Harmony</value>
+- HarmonyX:
+https://github.com/BepInEx/HarmonyX</value>
   </data>
 </root>

@@ -64,7 +64,7 @@ namespace BananaModManager
         private void LoadMods()
         {
             // Load the mods
-            Mods.Load(out var modOrder);
+            Mods.Load(out var modOrder, out var consoleWindow, out var speedrunMode);
 
             // First add the mods based on their order
             foreach (var mod in modOrder.Select(_ => Mods.List[_]))
@@ -75,6 +75,10 @@ namespace BananaModManager
 
             // Then the rest
             foreach (var mod in Mods.List.Select(_ => _.Value)) AddMod(mod);
+
+            // And set all the other user settings
+            CheckConsole.Checked = consoleWindow;
+            CheckSpeedrun.Checked = speedrunMode;
         }
 
         private void AddMod(Mod mod)
@@ -106,7 +110,7 @@ namespace BananaModManager
             if (game.Managed || Directory.Exists("managed")) return;
 
             // Ask if the user wants to do it
-            if (MessageBox.Show("Game files need to be extracted to enable mod support. This might take a few minutes, and some extra files might get downloaded. Do you want to continue?",
+            if (MessageBox.Show("Game files need to be extracted to enable mod support. This might take a few minutes, and some extra files might get downloaded during the process. Do you want to continue?",
                     "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, 
                     MessageBoxDefaultButton.Button1) != DialogResult.Yes) 
                 return;
@@ -179,9 +183,10 @@ namespace BananaModManager
             // Change what's shown on the PropertyGrid
             if (ListMods.SelectedItems.Count > 0)
             {
-                ContainerMain.Panel2Collapsed = false;
-                ContainerList.Panel2Collapsed = false;
                 var mod = SelectedMod;
+
+                ContainerMain.Panel2Collapsed = mod.DefaultConfig.Count == 0;
+                ContainerList.Panel2Collapsed = false;
                 GridConfig.SelectedObject = new ConfigPropertyGridAdapter(mod.Config, mod.DefaultConfig);
                 LabelTitle.Text = mod.Info.Title + " by " + mod.Info.Author;
                 if (mod.Info.AuthorURL == "") 
@@ -194,6 +199,11 @@ namespace BananaModManager
 
                 TextDescription.Text = Environment.NewLine + mod.Info.Description;
             }
+            else
+            {
+                ContainerMain.Panel2Collapsed = true;
+                ContainerList.Panel2Collapsed = true;
+            }
         }
 
         private void BtnSave_Click(object sender, EventArgs e)
@@ -203,7 +213,7 @@ namespace BananaModManager
             foreach (ListViewItem item in ListMods.Items)
                 if (item.Checked)
                     modOrder.Add(item.Name);
-            Mods.Save(modOrder);
+            Mods.Save(modOrder, CheckConsole.Checked, CheckSpeedrun.Checked);
 
             // We wanna reload everything now
             Mods.List.Clear();
@@ -266,9 +276,14 @@ namespace BananaModManager
             DeleteMod();
         }
 
-        private void BtnFindMods_Click(object sender, EventArgs e)
+        private void BtnDiscord_Click(object sender, EventArgs e)
         {
-            Process.Start("https://gamebanana.com/mods/games/14135");
+            Process.Start("https://discord.gg/vuZWDMzzye");
+        }
+
+        private void BtnSave2_Click(object sender, EventArgs e)
+        {
+            BtnSave_Click(sender, e);
         }
     }
 }

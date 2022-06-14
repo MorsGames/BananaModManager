@@ -4,7 +4,7 @@ namespace BananaModManager
 {
     public static class Games
     {
-        public static Game BananaBlitzHD = new Game
+        public static Game BananaBlitzHD = new()
         {
             Title = "Super Monkey Ball: Banana Blitz HD",
             ExecutableName = "SMBBBHD",
@@ -12,13 +12,21 @@ namespace BananaModManager
             AppID = "1061730",
             Managed = true
         };
-        public static Game BananaMania = new Game
+        public static Game BananaMania = new()
         {
             Title = "Super Monkey Ball: Banana Mania",
             ExecutableName = "smbbm",
             ExecutablePath = "smbbm\\",
             AppID = "1316910",
-            Managed = false
+            Managed = false,
+            Whitelist = new List<string>() {
+                "bm.mors.graphicaltweaks",
+                "bm.ceejiggy.noprompt",
+                "bm.snowman.dynamicroll",
+                "bm.snowman.guestcharacter",
+                "bm.viictiinii.timersound",
+                "iswimfly.HUD",
+            }
         };
 
         public static List<Game> List = new List<Game> {BananaBlitzHD, BananaMania};

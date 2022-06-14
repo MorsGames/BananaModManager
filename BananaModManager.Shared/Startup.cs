@@ -30,9 +30,12 @@ namespace BananaModManager.Shared
                 ShowWindow(handle, SW_SHOW);
         }
 
-        public static List<Mod> StartModLoader()
+        public static void StartModLoader(out List<Mod> mods, out bool speedrunMode)
         {
-            ShowConsoleWindow();
+            Mods.Load(out var activeMods, out var consoleWindow, out speedrunMode);
+
+            if (consoleWindow)
+                ShowConsoleWindow();
 
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("BananaModManager by Mors!");
@@ -48,14 +51,19 @@ namespace BananaModManager.Shared
 
             Console.WriteLine("Detected " + currentGame.Title + " (" + (currentGame.Managed ? "Mono" : "ILCpp") + ")");
 
-            Mods.Load(out var activeMods);
-
             Console.WriteLine("Found " + activeMods.Count + " active mods out of " + Mods.List.Count + ".");
 
-            var mods = new List<Mod>();
+            mods = new List<Mod>();
 
             foreach (var mod in activeMods.Select(modId => Mods.List[modId]))
             {
+                if (speedrunMode && !currentGame.Whitelist.Contains(mod.Info.Id)) {
+                    Console.BackgroundColor = ConsoleColor.DarkYellow;
+                    Console.WriteLine("Skipped loading " + mod.Info.Title + ". It's not whitelisted for the speedrun mode!");
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    continue;
+                }
+
                 mods.Add(mod);
 
                 Console.WriteLine("Loading " + mod.Info.Title + " (" + mod + ")");
@@ -71,13 +79,14 @@ namespace BananaModManager.Shared
                 converted.Add("Directory", mod.Directory.FullName);
 
                 // Time to invoke
+                if (mod.GetAssembly() == null)
+                    continue;
+
                 foreach (var type in mod.GetAssembly().GetTypes())
                 {
                     mod.Types = (List<Type>)type.GetMethod("OnModLoad")?.Invoke(null, new object[] { converted });
                 }
             }
-
-            return mods;
         }
         public static void ExceptionHandler(Exception e)
         {
