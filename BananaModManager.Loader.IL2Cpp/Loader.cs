@@ -92,7 +92,7 @@ namespace BananaModManager.Loader.IL2Cpp
                     {
                         Thread.Sleep(12000);
 
-                        if (Mods.Count > 0)
+                        if (Mods.Count > 0 && _speedrunMode == false)
                         {
                             LeaderboardsDelegateInstance = Dummy;
 
