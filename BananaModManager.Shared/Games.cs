@@ -26,6 +26,7 @@ namespace BananaModManager
                 "bm.snowman.guestcharacter",
                 "bm.viictiinii.timersound",
                 "iswimfly.HUD",
+                "iswimfly.ILBattle
             }
         };
 
