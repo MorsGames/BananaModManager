@@ -1,4 +1,4 @@
-# BananaModManager v0.9.3
+# BananaModManager
 
 A mod manager for Super Monkey Ball games that are made in Unity. (Mors has built the entirety of this project, I've forked to make some minor tweaks)
 
