@@ -35,9 +35,14 @@ namespace BananaModManager
         public bool Managed = false;
 
         /// <summary>
-        ///     Names of the allowed mods in the speedrun mode.
+        ///     Hashes of the alowed mods in speedrun mode.
         /// </summary>
         public List<string> Whitelist = new List<string>();
+        /// <summary>
+        ///     Names of the allowed mods in speedrun mode.
+        /// </summary>
+        public List<string> WhitelistNames = new List<string>();
+        /// <returns></returns>
 
         public override string ToString()
         {

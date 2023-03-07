@@ -92,14 +92,17 @@ namespace BananaModManager.Loader.IL2Cpp
                     {
                         Thread.Sleep(12000);
 
-                        if (Mods.Count > 0 && _speedrunMode == false)
+                        if (Mods.Count > 0 && !_speedrunMode)
                         {
                             LeaderboardsDelegateInstance = Dummy;
 
                             ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0xa9d990),
                                 LeaderboardsDelegateInstance);
                         }
-
+                        if (Mods.Count > 0 && _speedrunMode)
+                        {
+                            Console.WriteLine("1 Line of Code Later...");
+                        }
                         Console.WriteLine("Initializing the mods...");
                         CreateCodeRunner();
                     }

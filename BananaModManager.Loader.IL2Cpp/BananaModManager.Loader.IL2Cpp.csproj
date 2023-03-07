@@ -43,35 +43,20 @@
       <HintPath>..\packages\HarmonyX.2.10.0\lib\net45\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>E:\Steam\steamapps\common\smbbm\managed\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>H:\SteamLibrary\steamapps\common\smbbm\managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppMono.Security">
+      <HintPath>H:\SteamLibrary\steamapps\common\smbbm\managed\Il2CppMono.Security.dll</HintPath>
     </Reference>
     <Reference Include="Il2Cppmscorlib">
-      <HintPath>E:\Steam\steamapps\common\smbbm\unhollowed\Il2Cppmscorlib.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>H:\SteamLibrary\steamapps\common\smbbm\managed\Il2Cppmscorlib.dll</HintPath>
     </Reference>
     <Reference Include="Il2CppSystem">
-      <HintPath>E:\Steam\steamapps\common\smbbm\unhollowed\Il2CppSystem.dll</HintPath>
+      <HintPath>H:\SteamLibrary\steamapps\common\smbbm\managed\Il2CppSystem.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Il2CppSystem.Configuration">
-      <HintPath>E:\Steam\steamapps\common\smbbm\unhollowed\Il2CppSystem.Configuration.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Il2CppSystem.Core">
-      <HintPath>E:\Steam\steamapps\common\smbbm\unhollowed\Il2CppSystem.Core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Il2CppSystem.Runtime.Serialization">
-      <HintPath>E:\Steam\steamapps\common\smbbm\unhollowed\Il2CppSystem.Runtime.Serialization.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Il2CppSystem.Xml">
-      <HintPath>E:\Steam\steamapps\common\smbbm\unhollowed\Il2CppSystem.Xml.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Il2CppSystem.Xml.Linq">
-      <HintPath>E:\Steam\steamapps\common\smbbm\unhollowed\Il2CppSystem.Xml.Linq.dll</HintPath>
+      <HintPath>H:\SteamLibrary\steamapps\common\smbbm\managed\Il2CppSystem.Configuration.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Mono.Cecil, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
@@ -101,44 +86,36 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="UnhollowerBaseLib">
-      <HintPath>E:\Steam\steamapps\common\smbbm\unhollowed\UnhollowerBaseLib.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>H:\SteamLibrary\steamapps\common\smbbm\managed\UnhollowerBaseLib.dll</HintPath>
     </Reference>
     <Reference Include="UnhollowerRuntimeLib">
-      <HintPath>E:\Steam\steamapps\common\smbbm\unhollowed\UnhollowerRuntimeLib.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>H:\SteamLibrary\steamapps\common\smbbm\managed\UnhollowerRuntimeLib.dll</HintPath>
     </Reference>
     <Reference Include="Unity.InputSystem">
-      <HintPath>E:\Steam\steamapps\common\smbbm\unhollowed\Unity.InputSystem.dll</HintPath>
+      <HintPath>H:\SteamLibrary\steamapps\common\smbbm\managed\Unity.InputSystem.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Mathematics">
-      <HintPath>E:\Steam\steamapps\common\smbbm\unhollowed\Unity.Mathematics.dll</HintPath>
+      <HintPath>H:\SteamLibrary\steamapps\common\smbbm\managed\Unity.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Postprocessing.Runtime">
-      <HintPath>E:\Steam\steamapps\common\smbbm\unhollowed\Unity.Postprocessing.Runtime.dll</HintPath>
+      <HintPath>H:\SteamLibrary\steamapps\common\smbbm\managed\Unity.Postprocessing.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>E:\Steam\steamapps\common\smbbm\unhollowed\Unity.TextMeshPro.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Timeline">
-      <HintPath>E:\Steam\steamapps\common\smbbm\unhollowed\Unity.Timeline.dll</HintPath>
+      <HintPath>H:\SteamLibrary\steamapps\common\smbbm\managed\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>E:\Steam\steamapps\common\smbbm\unhollowed\UnityEngine.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\References\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>E:\Steam\steamapps\common\smbbm\unhollowed\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>H:\SteamLibrary\steamapps\common\smbbm\managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>E:\Steam\steamapps\common\smbbm\unhollowed\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>H:\SteamLibrary\steamapps\common\smbbm\managed\UnityEngine.IMGUIModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssetBundle.cs" />
     <Compile Include="CodeRunner.cs" />
     <Compile Include="Loader.cs" />
-    <Compile Include="Patches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnhollowerDetour.cs" />
   </ItemGroup>
