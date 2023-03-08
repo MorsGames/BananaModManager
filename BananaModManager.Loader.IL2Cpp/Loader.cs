@@ -34,7 +34,7 @@ namespace BananaModManager.Loader.IL2Cpp
         private static List<Mod> _mods;
         private static bool _speedrunMode;
 
-        private static List<Tuple<string, string>> _hashList = new List<Tuple<string, string>>();
+        private static List<string> _SpeedrunList = new List<string>();
         private static float _modListSlide = 1f;
 
         public static List<Mod> Mods => _mods;
@@ -135,14 +135,12 @@ namespace BananaModManager.Loader.IL2Cpp
                 // Calculate the hashes to display in the speedrun mode
                 if (_speedrunMode)
                 {
-                    Console.WriteLine("Calculating the hashes.");
+                    Console.WriteLine("Passing mod names to Speedrun Mode display...");
 
                     foreach (var t in Mods)
                     {
                         var name = t.Info.Title;
-                        var hash = Hash(t.Info.Id + new FileInfo(t.GetFullPath()).Length);
-
-                        _hashList.Add(new Tuple<string, string>(name, hash));
+                        _SpeedrunList.Add(name);
                     }
                 }
 
@@ -272,30 +270,11 @@ namespace BananaModManager.Loader.IL2Cpp
             var outlineSize = (int)Mathf.Ceil(ratio);
 
             // Draw them all
-            for (var i = 0; i < _hashList.Count; i++)
+            for (var i = 0; i < _SpeedrunList.Count; i++)
             {
                 DrawTextOutline(new Rect(Screen.width - offset.x - offset2 + _modListSlide, offset.y + style.fontSize * i, offset2 - offset.x, style.fontSize),
-                    _hashList[i].Item1, outlineSize, style);
+                    _SpeedrunList[i], outlineSize, style);
             }
-        }
-
-        private static string Hash(string str)
-        {
-            var allowedSymbols = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".ToCharArray();
-            const int length = 6;
-            var hash = new char[length];
-
-            for (var i = 0; i < str.Length; i++)
-            {
-                hash[i % length] = (char)(hash[i % length] ^ str[i]);
-            }
-
-            for (var i = 0; i < length; i++)
-            {
-                hash[i] = allowedSymbols[hash[i] % allowedSymbols.Length];
-            }
-
-            return new string(hash);
         }
 
         private static void DrawTextOutline(Rect r, string t, int strength, GUIStyle style)
