@@ -6,7 +6,7 @@ GameBanana Page: [SMB:BBHD](https://gamebanana.com/tools/7464) | [SMB:BM](https:
 
 **This project is currently is still in beta and is not finished! As of right now, it only supports mods that make use of code injection.**
 
-If you need some mods to use this mod manager with, check my [BananaBlitzHDMods](https://github.com/MorsGames/BananaBlitzHDMods) and [BananaManiaMods](https://github.com/MorsGames/BananaManiaMods) repositories.
+If you need some mods to use this mod manager with, check Mors' [BananaBlitzHDMods](https://github.com/MorsGames/BananaBlitzHDMods) and [BananaManiaMods](https://github.com/MorsGames/BananaManiaMods) repositories, or my [iswimflyBananaManiaMods](https://github.com/iswimfly/iswimflyBananaManiaMods).
 
 ### Currently Supported Games
 - [Super Monkey Ball: Banana Blitz HD](https://store.steampowered.com/app/1061730/Super_Monkey_Ball_Banana_Blitz_HD)
