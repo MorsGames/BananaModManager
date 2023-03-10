@@ -7,3 +7,5 @@
 - Timer Sound: https://gamebanana.com/sounds/56772
 - UI Enhancements: https://gamebanana.com/mods/382591 
 - Indivdual Level Battle Timer: https://gamebanana.com/mods/428681
+
+A full collection of all legal mods will be included with each [release](https://github.com/iswimfly/BananaModManager/releases)
