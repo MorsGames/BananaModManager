@@ -17,7 +17,8 @@ namespace BananaModManager
         public MainForm()
         {
             InitializeComponent();
-
+            // Try to create registry entry for One-Click install
+            GameBanana.InstallOneClick();
             // Load the games
             foreach (var game in Games.List)
             {
