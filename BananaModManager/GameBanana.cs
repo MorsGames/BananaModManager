@@ -7,7 +7,6 @@ using Microsoft.Win32;
 using System.Windows.Forms;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
-using System.Net.Http;
 using Newtonsoft.Json;
 using System.Text;
 using System.Net;
