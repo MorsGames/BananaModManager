@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Runtime.InteropServices;
 using BananaModManager.Loader;
 
@@ -39,6 +40,7 @@ namespace BananaModManager.Shared
 
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("BananaModManager by Mors!");
+            Console.WriteLine("Speedrun fixes created by iswimfly!");
             Console.ForegroundColor = ConsoleColor.White;
 
             // Get the current game
@@ -57,11 +59,37 @@ namespace BananaModManager.Shared
 
             foreach (var mod in activeMods.Select(modId => Mods.List[modId]))
             {
-                if (speedrunMode && !currentGame.Whitelist.Contains(mod.Info.Id)) {
-                    Console.BackgroundColor = ConsoleColor.DarkYellow;
-                    Console.WriteLine("Skipped loading " + mod.Info.Title + ". It's not whitelisted for the speedrun mode!");
-                    Console.BackgroundColor = ConsoleColor.Black;
-                    continue;
+                if (speedrunMode)
+                {
+                    string Hash = "";
+                    byte[] hashvalue;
+                    using (SHA256 SHA256 = SHA256.Create())
+                    {
+                        using (FileStream fileStream = File.OpenRead(mod.Directory.FullName + "\\" + mod.Info.DLLFile))
+                        {
+                            fileStream.Position = 0;
+                            hashvalue = SHA256.ComputeHash(fileStream);
+                            for (int i = 0; i < hashvalue.Length; i++)
+                            {
+                                Hash += $"{hashvalue[i]:X2}";
+                            }
+                        }
+
+                    }
+                    if (!currentGame.Whitelist.Contains(Hash) && currentGame.WhitelistNames.Contains(mod.Info.DLLFile))
+                    {
+                        Console.BackgroundColor = ConsoleColor.DarkRed;
+                        Console.WriteLine("Nice try, cheater! " + mod.Info.Title + "'s Hash is different. The file is modified!");
+                        Console.BackgroundColor = ConsoleColor.Black;
+                        continue;
+                    }
+                    if (!currentGame.WhitelistNames.Contains(mod.Info.DLLFile))
+                    {
+                        Console.BackgroundColor = ConsoleColor.DarkYellow;
+                        Console.WriteLine("Skipped loading " + mod.Info.Title + ". It's not whitelisted for the speedrun mode!");
+                        Console.BackgroundColor = ConsoleColor.Black;
+                        continue;
+                    }
                 }
 
                 mods.Add(mod);

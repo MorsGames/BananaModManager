@@ -3,18 +3,27 @@ using System.Windows.Forms;
 
 namespace BananaModManager
 {
-    internal static class Program
+    public static class Program
     {
         /// <summary>
         ///     The main entry point for the application.
         /// </summary>
         [STAThread]
-        private static void Main()
+        static void Main(string[] args)
         {
-            //Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            if(args.Length > 0 && args[0] == "-download")
+            {
+                string modURL = args[1];
+                modURL = modURL.Remove(0, 17);
+                Application.Run(new OneClickConfirmation(modURL));
+            }
+            else
+            {
+                //Application.SetHighDpiMode(HighDpiMode.SystemAware);
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new MainForm());
+            }
         }
     }
 }

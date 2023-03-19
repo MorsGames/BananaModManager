@@ -332,3 +332,9 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+
+# Compiled
+Compiled/
+packages/
+Release
+

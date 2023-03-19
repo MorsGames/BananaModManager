@@ -117,39 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="MenuConfig.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <metadata name="MenuMods.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>136, 17</value>
-  </metadata>
-  <data name="TextInfo.Text" xml:space="preserve">
-    <value>A mod manager for Super Monkey Ball games that are made in Unity.
-
-Credits:
---------
-- Mors: 
-Programming 
-http://mors-games.com
-
-Open Source Projects Used:
---------
-- UnityDoorstop: 
-https://github.com/NeighTools/UnityDoorstop
-
-- Il2CppDumper:
-https://github.com/Perfare/Il2CppDumper
-
-- Il2CppAssemblyUnhollower:
-https://github.com/knah/Il2CppAssemblyUnhollower
-
-- Detours:
-https://github.com/microsoft/Detours
-
-- Mono:
-https://github.com/mono/mono
-
-- HarmonyX:
-https://github.com/BepInEx/HarmonyX</value>
-  </data>
 </root>

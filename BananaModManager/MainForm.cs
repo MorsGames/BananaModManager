@@ -17,7 +17,8 @@ namespace BananaModManager
         public MainForm()
         {
             InitializeComponent();
-
+            // Try to create registry entry for One-Click install
+            GameBanana.InstallOneClick();
             // Load the games
             foreach (var game in Games.List)
             {
@@ -284,6 +285,11 @@ namespace BananaModManager
         private void BtnSave2_Click(object sender, EventArgs e)
         {
             BtnSave_Click(sender, e);
+        }
+
+        private void TabControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
