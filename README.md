@@ -1,12 +1,12 @@
 # BananaModManager
 
-A mod manager for Super Monkey Ball games that are made in Unity. (Mors has built the entirety of this project, I've forked to make some minor tweaks)
+A mod manager for Super Monkey Ball games that are made in Unity. (Mors has built the entirety of this project, iswimfly has made some internal tweaks.)
 
 GameBanana Page: [SMB:BBHD](https://gamebanana.com/tools/7464) | [SMB:BM](https://gamebanana.com/tools/7542)
 
 **This project is currently is still in beta and is not finished! As of right now, it only supports mods that make use of code injection.**
 
-If you need some mods to use this mod manager with, check Mors' [BananaBlitzHDMods](https://github.com/MorsGames/BananaBlitzHDMods) and [BananaManiaMods](https://github.com/MorsGames/BananaManiaMods) repositories, or my [iswimflyBananaManiaMods](https://github.com/iswimfly/iswimflyBananaManiaMods).
+If you need some mods to use this mod manager with, check Mors' [BananaBlitzHDMods](https://github.com/MorsGames/BananaBlitzHDMods) and [BananaManiaMods](https://github.com/MorsGames/BananaManiaMods) repositories, or iswimfly's [iswimflyBananaManiaMods](https://github.com/iswimfly/iswimflyBananaManiaMods).
 
 ### Currently Supported Games
 - [Super Monkey Ball: Banana Blitz HD](https://store.steampowered.com/app/1061730/Super_Monkey_Ball_Banana_Blitz_HD)
@@ -20,21 +20,19 @@ If you need some mods to use this mod manager with, check Mors' [BananaBlitzHDMo
 - Automatic updates for the mods.
 - GameBanana 1-click install support.
 
-I'm currently busy with other projects to maintain this project on a regular basis, so I cannot guarantee when these features will arrive (if ever).
-
 If you have a question, or want to help please reach out to me on the [Banana Mania Modding Discord](https://discord.gg/vuZWDMzzye). Make sure to ping `@iswimfly#0556` or `@Mors#3278` so your message is seen!
 
 This project is licensed under GPLv3.
 
 ## Installation
-Download the release from the [releases](https://github.com/iswimfly/BananaModManager/releases) section and extract the contents of the "Release" folder inside the zip to the same folder as the game's executable.
+Download the release from the [releases](https://github.com/MorsGames/BananaModManager/releases) section and extract the contents of the "Release" folder inside the zip to the same folder as the game's executable.
 
 Don't put the mod loader to a different folder than the game's executable, otherwise it won't work.
 
 To install the mods, create a folder called "mods" and extract the zip files there. Each mod should be in their own folder.
 
 ## Making Mods
-Check Mors' [BananaBlitzHDMods](https://github.com/MorsGames/BananaBlitzHDMods) and [BananaManiaMods](https://github.com/MorsGames/BananaManiaMods) repositories, or my [iswimflyBananaManiaMods](https://github.com/iswimfly/iswimflyBananaManiaMods) repository to see some example mods.
+Check Mors' [BananaBlitzHDMods](https://github.com/MorsGames/BananaBlitzHDMods) and [BananaManiaMods](https://github.com/MorsGames/BananaManiaMods) repositories, or iswimfly's [iswimflyBananaManiaMods](https://github.com/iswimfly/iswimflyBananaManiaMods) repository to see some example mods.
 
 A full guide is coming soon. Maybe. 
 
@@ -42,7 +40,7 @@ Or maybe not.
 
 ## Credits
 - [Mors](http://mors-games.com): Programming
-- [iswimfly](https://www.twitch.tv/iswimfly556): Speedrun Mode fixes
+- [iswimfly](https://www.twitch.tv/iswimfly556): Fixes and Tweaks after 0.9.3
 
 ### Open Source Projects Used:
 - [UnityDoorstop](https://github.com/NeighTools/UnityDoorstop)
