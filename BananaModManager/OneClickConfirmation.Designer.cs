@@ -1,4 +1,8 @@
-﻿namespace BananaModManager
+﻿using System;
+using System.Net;
+using System.Text.RegularExpressions;
+
+namespace BananaModManager
 {
     partial class OneClickConfirmation
     {
@@ -26,6 +30,31 @@
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
+        /// 
+
+        public static string GetPageTitle(string link)
+        {
+            try
+            {
+                WebClient wc = new WebClient();
+                string html = wc.DownloadString(link);
+
+                Regex x = new Regex("<title>(.*)</title>");
+                MatchCollection m = x.Matches(html);
+
+                if (m.Count > 0)
+                {
+                    return m[0].Value.Replace("<title>", "").Replace("</title>", "");
+                }
+                else
+                    return "";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Could not connect. Error:" + ex.Message);
+                return "";
+            }
+        }
         private void InitializeComponent()
         {
             this.ModLink = new System.Windows.Forms.LinkLabel();
@@ -42,7 +71,7 @@
             this.ModLink.Size = new System.Drawing.Size(91, 13);
             this.ModLink.TabIndex = 0;
             this.ModLink.TabStop = true;
-            this.ModLink.Text = passedUrl;
+            this.ModLink.Text = GetPageTitle(passedUrl).Remove(GetPageTitle(passedUrl).Length - 40, 40);
             this.ModLink.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.ModLink.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ModLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.ModLink_LinkClicked);
@@ -87,7 +116,7 @@
             this.Controls.Add(this.InstallText);
             this.Controls.Add(this.ModLink);
             this.Name = "OneClickConfirmation";
-            this.Text = "Form1";
+            this.Text = "One-Click Mod Install";
             this.Load += new System.EventHandler(this.OneClickConfirmation_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

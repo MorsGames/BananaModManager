@@ -56,13 +56,13 @@ namespace BananaModManager
             this.BtnSave = new System.Windows.Forms.Button();
             this.BtnPlay = new System.Windows.Forms.Button();
             this.PageSettings = new System.Windows.Forms.TabPage();
+            this.BtnSave2 = new System.Windows.Forms.Button();
             this.PanelSettings = new System.Windows.Forms.FlowLayoutPanel();
             this.LabelGame = new System.Windows.Forms.Label();
             this.ComboGames = new System.Windows.Forms.ComboBox();
             this.CheckConsole = new System.Windows.Forms.CheckBox();
             this.CheckSpeedrun = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.BtnSave2 = new System.Windows.Forms.Button();
             this.PageAbout = new System.Windows.Forms.TabPage();
             this.TextInfo = new System.Windows.Forms.TextBox();
             this.LabelAboutVersion = new System.Windows.Forms.Label();
@@ -140,6 +140,7 @@ namespace BananaModManager
             this.TabControl.TabBackColor = System.Drawing.SystemColors.Control;
             this.TabControl.TabColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
             this.TabControl.TabIndex = 6;
+            this.TabControl.SelectedIndexChanged += new System.EventHandler(this.TabControl_SelectedIndexChanged);
             // 
             // PageMods
             // 
@@ -202,7 +203,7 @@ namespace BananaModManager
             this.ContainerList.Panel2.Controls.Add(this.LabelTitle);
             this.ContainerList.Panel2.Controls.Add(this.TextDescription);
             this.ContainerList.Size = new System.Drawing.Size(409, 339);
-            this.ContainerList.SplitterDistance = 256;
+            this.ContainerList.SplitterDistance = 259;
             this.ContainerList.SplitterWidth = 3;
             this.ContainerList.TabIndex = 0;
             // 
@@ -221,7 +222,7 @@ namespace BananaModManager
             this.ListMods.Location = new System.Drawing.Point(0, 0);
             this.ListMods.Margin = new System.Windows.Forms.Padding(2);
             this.ListMods.Name = "ListMods";
-            this.ListMods.Size = new System.Drawing.Size(409, 256);
+            this.ListMods.Size = new System.Drawing.Size(409, 259);
             this.ListMods.TabIndex = 9;
             this.ListMods.UseCompatibleStateImageBehavior = false;
             this.ListMods.View = System.Windows.Forms.View.Details;
@@ -264,7 +265,7 @@ namespace BananaModManager
             this.TextDescription.Multiline = true;
             this.TextDescription.Name = "TextDescription";
             this.TextDescription.ReadOnly = true;
-            this.TextDescription.Size = new System.Drawing.Size(409, 80);
+            this.TextDescription.Size = new System.Drawing.Size(409, 77);
             this.TextDescription.TabIndex = 0;
             // 
             // GridConfig
@@ -341,6 +342,16 @@ namespace BananaModManager
             this.PageSettings.TabIndex = 1;
             this.PageSettings.Text = "Settings";
             // 
+            // BtnSave2
+            // 
+            this.BtnSave2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtnSave2.Location = new System.Drawing.Point(510, 383);
+            this.BtnSave2.Name = "BtnSave2";
+            this.BtnSave2.Size = new System.Drawing.Size(103, 26);
+            this.BtnSave2.TabIndex = 9;
+            this.BtnSave2.Text = "Save";
+            this.BtnSave2.Click += new System.EventHandler(this.BtnSave2_Click);
+            // 
             // PanelSettings
             // 
             this.PanelSettings.Controls.Add(this.LabelGame);
@@ -408,16 +419,6 @@ namespace BananaModManager
             this.label1.TabIndex = 4;
             this.label1.Text = "(Enables the leaderboards, but only allows whitelisted mods, and displays active " +
     "mods on the screen.)";
-            // 
-            // BtnSave2
-            // 
-            this.BtnSave2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnSave2.Location = new System.Drawing.Point(510, 383);
-            this.BtnSave2.Name = "BtnSave2";
-            this.BtnSave2.Size = new System.Drawing.Size(103, 26);
-            this.BtnSave2.TabIndex = 9;
-            this.BtnSave2.Text = "Save";
-            this.BtnSave2.Click += new System.EventHandler(this.BtnSave2_Click);
             // 
             // PageAbout
             // 

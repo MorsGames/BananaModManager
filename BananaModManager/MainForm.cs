@@ -286,5 +286,10 @@ namespace BananaModManager
         {
             BtnSave_Click(sender, e);
         }
+
+        private void TabControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

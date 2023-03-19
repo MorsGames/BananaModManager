@@ -78,6 +78,10 @@ namespace BananaModManager
                 catch (IOException)
                 {
                     MessageBox.Show("The mod is already installed! Updating Mods will come soon...");
+                    if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName))
+                    {
+                        File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName);
+                    }
                 }
             }
         }
