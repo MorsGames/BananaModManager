@@ -349,3 +349,5 @@ BananaModManager.Shared/packages.config
 BananaModManager.Shared/BananaModManager.Shared.csproj
 BananaModManager.Loader.Mono/BananaModManager.Loader.Mono.csproj
 BananaModManager.Loader.Mono/BananaModManager.Loader.Mono.csproj
+BananaModManager.Loader.Mono/BananaModManager.Loader.Mono.csproj
+BananaModManager.Shared/BananaModManager.Shared.csproj

@@ -7,8 +7,11 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using BananaModManager.Shared;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace BananaModManager
 {
@@ -16,11 +19,35 @@ namespace BananaModManager
     {
         public MainForm()
         {
+            // Check for updates to Banana Mod Manager
+            using (WebClient wc = new WebClient())
+            {
+                ServicePointManager.Expect100Continue = true;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
+                wc.Headers.Add("user-agent", "request");
+                var jsondata = wc.DownloadString(new System.Uri("https://api.github.com/repos/MorsGames/BananaModManager/releases/latest"));
+                Release parsedJson = JsonConvert.DeserializeObject<Release>(jsondata);
+                string bmmversion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
+                if (parsedJson.name != "v" + bmmversion)
+                {
+                    if (MessageBox.Show("Your version of BananaModManager is out of date! Would you like to download the latest version?", "Update Available!", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                    {
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = "https://github.com/MorsGames/BananaModManager/releases/latest",
+                            UseShellExecute = true,
+                        });
+                        Process.GetCurrentProcess().Kill();
+                    }
+                }
+            }
+
             InitializeComponent();
             // Load the games
             foreach (var game in Games.List)
             {
-                if (File.Exists(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), game.ExecutableName + ".exe")))
+                if (File.Exists(Path.Combine(Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath), game.ExecutableName + ".exe")))
                 {
                     CurrentGame = game;
                 }
@@ -41,9 +68,11 @@ namespace BananaModManager
 
             // Set the text stuff
             var version = Assembly.GetExecutingAssembly().GetName().Version;
-            var versionString = "v" + version.Major + "." + version.Minor + "." + version.Build;
+            var versionString = "v" + version.Major + "." + version.Minor + "." + version.Build + "." + version.Revision;
             LabelAboutVersion.Text = "Version " + versionString;
             Text = "BananaModManager " + versionString;
+
+            
         }
 
         private void SetupCurrentGame(object sender, EventArgs e)
@@ -209,6 +238,7 @@ namespace BananaModManager
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
+
             // Get the mod order
             var modOrder = new List<string>();
             foreach (ListViewItem item in ListMods.Items)
