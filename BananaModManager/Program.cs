@@ -17,6 +17,10 @@ namespace BananaModManager
                 modURL = modURL.Remove(0, 17);
                 Application.Run(new OneClickConfirmation(modURL));
             }
+            if(args.Length > 0 && args[0] == "--update")
+            {
+                Update.DoUpdate();
+            }
             else
             {
                 //Application.SetHighDpiMode(HighDpiMode.SystemAware);

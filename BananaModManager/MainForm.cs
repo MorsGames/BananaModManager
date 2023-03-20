@@ -22,26 +22,43 @@ namespace BananaModManager
             // Check for updates to Banana Mod Manager
             using (WebClient wc = new WebClient())
             {
-                ServicePointManager.Expect100Continue = true;
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
                 wc.Headers.Add("user-agent", "request");
                 var jsondata = wc.DownloadString(new System.Uri("https://api.github.com/repos/MorsGames/BananaModManager/releases/latest"));
                 Release parsedJson = JsonConvert.DeserializeObject<Release>(jsondata);
                 string bmmversion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
-                if (parsedJson.name != "v" + bmmversion)
+                if (parsedJson.tag_name != "v" + bmmversion)
                 {
-                    if (MessageBox.Show("Your version of BananaModManager is out of date! Would you like to download the latest version?", "Update Available!", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                    if (MessageBox.Show("Your version of BananaModManager is out of date! Would you like to download the latest version?" + "\n \n Patch Notes: \n" + parsedJson.body, "Update Available!", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
                 MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                     {
-                        Process.Start(new ProcessStartInfo
-                        {
-                            FileName = "https://github.com/MorsGames/BananaModManager/releases/latest",
-                            UseShellExecute = true,
-                        });
+
+                        BananaModManager.Update.Download();
+                        ProcessStartInfo startInfo = new ProcessStartInfo(AppDomain.CurrentDomain.BaseDirectory + "\\New\\BananaModManager.exe");
+                        startInfo.Arguments = "--update";
+                        Process.Start(startInfo);
                         Process.GetCurrentProcess().Kill();
+                            
                     }
                 }
             }
+            //Check for leftovers from update process
+            try
+            {
+                if (Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\New\\"))
+                {
+                    Directory.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\New\\", true);
+                }
+                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Download.zip"))
+                {
+                    File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\Download.zip");
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
+
+
 
             InitializeComponent();
             // Load the games

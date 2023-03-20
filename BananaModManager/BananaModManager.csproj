@@ -87,6 +87,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Update.cs" />
     <Compile Include="OneClickConfirmation.cs">
       <SubType>Form</SubType>
     </Compile>
