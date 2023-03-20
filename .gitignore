@@ -338,3 +338,14 @@ Compiled/
 packages/
 Release
 
+_ForReleases.zip
+_Speedrun.Legal.Mods.zip
+BananaModManager/BananaModManager.csproj
+BananaModManager.Shared/packages.config
+BananaModManager.Shared/BananaModManager.Shared.csproj
+BananaModManager.Loader.Mono/BananaModManager.Loader.Mono.csproj
+BananaModManager/BananaModManager.csproj
+BananaModManager.Shared/packages.config
+BananaModManager.Shared/BananaModManager.Shared.csproj
+BananaModManager.Loader.Mono/BananaModManager.Loader.Mono.csproj
+BananaModManager.Loader.Mono/BananaModManager.Loader.Mono.csproj
