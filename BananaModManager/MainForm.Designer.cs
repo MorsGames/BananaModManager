@@ -63,6 +63,10 @@ namespace BananaModManager
             this.CheckConsole = new System.Windows.Forms.CheckBox();
             this.CheckSpeedrun = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.CheckOneClick = new System.Windows.Forms.CheckBox();
+            this.OneClickLabel = new System.Windows.Forms.Label();
+            this.CheckFastRestart = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.PageAbout = new System.Windows.Forms.TabPage();
             this.TextInfo = new System.Windows.Forms.TextBox();
             this.LabelAboutVersion = new System.Windows.Forms.Label();
@@ -203,7 +207,7 @@ namespace BananaModManager
             this.ContainerList.Panel2.Controls.Add(this.LabelTitle);
             this.ContainerList.Panel2.Controls.Add(this.TextDescription);
             this.ContainerList.Size = new System.Drawing.Size(409, 339);
-            this.ContainerList.SplitterDistance = 259;
+            this.ContainerList.SplitterDistance = 264;
             this.ContainerList.SplitterWidth = 3;
             this.ContainerList.TabIndex = 0;
             // 
@@ -222,7 +226,7 @@ namespace BananaModManager
             this.ListMods.Location = new System.Drawing.Point(0, 0);
             this.ListMods.Margin = new System.Windows.Forms.Padding(2);
             this.ListMods.Name = "ListMods";
-            this.ListMods.Size = new System.Drawing.Size(409, 259);
+            this.ListMods.Size = new System.Drawing.Size(409, 264);
             this.ListMods.TabIndex = 9;
             this.ListMods.UseCompatibleStateImageBehavior = false;
             this.ListMods.View = System.Windows.Forms.View.Details;
@@ -265,7 +269,7 @@ namespace BananaModManager
             this.TextDescription.Multiline = true;
             this.TextDescription.Name = "TextDescription";
             this.TextDescription.ReadOnly = true;
-            this.TextDescription.Size = new System.Drawing.Size(409, 77);
+            this.TextDescription.Size = new System.Drawing.Size(409, 72);
             this.TextDescription.TabIndex = 0;
             // 
             // GridConfig
@@ -359,6 +363,10 @@ namespace BananaModManager
             this.PanelSettings.Controls.Add(this.CheckConsole);
             this.PanelSettings.Controls.Add(this.CheckSpeedrun);
             this.PanelSettings.Controls.Add(this.label1);
+            this.PanelSettings.Controls.Add(this.CheckOneClick);
+            this.PanelSettings.Controls.Add(this.OneClickLabel);
+            this.PanelSettings.Controls.Add(this.CheckFastRestart);
+            this.PanelSettings.Controls.Add(this.label2);
             this.PanelSettings.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PanelSettings.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.PanelSettings.Location = new System.Drawing.Point(2, 2);
@@ -408,6 +416,7 @@ namespace BananaModManager
             this.CheckSpeedrun.TabIndex = 2;
             this.CheckSpeedrun.Text = "Speedrun Mode";
             this.CheckSpeedrun.UseVisualStyleBackColor = true;
+            this.CheckSpeedrun.CheckedChanged += new System.EventHandler(this.CheckSpeedrun_CheckedChanged);
             // 
             // label1
             // 
@@ -419,6 +428,46 @@ namespace BananaModManager
             this.label1.TabIndex = 4;
             this.label1.Text = "(Enables the leaderboards, but only allows whitelisted mods, and displays active " +
     "mods on the screen.)";
+            // 
+            // CheckOneClick
+            // 
+            this.CheckOneClick.AutoSize = true;
+            this.CheckOneClick.CausesValidation = false;
+            this.CheckOneClick.Location = new System.Drawing.Point(3, 118);
+            this.CheckOneClick.Name = "CheckOneClick";
+            this.CheckOneClick.Size = new System.Drawing.Size(117, 19);
+            this.CheckOneClick.TabIndex = 7;
+            this.CheckOneClick.Text = "Enable One-Click";
+            this.CheckOneClick.UseVisualStyleBackColor = true;
+            // 
+            // OneClickLabel
+            // 
+            this.OneClickLabel.Location = new System.Drawing.Point(3, 140);
+            this.OneClickLabel.Name = "OneClickLabel";
+            this.OneClickLabel.Size = new System.Drawing.Size(257, 23);
+            this.OneClickLabel.TabIndex = 8;
+            this.OneClickLabel.Text = "Enables One-Click support on GameBanana!";
+            // 
+            // FastRestart
+            // 
+            this.CheckFastRestart.AutoSize = true;
+            this.CheckFastRestart.Location = new System.Drawing.Point(3, 166);
+            this.CheckFastRestart.Name = "CheckFastRestart";
+            this.CheckFastRestart.Size = new System.Drawing.Size(262, 19);
+            this.CheckFastRestart.TabIndex = 4;
+            this.CheckFastRestart.Text = "Add Fast Restart Keybind for Speedrun Mode";
+            this.CheckFastRestart.UseVisualStyleBackColor = true;
+            this.CheckFastRestart.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(3, 188);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(574, 23);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Pressing F12 while the game is open will fast restart the game, toggling Speedrun" +
+    " Mode in the process.";
+            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // PageAbout
             // 
@@ -534,8 +583,12 @@ namespace BananaModManager
         private System.Windows.Forms.ToolStripMenuItem deleteModToolStripMenuItem;
         private System.Windows.Forms.CheckBox CheckConsole;
         private System.Windows.Forms.CheckBox CheckSpeedrun;
+        private System.Windows.Forms.CheckBox CheckOneClick;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label OneClickLabel;
         private System.Windows.Forms.Button BtnSave2;
+        private System.Windows.Forms.CheckBox CheckFastRestart;
+        private System.Windows.Forms.Label label2;
     }
 }
 

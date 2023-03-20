@@ -30,9 +30,9 @@ namespace BananaModManager
             {
                 VisitLink(passedUrl);
             }
-            catch (Exception ex)
+            catch
             {
-
+                MessageBox.Show("Invalid URL! Please try again with a valid GameBanana link.");
             }
         }
         private void VisitLink(string modURL)

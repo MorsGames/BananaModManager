@@ -33,7 +33,7 @@ namespace BananaModManager.Shared
 
         public static void StartModLoader(out List<Mod> mods, out bool speedrunMode)
         {
-            Mods.Load(out var activeMods, out var consoleWindow, out speedrunMode);
+            Mods.Load(out var activeMods, out var consoleWindow, out speedrunMode, out bool oneClick, out bool fastRestart);
 
             if (consoleWindow)
                 ShowConsoleWindow();

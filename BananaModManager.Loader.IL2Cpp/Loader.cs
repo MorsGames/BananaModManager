@@ -37,6 +37,9 @@ namespace BananaModManager.Loader.IL2Cpp
         private static List<string> _SpeedrunList = new List<string>();
         private static float _modListSlide = 1f;
 
+        private static UserConfig userConfig;
+        private static Game currentGame;
+
         public static List<Mod> Mods => _mods;
         public static Dictionary<string, string> AssetBundles { get; private set; } = new Dictionary<string, string>();
         public static bool SpeedrunMode => _speedrunMode;
@@ -69,6 +72,16 @@ namespace BananaModManager.Loader.IL2Cpp
                     Console.BackgroundColor = ConsoleColor.Black;
                 };
 
+                Console.WriteLine("Carrying over user config and checking current game...");
+                
+                // Carries over the entire user config for use in other areas
+                userConfig = Shared.Mods.LoadUserConfig();
+                foreach (Game game in Games.List)
+                {
+                    if (game.ExecutableName == System.Diagnostics.Process.GetCurrentProcess().ProcessName)
+                        currentGame = game;
+                }
+                Console.WriteLine("Config loaded! " + currentGame.Title + " detected!");
                 var version = Version.Parse(Process.GetCurrentProcess().MainModule.FileVersionInfo.FileVersion);
 
                 var revision = Math.Abs(version.Revision);
@@ -98,10 +111,6 @@ namespace BananaModManager.Loader.IL2Cpp
 
                             ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0xa9d990),
                                 LeaderboardsDelegateInstance);
-                        }
-                        if (Mods.Count > 0 && _speedrunMode)
-                        {
-                            Console.WriteLine("1 Line of Code Later...");
                         }
                         Console.WriteLine("Initializing the mods...");
                         CreateCodeRunner();
@@ -218,6 +227,16 @@ namespace BananaModManager.Loader.IL2Cpp
         public static void InvokeUpdate()
         {
             foreach (var method in UpdateMethods) method.Invoke(null, null);
+            if (AppInput.GetKeyDown(KeyCode.F12) && userConfig.FastRestart == true)
+            {
+                Shared.Mods.Save(userConfig.ActiveMods, userConfig.ConsoleWindow, !userConfig.SpeedrunMode, userConfig.OneClick, userConfig.FastRestart);
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "steam://rungameid/" + currentGame.AppID,
+                    UseShellExecute = true
+                });
+                Process.GetCurrentProcess().Kill();
+            }
         }
 
         public static void InvokeFixedUpdate()

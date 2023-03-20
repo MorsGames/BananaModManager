@@ -7,6 +7,7 @@ using Microsoft.Win32;
 using System.Windows.Forms;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
+using System.Net.Http;
 using Newtonsoft.Json;
 using System.Text;
 using System.Net;
@@ -17,7 +18,7 @@ namespace BananaModManager
     {
         public static Dictionary<string, string> parsedJson;
         // Upon launching the Mod Manager, this enables one-click capability.
-        public static bool InstallOneClick()
+        public static void InstallOneClick()
         {
             string ExeDirectory = Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, ".exe");
             string protocol = $"bananamodmanager";
@@ -29,11 +30,22 @@ namespace BananaModManager
                 reg = reg.CreateSubKey(@"shell\open\command");
                 reg.SetValue("", $"\"{ExeDirectory}\" -download \"%1\"");
                 reg.Close();
-                return true;
+                return;            
             }
             catch
             {
-                return false;
+                return;
+            }
+        }
+        public static void DisableOneClick()
+        {
+            try
+            {
+               Registry.CurrentUser.DeleteSubKeyTree(@"Software\Classes\BananaModManager");
+            }
+            catch
+            {
+                return;
             }
         }
 

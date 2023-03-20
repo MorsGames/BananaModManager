@@ -28,5 +28,14 @@ namespace BananaModManager.Shared
         /// </summary>
         public bool SpeedrunMode { get; set; } = true;
 
+        ///<summary>
+        ///     Enables One-Click support on GameBanana. Adding "bananamodmanager:" before any valid mod URL will also prompt the One-Click installation.
+        /// </summary>
+        public bool OneClick { get; set; } = true;
+
+        /// <summary>
+        ///     Enables fast restarting and toggling Speedrun Mode by pressing F12, a quicker way to toggle Speedrun Mode for speedrunners.
+        /// </summary>
+        public bool FastRestart { get; set; } = true;
     }
 }
