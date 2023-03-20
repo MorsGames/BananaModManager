@@ -465,7 +465,7 @@ namespace BananaModManager
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(574, 23);
             this.label2.TabIndex = 5;
-            this.label2.Text = "Pressing F12 while the game is open will fast restart the game, toggling Speedrun" +
+            this.label2.Text = "Pressing F11 while the game is open will fast restart the game, toggling Speedrun" +
     " Mode in the process.";
             this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
