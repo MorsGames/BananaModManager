@@ -22,25 +22,30 @@ namespace BananaModManager
             // Check for updates to Banana Mod Manager
             using (WebClient wc = new WebClient())
             {
-                wc.Headers.Add("user-agent", "request");
-                var jsondata = wc.DownloadString(new System.Uri("https://api.github.com/repos/MorsGames/BananaModManager/releases/latest"));
-                Release parsedJson = JsonConvert.DeserializeObject<Release>(jsondata);
-                string bmmversion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
-                if (parsedJson.tag_name != "v" + bmmversion)
+                try
                 {
-                    if (MessageBox.Show("Your version of BananaModManager is out of date! Would you like to download the latest version?" + "\n \n Patch Notes: \n" + parsedJson.body, "Update Available!", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
-                MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                    wc.Headers.Add("user-agent", "request");
+                    var jsondata = wc.DownloadString(new System.Uri("https://api.github.com/repos/MorsGames/BananaModManager/releases/latest"));
+                    Release parsedJson = JsonConvert.DeserializeObject<Release>(jsondata);
+                    string bmmversion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
+                    if (parsedJson.tag_name != "v" + bmmversion)
                     {
-
-                        BananaModManager.Update.Download();
-                        ProcessStartInfo startInfo = new ProcessStartInfo(AppDomain.CurrentDomain.BaseDirectory + "\\New\\BananaModManager.exe");
-                        startInfo.Arguments = "--update";
-                        Process.Start(startInfo);
-                        Process.GetCurrentProcess().Kill();
-                            
+                        if (MessageBox.Show("Your version of BananaModManager is out of date! Would you like to download the latest version?" + "\n \n Patch Notes: \n" + parsedJson.body, "Update Available!", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                        {
+                            BananaModManager.Update.Download();
+                            ProcessStartInfo startInfo = new ProcessStartInfo(AppDomain.CurrentDomain.BaseDirectory + "\\New\\BananaModManager.exe");
+                            startInfo.Arguments = "--update";
+                            Process.Start(startInfo);
+                            Process.GetCurrentProcess().Kill();
+                        }
                     }
                 }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.ToString());
+                }
             }
+            
             //Check for leftovers from update process
             try
             {
@@ -57,8 +62,6 @@ namespace BananaModManager
             {
                 MessageBox.Show(e.ToString());
             }
-
-
 
             InitializeComponent();
             // Load the games

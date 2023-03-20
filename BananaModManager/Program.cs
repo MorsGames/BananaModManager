@@ -19,7 +19,15 @@ namespace BananaModManager
             }
             if(args.Length > 0 && args[0] == "--update")
             {
-                Update.DoUpdate();
+                try
+                {
+                    Update.DoUpdate();
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.ToString());
+                }
+                
             }
             else
             {

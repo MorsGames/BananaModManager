@@ -28,17 +28,18 @@ namespace BananaModManager
                     if (entry.FullName.EndsWith("/") || entry.FullName.EndsWith("\\"))
                     {
                         string entryFullName = entry.FullName.Replace('/', '\\');
-                        string entryFullpath = Path.Combine(actualdirectory + "\\", entryFullName);
+                        string entryFullpath = Path.Combine(actualdirectory + "\\" + entryFullName);
                         if (!Directory.Exists(entryFullpath))
                             Directory.CreateDirectory(entryFullpath);
                     }
                     else
                     {
                         string entryFullName = entry.FullName.Replace('/', '\\');
-                        entry.ExtractToFile(Path.Combine(actualdirectory + "\\", entryFullName), true);
+                        entry.ExtractToFile(Path.Combine(actualdirectory + "\\" + entryFullName), true);
                     }
                 }
-                ProcessStartInfo startInfo = new ProcessStartInfo(actualdirectory + "\\BananaModManager.exe");
+                ProcessStartInfo updatedStartInfo = new ProcessStartInfo(actualdirectory + "\\BananaModManager.exe");
+                Process.Start(updatedStartInfo);
                 Process.GetCurrentProcess().Kill();
             }
             catch (Exception e)
@@ -53,14 +54,21 @@ namespace BananaModManager
         {
             
             using (WebClient wc = new WebClient())
-            { 
-                wc.Headers.Add("user-agent", "request");
-                var jsondata = wc.DownloadString(new System.Uri("https://api.github.com/repos/MorsGames/BananaModManager/releases/latest"));
-                Release parsedJson = JsonConvert.DeserializeObject<Release>(jsondata);
-                if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\New\\"))
-                    Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\New\\");
-                wc.DownloadFile(parsedJson.assets[0].browser_download_url, AppDomain.CurrentDomain.BaseDirectory + "\\New\\Download.zip");
-                ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\New\\Download.zip", AppDomain.CurrentDomain.BaseDirectory + "\\New");
+            {
+                try
+                {
+                    wc.Headers.Add("user-agent", "request");
+                    var jsondata = wc.DownloadString(new System.Uri("https://api.github.com/repos/MorsGames/BananaModManager/releases/latest"));
+                    Release parsedJson = JsonConvert.DeserializeObject<Release>(jsondata);
+                    if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\New\\"))
+                        Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\New\\");
+                    wc.DownloadFile(parsedJson.assets[0].browser_download_url, AppDomain.CurrentDomain.BaseDirectory + "\\New\\Download.zip");
+                    ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\New\\Download.zip", AppDomain.CurrentDomain.BaseDirectory + "\\New");
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.ToString());
+                }
             }
             
         }

@@ -227,7 +227,7 @@ namespace BananaModManager.Loader.IL2Cpp
         public static void InvokeUpdate()
         {
             foreach (var method in UpdateMethods) method.Invoke(null, null);
-            if (AppInput.GetKeyDown(KeyCode.F12) && userConfig.FastRestart == true)
+            if (AppInput.GetKeyDown(KeyCode.F11) && userConfig.FastRestart == true)
             {
                 Shared.Mods.Save(userConfig.ActiveMods, userConfig.ConsoleWindow, !userConfig.SpeedrunMode, userConfig.OneClick, userConfig.FastRestart);
                 Process.Start(new ProcessStartInfo
