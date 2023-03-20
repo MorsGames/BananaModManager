@@ -17,7 +17,6 @@ namespace BananaModManager
     {
         public static void DoUpdate()
         {
-            MessageBox.Show("Fuck You");
             try
             {
                 string newDirectory = AppDomain.CurrentDomain.BaseDirectory;
