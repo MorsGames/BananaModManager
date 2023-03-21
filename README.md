@@ -16,9 +16,7 @@ If you need some mods to use this mod manager with, check Mors' [BananaBlitzHDMo
 
 ### Missing Things
 - Support for file redirection.
-- Automatic updates for the mod manager itself.
 - Automatic updates for the mods.
-- GameBanana 1-click install support.
 
 If you have a question, or want to help please reach out to me on the [Banana Mania Modding Discord](https://discord.gg/vuZWDMzzye). Make sure to ping `@iswimfly#0556` or `@Mors#3278` so your message is seen!
 
