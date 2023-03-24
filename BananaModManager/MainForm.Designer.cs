@@ -71,6 +71,8 @@ namespace BananaModManager
             this.TextInfo = new System.Windows.Forms.TextBox();
             this.LabelAboutVersion = new System.Windows.Forms.Label();
             this.LabelAboutTitle = new System.Windows.Forms.Label();
+            this.SaveModeCheckbox = new System.Windows.Forms.CheckBox();
+            this.SaveModeLabel = new System.Windows.Forms.Label();
             this.MenuConfig.SuspendLayout();
             this.MenuMods.SuspendLayout();
             this.TabControl.SuspendLayout();
@@ -207,7 +209,7 @@ namespace BananaModManager
             this.ContainerList.Panel2.Controls.Add(this.LabelTitle);
             this.ContainerList.Panel2.Controls.Add(this.TextDescription);
             this.ContainerList.Size = new System.Drawing.Size(409, 339);
-            this.ContainerList.SplitterDistance = 264;
+            this.ContainerList.SplitterDistance = 265;
             this.ContainerList.SplitterWidth = 3;
             this.ContainerList.TabIndex = 0;
             // 
@@ -226,7 +228,7 @@ namespace BananaModManager
             this.ListMods.Location = new System.Drawing.Point(0, 0);
             this.ListMods.Margin = new System.Windows.Forms.Padding(2);
             this.ListMods.Name = "ListMods";
-            this.ListMods.Size = new System.Drawing.Size(409, 264);
+            this.ListMods.Size = new System.Drawing.Size(409, 265);
             this.ListMods.TabIndex = 9;
             this.ListMods.UseCompatibleStateImageBehavior = false;
             this.ListMods.View = System.Windows.Forms.View.Details;
@@ -269,7 +271,7 @@ namespace BananaModManager
             this.TextDescription.Multiline = true;
             this.TextDescription.Name = "TextDescription";
             this.TextDescription.ReadOnly = true;
-            this.TextDescription.Size = new System.Drawing.Size(409, 72);
+            this.TextDescription.Size = new System.Drawing.Size(409, 71);
             this.TextDescription.TabIndex = 0;
             // 
             // GridConfig
@@ -367,6 +369,8 @@ namespace BananaModManager
             this.PanelSettings.Controls.Add(this.OneClickLabel);
             this.PanelSettings.Controls.Add(this.CheckFastRestart);
             this.PanelSettings.Controls.Add(this.label2);
+            this.PanelSettings.Controls.Add(this.SaveModeCheckbox);
+            this.PanelSettings.Controls.Add(this.SaveModeLabel);
             this.PanelSettings.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PanelSettings.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.PanelSettings.Location = new System.Drawing.Point(2, 2);
@@ -448,7 +452,7 @@ namespace BananaModManager
             this.OneClickLabel.TabIndex = 8;
             this.OneClickLabel.Text = "Enables One-Click support on GameBanana!";
             // 
-            // FastRestart
+            // CheckFastRestart
             // 
             this.CheckFastRestart.AutoSize = true;
             this.CheckFastRestart.Location = new System.Drawing.Point(3, 166);
@@ -514,6 +518,26 @@ namespace BananaModManager
             this.LabelAboutTitle.Size = new System.Drawing.Size(520, 65);
             this.LabelAboutTitle.TabIndex = 3;
             this.LabelAboutTitle.Text = "BananaModManager";
+            // 
+            // SaveModeCheckbox
+            // 
+            this.SaveModeCheckbox.AutoSize = true;
+            this.SaveModeCheckbox.Location = new System.Drawing.Point(3, 214);
+            this.SaveModeCheckbox.Name = "SaveModeCheckbox";
+            this.SaveModeCheckbox.Size = new System.Drawing.Size(84, 19);
+            this.SaveModeCheckbox.TabIndex = 9;
+            this.SaveModeCheckbox.Text = "Save Mode";
+            this.SaveModeCheckbox.UseVisualStyleBackColor = true;
+            // 
+            // SaveModeLabel
+            // 
+            this.SaveModeLabel.AutoSize = true;
+            this.SaveModeLabel.Location = new System.Drawing.Point(3, 236);
+            this.SaveModeLabel.Name = "SaveModeLabel";
+            this.SaveModeLabel.Size = new System.Drawing.Size(591, 15);
+            this.SaveModeLabel.TabIndex = 10;
+            this.SaveModeLabel.Text = "When enabled the game will save your best clears of each stage. When disabled it " +
+    "will not save your best clears.";
             // 
             // MainForm
             // 
@@ -589,6 +613,8 @@ namespace BananaModManager
         private System.Windows.Forms.Button BtnSave2;
         private System.Windows.Forms.CheckBox CheckFastRestart;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox SaveModeCheckbox;
+        private System.Windows.Forms.Label SaveModeLabel;
     }
 }
 

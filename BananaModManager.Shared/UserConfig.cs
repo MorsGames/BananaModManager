@@ -37,5 +37,10 @@ namespace BananaModManager.Shared
         ///     Enables fast restarting and toggling Speedrun Mode by pressing F12, a quicker way to toggle Speedrun Mode for speedrunners.
         /// </summary>
         public bool FastRestart { get; set; } = true;
+
+        /// <summary>
+        ///     Enables/Disables saving the game (For prevention of overwriting times).
+        /// </summary>
+        public bool SaveMode { get; set; } = true;
     }
 }

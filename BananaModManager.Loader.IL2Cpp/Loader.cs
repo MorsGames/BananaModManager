@@ -108,9 +108,12 @@ namespace BananaModManager.Loader.IL2Cpp
                         if (Mods.Count > 0 && !_speedrunMode)
                         {
                             LeaderboardsDelegateInstance = Dummy;
-
-                            ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0xa9d990),
-                                LeaderboardsDelegateInstance);
+                            ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0x296130),LeaderboardsDelegateInstance);
+                        }
+                        if (Mods.Count > 0 && !userConfig.SaveMode)
+                        {
+                            SaveDelegateInstance = Dummy2;
+                            ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0xE5B820), SaveDelegateInstance);
                         }
                         Console.WriteLine("Initializing the mods...");
                         CreateCodeRunner();
@@ -162,7 +165,9 @@ namespace BananaModManager.Loader.IL2Cpp
         }
 
         public delegate void LeaderboardsDelegate();
+        public delegate void SaveDelegate();
         public static LeaderboardsDelegate LeaderboardsDelegateInstance;
+        public static SaveDelegate SaveDelegateInstance; 
 
         public static void Dummy()
         {
@@ -170,6 +175,13 @@ namespace BananaModManager.Loader.IL2Cpp
             Console.WriteLine("Leaderboards are disabled when mods are used.");
             Console.BackgroundColor = ConsoleColor.Black;
         }
+        public static void Dummy2()
+        {
+            Console.BackgroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine("Save Mode is disabled. Best clears will not save.");
+            Console.BackgroundColor = ConsoleColor.Black;
+        }
+
 
         private static void CreateCodeRunner()
         {
@@ -229,7 +241,7 @@ namespace BananaModManager.Loader.IL2Cpp
             foreach (var method in UpdateMethods) method.Invoke(null, null);
             if (AppInput.GetKeyDown(KeyCode.F11) && userConfig.FastRestart == true)
             {
-                Shared.Mods.Save(userConfig.ActiveMods, userConfig.ConsoleWindow, !userConfig.SpeedrunMode, userConfig.OneClick, userConfig.FastRestart);
+                Shared.Mods.Save(userConfig.ActiveMods, userConfig.ConsoleWindow, !userConfig.SpeedrunMode, userConfig.OneClick, userConfig.FastRestart, userConfig.SaveMode);
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = "steam://rungameid/" + currentGame.AppID,

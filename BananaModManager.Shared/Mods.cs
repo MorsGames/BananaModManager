@@ -22,7 +22,7 @@ namespace BananaModManager.Shared
         ///     Loads all necessary data about all the mods
         /// </summary>
         /// <param name="activeMods">A list of all mods that are currently enabled, in a specific order.</param>
-        public static void Load(out List<string> activeMods, out bool consoleWindow, out bool speedrunMode, out bool oneClick, out bool fastRestart)
+        public static void Load(out List<string> activeMods, out bool consoleWindow, out bool speedrunMode, out bool oneClick, out bool fastRestart, out bool saveMode)
         {
             // Load the config file
             var userConfig = LoadUserConfig();
@@ -33,6 +33,7 @@ namespace BananaModManager.Shared
             speedrunMode = userConfig.SpeedrunMode;
             oneClick = userConfig.OneClick;
             fastRestart = userConfig.FastRestart;
+            saveMode = userConfig.SaveMode;
 
 
             // Get the mods folder
@@ -180,7 +181,7 @@ namespace BananaModManager.Shared
         ///     Saves the user config of the mod manager.
         /// </summary>
         /// <param name="activeMods">A list of enabled mods, in a specific order.</param>
-        public static void Save(List<string> activeMods, bool consoleWindow, bool speedrunMode, bool oneClick, bool fastRestart)
+        public static void Save(List<string> activeMods, bool consoleWindow, bool speedrunMode, bool oneClick, bool fastRestart, bool saveMode)
         {
             // Config object used for the user data
             var loaderConfig = new UserConfig
@@ -189,7 +190,8 @@ namespace BananaModManager.Shared
                 ConsoleWindow = consoleWindow,
                 SpeedrunMode = speedrunMode,
                 OneClick = oneClick,
-                FastRestart = fastRestart
+                FastRestart = fastRestart,
+                SaveMode = saveMode
             };
 
             // Add the configs into it
