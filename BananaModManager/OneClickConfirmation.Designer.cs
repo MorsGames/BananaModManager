@@ -73,7 +73,17 @@ namespace BananaModManager
             this.ModLink.Size = new System.Drawing.Size(91, 13);
             this.ModLink.TabIndex = 0;
             this.ModLink.TabStop = true;
-            this.ModLink.Text = GetPageTitle("https://gamebanana.com/mods/" + passedID).Remove(GetPageTitle("https://gamebanana.com/mods/" + passedID).Length - 40, 40);
+            using (WebClient webClient = new WebClient())
+            {
+                if (webClient.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=Mod&itemid={passedID}&fields=Game%28%29.name&format=json_min").Contains("Mania"))
+                {
+                    this.ModLink.Text = GetPageTitle("https://gamebanana.com/mods/" + passedID).Remove(GetPageTitle("https://gamebanana.com/mods/" + passedID).Length - 40, 40);
+                }
+                else
+                {
+                    this.ModLink.Text = GetPageTitle("https://gamebanana.com/mods/" + passedID).Remove(GetPageTitle("https://gamebanana.com/mods/" + passedID).Length - 43, 43);
+                }
+            }
             this.ModLink.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.ModLink.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ModLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.ModLink_LinkClicked);

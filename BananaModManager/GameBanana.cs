@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Text;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.IO.Compression;
 using System.IO;
-using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Win32;
 using System.Windows.Forms;
-using System.Threading.Tasks;
-using System.Runtime.Serialization;
-using System.Net.Http;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 
 using BananaModManager;
@@ -103,30 +96,37 @@ namespace BananaModManager
                 string DLL = "";
                 foreach (string i in files)
                 {
-                    string file;
+                    string file = i;
                     // If it has a directory, remove it
-                    if (i.Contains("/"))
+                    if (file.Contains("/"))
                     {
-                        file = i.Substring(i.IndexOf('/') + 1);
-
+                        file = file.Substring(file.IndexOf('/') + 1);
                     }
                     // Check the extension
-                    if (i.Contains(".dll"))
+                    if (file.Contains(".dll"))
                     {
-                        DLL = i.Remove(i.Length -1, 1);
+                        DLL = file.Remove(file.Length -1, 1);
                     }
                     
                 }
                 fileName = fileName.Trim(stuff);
+                string modName;
                 // Grab the mod name from the title of the main page
-                string modName = GetModTitle("https://gamebanana.com/mods/" + modID).Remove(GetModTitle("https://gamebanana.com/mods/" + modID).Length - 40, 40);
+                if (client.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=Mod&itemid={modID}&fields=Game%28%29.name&format=json_min").Contains("Mania"))
+                {
+                    modName = GetModTitle("https://gamebanana.com/mods/" + modID).Remove(GetModTitle("https://gamebanana.com/mods/" + modID).Length - 40, 40);
+                }
+                else
+                {
+                    modName = GetModTitle("https://gamebanana.com/mods/" + modID).Remove(GetModTitle("https://gamebanana.com/mods/" + modID).Length - 44, 44);
+                }
                 try
                 {
                     // Download the zip
                     client.DownloadFile(downloadUrl, AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName);
-
+                    string[] ExistingVersions = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\", DLL, SearchOption.AllDirectories);
                     // Check if the mod is installed and prompt to overwrite
-                    if (Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\", DLL, SearchOption.AllDirectories) != null)
+                    if (ExistingVersions.Length != 0)
                     {
                         if (MessageBox.Show("It appears you have a version of this mod installed! Would you like to overwrite/update it?", "Overwrite?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                         {
@@ -144,10 +144,13 @@ namespace BananaModManager
                         }
                         else
                         {
+                            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName))
+                            {
+                                File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName);
+                            }
                             return;
                         }
                     }
-
                     // If the zip contains a folder with the mod inside, just extract to "smbbm\mods"
                     if (fileContents.Contains("/"))
                     {
