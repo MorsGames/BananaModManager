@@ -13,9 +13,10 @@ namespace BananaModManager
         {
             if(args.Length > 0 && args[0] == "-download")
             {
-                string modURL = args[1];
-                modURL = modURL.Remove(0, 17);
-                Application.Run(new OneClickConfirmation(modURL));
+                string[] modInfo = args[1].Split(',');
+                string downloadURL = modInfo[0].Remove(0,17);
+                string modID = modInfo[1];
+                Application.Run(new OneClickConfirmation(downloadURL, modID));
             }
             if(args.Length > 0 && args[0] == "--update")
             {

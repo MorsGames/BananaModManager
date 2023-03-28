@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Text;
+using System.Net;
+using System.Text.RegularExpressions;
 using System.IO.Compression;
 using System.IO;
 using System.Collections.Generic;
@@ -9,14 +12,41 @@ using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using System.Net.Http;
 using Newtonsoft.Json;
-using System.Text;
-using System.Net;
+using Newtonsoft.Json.Linq;
+
+
+using BananaModManager;
 
 namespace BananaModManager
 {
+
     public static class GameBanana
     {
-        public static Dictionary<string, string> parsedJson;
+
+        public static string GetModTitle(string link)
+        {
+            try
+            {
+                WebClient wc = new WebClient();
+                string html = wc.DownloadString(link);
+
+                Regex x = new Regex("<title>(.*)</title>");
+                MatchCollection m = x.Matches(html);
+
+                if (m.Count > 0)
+                {
+                    return m[0].Value.Replace("<title>", "").Replace("</title>", "");
+                }
+                else
+                    return "";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Could not connect. Error:" + ex.Message);
+                return "";
+            }
+        }
+
         // Upon launching the Mod Manager, this enables one-click capability.
         public static void InstallOneClick()
         {
@@ -49,59 +79,95 @@ namespace BananaModManager
             }
         }
 
-        public static void ParseData(string gbID)
+        public static void InstallMod(string downloadUrl, string modID)
         {
-            // Use Mod ID to find files 
-            string urlRequest = $"https://api.gamebanana.com/Core/Item/Data?itemtype=Mod&itemid={gbID}&fields=Files().aFiles()&format=json_min&flags=JSON_UNESCAPED_SLASHES";
-            using (WebClient wc = new WebClient())
-            {
-                var jsondata = wc.DownloadString(urlRequest);
-                //fix the formatting so it can be parsed
-                jsondata = jsondata.Remove(0, 11);
-                jsondata = jsondata.Remove(jsondata.Length - 2, 2);
-                parsedJson = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsondata);
-            }
-
-
-            WebClient x = new WebClient();
-        }
-
-        public static void DownloadArchive(Dictionary<string, string> modInfo)
-        {
-            StringBuilder sb = new StringBuilder();
-
-            foreach (var item in modInfo)
-            {
-                sb.AppendFormat("{0} - {1}{2}", item.Key, item.Value, Environment.NewLine);
-            }
-
-            string downloadlink = modInfo["_sDownloadUrl"];
-            string fileName = modInfo["_sFile"];
+            
             using (var client = new WebClient())
             {
+                
+                // Isolate the File ID for API usage
+                string fileID = downloadUrl.Remove(0, downloadUrl.Length - 6);
+
+                // GameBanana API requests
+                string fileName = client.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=File&itemid={fileID}&fields=file&format=json_min");
+                string fileContents = client.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=File&itemid={fileID}&fields=Metadata%28%29.aArchiveFilesList%28%29&format=json_min&flags=JSON_UNESCAPED_SLASHES");
+                
+
+                // Remove the extra json junk
+                char[] brackets = { '[', ']', '"'};
+                fileContents = fileContents.Trim('[', ']');
+
+                // Sort through the files and find the DLL
+                string[] files = fileContents.Split(',');
+                string DLL = "";
+                foreach (string i in files)
+                {
+                    string file = "";
+                    // If it has a directory, remove it
+                    if (i.Contains("/"))
+                    {
+                        file = i.Substring(i.IndexOf('/') + 1);
+                    }
+                    // Check the extension
+                    if (i.Contains(".dll"))
+                    {
+                        DLL = file.Remove(file.Length - 1);
+                    }
+
+                }
+                fileName = fileName.Trim(brackets);
+
+                // Grab the mod name from the title of the main page
+                string modName = GetModTitle("https://gamebanana.com/mods/" + modID).Remove(GetModTitle("https://gamebanana.com/mods/" + modID).Length - 40, 40);
                 try
                 {
-                    client.DownloadFile(downloadlink, AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName);
-                    ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName, AppDomain.CurrentDomain.BaseDirectory + "\\mods\\");
+                    // Download the zip
+                    client.DownloadFile(downloadUrl, AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName);
+
+                    // Check if the mod is installed and prompt to overwrite
+                    if (Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\", DLL, SearchOption.AllDirectories) != null)
+                    {
+                        if (MessageBox.Show("It appears you have a version of this mod installed! Would you like to overwrite/update it?", "Overwrite?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                        {
+                            try
+                            {
+                                string[] path = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\", DLL, SearchOption.AllDirectories);
+                                // Find directory of the DLL regardless of name and delete the contents. 
+                                Directory.Delete(path[0].Remove(path[0].Length - DLL.Length, DLL.Length), true);
+
+                            }
+                            catch (Exception e)
+                            {
+                                MessageBox.Show(e.Message);
+                            }
+                        }
+                    }
+
+                    // If the zip contains a folder with the mod inside, just extract to "smbbm\mods"
+                    if (fileContents.Contains("/"))
+                    {
+                        ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName, AppDomain.CurrentDomain.BaseDirectory + "\\mods\\");
+                    }
+                    // If the zip doesn't contain a folder with the mod inside, make one with the mod name we pulled earlier and extract
+                    else
+                    {
+                        Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + $"\\mods\\{modName}\\");
+                        ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName, AppDomain.CurrentDomain.BaseDirectory + $"\\mods\\{modName}\\");
+                    }
+                    // Remove the zip
                     File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName);
-                    MessageBox.Show("Success!");
+                    // WE DID IT!
+                    MessageBox.Show($"\"{modName}\" has been installed! It is recommended you check the newly created directory for a \"README.txt\".\nSometimes mods have additional files that need to be placed elsewhere!", "Success!");
                 }
-                catch (IOException)
+                catch (Exception e)
                 {
-                    MessageBox.Show("The mod is already installed! Updating Mods will come soon...");
+                    MessageBox.Show($"An error has occured: {e.Message}");
                     if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName))
                     {
                         File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName);
                     }
                 }
             }
-        }
-
-        public static void ModDownload(string gamebananaUrl)
-        {
-            string modID = gamebananaUrl.Substring(gamebananaUrl.Length - 6);
-            ParseData(modID);
-            DownloadArchive(parsedJson);
         }
     }
 }

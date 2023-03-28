@@ -32,6 +32,7 @@ namespace BananaModManager
         /// </summary>
         private void InitializeComponent()
         {
+            this.Icon = Properties.Resources.ProgramIcon;
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.MenuConfig = new System.Windows.Forms.ContextMenuStrip(this.components);

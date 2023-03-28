@@ -13,10 +13,20 @@ namespace BananaModManager
     public partial class OneClickConfirmation : Form
     {
         public static string passedUrl = "";
-        public OneClickConfirmation(string modURL)
+        public static string passedID = "";
+        public OneClickConfirmation(string downloadURL, string modID)
         {
-            passedUrl = modURL;
-            InitializeComponent();
+            passedUrl = downloadURL;
+            passedID = modID;
+            try
+            {
+                InitializeComponent();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            
         }
 
         private void OneClickConfirmation_Load(object sender, EventArgs e)
@@ -28,22 +38,22 @@ namespace BananaModManager
         {
             try 
             {
-                VisitLink(passedUrl);
+                VisitLink("https://gamebanana.com/mods/" + passedID);
             }
             catch
             {
                 MessageBox.Show("Invalid URL! Please try again with a valid GameBanana link.");
             }
         }
-        private void VisitLink(string modURL)
+        private void VisitLink(string GameBananaURL)
         {
             ModLink.LinkVisited = true;
-            System.Diagnostics.Process.Start(modURL);  
+            System.Diagnostics.Process.Start(GameBananaURL);  
         }
 
         private void ConfirmInstall_Click(object sender, EventArgs e)
         {
-            GameBanana.ModDownload(passedUrl);
+            GameBanana.InstallMod(passedUrl, passedID);
         }
 
         private void DeconfirmInstall_Click(object sender, EventArgs e)

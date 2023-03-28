@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Net;
+using System.IO;
+using System.Windows.Forms;
 using System.Text.RegularExpressions;
 
 namespace BananaModManager
@@ -31,8 +33,7 @@ namespace BananaModManager
         /// the contents of this method with the code editor.
         /// </summary>
         /// 
-
-        public static string GetPageTitle(string link)
+            public static string GetPageTitle(string link)
         {
             try
             {
@@ -51,12 +52,13 @@ namespace BananaModManager
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Could not connect. Error:" + ex.Message);
+                MessageBox.Show("Could not connect. Error:" + ex.Message);
                 return "";
             }
         }
         private void InitializeComponent()
         {
+            this.Icon = Properties.Resources.ProgramIcon;
             this.ModLink = new System.Windows.Forms.LinkLabel();
             this.InstallText = new System.Windows.Forms.Label();
             this.ConfirmInstall = new System.Windows.Forms.Button();
@@ -71,7 +73,7 @@ namespace BananaModManager
             this.ModLink.Size = new System.Drawing.Size(91, 13);
             this.ModLink.TabIndex = 0;
             this.ModLink.TabStop = true;
-            this.ModLink.Text = GetPageTitle(passedUrl).Remove(GetPageTitle(passedUrl).Length - 40, 40);
+            this.ModLink.Text = GetPageTitle("https://gamebanana.com/mods/" + passedID).Remove(GetPageTitle("https://gamebanana.com/mods/" + passedID).Length - 40, 40);
             this.ModLink.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.ModLink.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ModLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.ModLink_LinkClicked);
