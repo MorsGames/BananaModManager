@@ -84,7 +84,6 @@ namespace BananaModManager
             
             using (var client = new WebClient())
             {
-                
                 // Isolate the File ID for API usage
                 string fileID = downloadUrl.Remove(0, downloadUrl.Length - 6);
 
@@ -94,29 +93,31 @@ namespace BananaModManager
                 
 
                 // Remove the extra json junk
-                char[] brackets = { '[', ']', '"'};
-                fileContents = fileContents.Trim('[', ']');
-
+                char[] stuff = {'[', ']', ']', '"', '[', '\"'};
+                foreach (char c in fileContents)
+                {
+                    fileContents = fileContents.Trim('[', ']', '\"');
+                }
                 // Sort through the files and find the DLL
                 string[] files = fileContents.Split(',');
                 string DLL = "";
                 foreach (string i in files)
                 {
-                    string file = "";
+                    string file;
                     // If it has a directory, remove it
                     if (i.Contains("/"))
                     {
                         file = i.Substring(i.IndexOf('/') + 1);
+
                     }
                     // Check the extension
                     if (i.Contains(".dll"))
                     {
-                        DLL = file.Remove(file.Length - 1);
+                        DLL = i.Remove(i.Length -1, 1);
                     }
-
+                    
                 }
-                fileName = fileName.Trim(brackets);
-
+                fileName = fileName.Trim(stuff);
                 // Grab the mod name from the title of the main page
                 string modName = GetModTitle("https://gamebanana.com/mods/" + modID).Remove(GetModTitle("https://gamebanana.com/mods/" + modID).Length - 40, 40);
                 try
@@ -140,6 +141,10 @@ namespace BananaModManager
                             {
                                 MessageBox.Show(e.Message);
                             }
+                        }
+                        else
+                        {
+                            return;
                         }
                     }
 
