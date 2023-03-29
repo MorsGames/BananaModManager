@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace BananaModManager.Shared
 {
-    // Stores the information pulled from GitHub after checking for a release
     public class Release
     {
+        // Stores the information pulled from GitHub after checking for a release
         public string url { get; set; }
         public string assets_url { get; set; }
         public string upload_url { get; set; }

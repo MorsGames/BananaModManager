@@ -15,7 +15,7 @@ namespace BananaModManager
 
     public static class GameBanana
     {
-
+        // Borrowed code to get title of html page
         public static string GetModTitle(string link)
         {
             try
@@ -40,7 +40,7 @@ namespace BananaModManager
             }
         }
 
-        // Upon launching the Mod Manager, this enables one-click capability.
+        // This enables one-click capability by writing registry entries to redirect "bananamodmanager:" links to BMM.
         public static void InstallOneClick()
         {
             string ExeDirectory = Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, ".exe");
@@ -60,6 +60,7 @@ namespace BananaModManager
                 return;
             }
         }
+        // This deletes the registry entries if the user unchecks 1-Click.
         public static void DisableOneClick()
         {
             try
@@ -81,9 +82,10 @@ namespace BananaModManager
                 string fileID = downloadUrl.Remove(0, downloadUrl.Length - 6);
 
                 // GameBanana API requests
+                // Get the name of the archive
                 string fileName = client.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=File&itemid={fileID}&fields=file&format=json_min");
+                // Get the entire archive contents
                 string fileContents = client.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=File&itemid={fileID}&fields=Metadata%28%29.aArchiveFilesList%28%29&format=json_min&flags=JSON_UNESCAPED_SLASHES");
-                
 
                 // Remove the extra json junk
                 char[] stuff = {'[', ']', ']', '"', '[', '\"'};
@@ -114,34 +116,37 @@ namespace BananaModManager
                 // Grab the mod name from the title of the main page
                 if (client.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=Mod&itemid={modID}&fields=Game%28%29.name&format=json_min").Contains("Mania"))
                 {
+                    // Banana Mania Mod Names
                     modName = GetModTitle("https://gamebanana.com/mods/" + modID).Remove(GetModTitle("https://gamebanana.com/mods/" + modID).Length - 40, 40);
                 }
                 else
                 {
+                    // BBHD Mod Names
                     modName = GetModTitle("https://gamebanana.com/mods/" + modID).Remove(GetModTitle("https://gamebanana.com/mods/" + modID).Length - 44, 44);
                 }
                 try
                 {
                     // Download the zip
                     client.DownloadFile(downloadUrl, AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName);
-                    string[] ExistingVersions = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\", DLL, SearchOption.AllDirectories);
+
                     // Check if the mod is installed and prompt to overwrite
+                    string[] ExistingVersions = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\", DLL, SearchOption.AllDirectories);
                     if (ExistingVersions.Length != 0)
                     {
                         if (MessageBox.Show("It appears you have a version of this mod installed! Would you like to overwrite/update it?", "Overwrite?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                         {
                             try
                             {
-                                string[] path = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\", DLL, SearchOption.AllDirectories);
                                 // Find directory of the DLL regardless of name and delete the contents. 
+                                string[] path = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\", DLL, SearchOption.AllDirectories);
                                 Directory.Delete(path[0].Remove(path[0].Length - DLL.Length, DLL.Length), true);
-
                             }
                             catch (Exception e)
                             {
                                 MessageBox.Show(e.Message);
                             }
                         }
+                        // If the user says no, just delete the downloaded zip.
                         else
                         {
                             if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName))
