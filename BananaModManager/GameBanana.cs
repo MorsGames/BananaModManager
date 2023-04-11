@@ -136,7 +136,7 @@ namespace BananaModManager
                         {
                             try
                             {
-                                // Find directory of the DLL regardless of name and delete the contents. 
+                                // Find directory of the DLL regardless of folder name and delete the contents. 
                                 string[] path = Directory.GetFiles(modsDirectory, DLL, SearchOption.AllDirectories);
                                 Directory.Delete(path[0].Remove(path[0].Length - DLL.Length, DLL.Length), true);
                             }
@@ -163,35 +163,40 @@ namespace BananaModManager
                     string entryDirectory = null;
                     foreach (ZipArchiveEntry entry in zip.Entries)
                     {
-                        string entryName = entry.FullName;
-                        
-                        if (entryName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) || (entryName.EndsWith(".json", StringComparison.OrdinalIgnoreCase)))
+                        if (entry.FullName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) || (entry.FullName.EndsWith(".json", StringComparison.OrdinalIgnoreCase)))
                         {
                             {
-                                MessageBox.Show(modsDirectory + entryName);
                                 // Extract DLL or Json File
-                                entry.ExtractToFile(modsDirectory + entryName);
-                                // Store the directory within the zip file in case there's non-DLL or non-Json files in there
-                                if(entryDirectory == null)
+                                if (!File.Exists(modsDirectory + entry.FullName))
                                 {
-                                    entryDirectory = entryName.Remove(entryName.Length - entry.Name.Length, entry.Name.Length);
+                                    entry.ExtractToFile(modsDirectory + entry.FullName);
+                                    entryDirectory = entry.FullName.Remove(entry.FullName.Length - entry.Name.Length, entry.Name.Length);
+                                }
+                                // Store the directory within the zip file in case there's non-DLL or non-Json files in there
+                                if(entryDirectory != null)
+                                {
+                                    // If the file is in the mod's main directory, extract it
+                                    foreach (ZipArchiveEntry subDirectoryEntry in zip.Entries)
+                                    {
+                                        if (subDirectoryEntry.FullName.Contains(entryDirectory) && subDirectoryEntry.Name != entry.Name)
+                                        {
+                                            string fixedslashes = subDirectoryEntry.FullName.Replace("/", "\\");
+                                            if (!Directory.Exists(modsDirectory + fixedslashes) && fixedslashes.EndsWith("\\"))
+                                            {
+                                                Directory.CreateDirectory(modsDirectory + fixedslashes);
+                                            }
+                                            else
+                                            {
+                                                entry.ExtractToFile(modsDirectory + fixedslashes);
+                                            }
+                                        }
+                                    }
+                                    entryDirectory = null;
                                 }
                                 continue;
                             }
                         }
-                        // If the file is in the mod's main directory, extract it
-                        string fixedslashes = entryName.Replace("/", "\\");
-                        if (entryDirectory != null && entry.FullName.Contains(entryDirectory))
-                            {
-                            if (!Directory.Exists(modsDirectory + fixedslashes) && fixedslashes.EndsWith("\\"))
-                            {
-                                Directory.CreateDirectory(modsDirectory + fixedslashes);
-                            }
-                            else
-                            {
-                                entry.ExtractToFile(modsDirectory + fixedslashes);
-                            }
-                            }
+                        
                         else
                         {
                             moreFiles = true;
