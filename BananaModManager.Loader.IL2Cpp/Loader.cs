@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -14,7 +15,7 @@ using UnhollowerBaseLib;
 using UnhollowerBaseLib.Runtime;
 using UnhollowerRuntimeLib;
 using UnityEngine;
-using UnityEngine.UI;
+using Framework.UI;
 using UnityEngine.SceneManagement;
 using Console = System.Console;
 using ConsoleColor = System.ConsoleColor;
@@ -37,7 +38,7 @@ namespace BananaModManager.Loader.IL2Cpp
         private static bool _speedrunMode;
         private static bool _saveMode;
         private static bool _discordRPC = false;
-        private static string ClientID;
+        private static string ClientID = null;
 
         private static List<string> _SpeedrunList = new List<string>();
         private static float _modListSlide = 1f;
@@ -105,7 +106,7 @@ namespace BananaModManager.Loader.IL2Cpp
                 ClassInjector.Detour = new UnhollowerDetour();
 
                 // Discord RPC Setup
-                if (_discordRPC)
+                if (_discordRPC || ClientID != null)
                 {
                     switch (currentGame.AppID)
                     {
@@ -123,9 +124,9 @@ namespace BananaModManager.Loader.IL2Cpp
                         Details = $"Loading in!"
                     });
                 }
-                
-                
-                
+
+
+
                 // Set default presence
 
                 Console.WriteLine("All done!");
@@ -281,7 +282,18 @@ namespace BananaModManager.Loader.IL2Cpp
                 });
                 Process.GetCurrentProcess().Kill();
             }
-            // Add the Discord stuff in here
+            if (_discordRPC)
+            {
+                switch (ClientID)
+                {
+                    case "1094498140335378472":
+                        BananaManiaRPC();
+                        break;
+                    case "1095161758357930164":
+                        BananaBlitzHDRPC();
+                        break;
+                }
+            }
         }
 
         public static void InvokeFixedUpdate()
@@ -340,6 +352,10 @@ namespace BananaModManager.Loader.IL2Cpp
                     _SpeedrunList[i], outlineSize, style);
             }
         }
+        public static void OnDisable()
+        {
+            client.Dispose();
+        }
 
         private static void DrawTextOutline(Rect r, string t, int strength, GUIStyle style)
         {
@@ -367,7 +383,56 @@ namespace BananaModManager.Loader.IL2Cpp
         }
         private static void BananaManiaRPC()
         {
+            // Set up to show who you're playing as
+            Dictionary<Chara.eKind, string> characters = new Dictionary<Chara.eKind, string>();
+            characters.Add(Chara.eKind.Aiai, "Aiai");
+            characters.Add(Chara.eKind.Meemee, "Meemee");
+            characters.Add(Chara.eKind.Baby, "Baby");
+            characters.Add(Chara.eKind.Gongon, "Gongon");
+            characters.Add(Chara.eKind.Yanyan, "Yanyan");
+            characters.Add(Chara.eKind.Doctor, "Doctor");
+            characters.Add(Chara.eKind.Jam, "Jam");
+            characters.Add(Chara.eKind.Jet, "Jet");
+            characters.Add(Chara.eKind.Sonic, "Sonic");
+            characters.Add(Chara.eKind.Tails, "Tails");
+            characters.Add(Chara.eKind.Kiryu, "Kiryu");
+            characters.Add(Chara.eKind.Beat, "Beat");
+            characters.Add(Chara.eKind.Dlc01, "Hello Kitty");
+            characters.Add(Chara.eKind.Dlc02, "Morgana");
+            characters.Add(Chara.eKind.Dlc03, "Suezo");
+            characters.Add(Chara.eKind.GameGear, "the Game Gear");
+            characters.Add(Chara.eKind.SegaSaturn, "the Sega Saturn");
+            characters.Add(Chara.eKind.Dreamcast, "the Sega Dreamcast");
 
+            switch (SceneManager.GetActiveScene().name)
+            {
+                case "Title":
+                    client.SetPresence(new RichPresence()
+                    {
+                        Details = $"At the Title Screen!"
+                    });
+                    break;
+                case "MainMenu":
+                    client.SetPresence(new RichPresence()
+                    {
+                        Details = $"Browsing the Main Menu!"
+                    });
+                    break;
+                default:
+                    if (!SceneManager.GetSceneByName("MainGame").isLoaded) return;
+                    if (GameObject.FindObjectOfType<MainGameStage>() == null) return;
+                    if (GameObject.FindObjectOfType<Player>() == null) return;
+                    string modeName = GameObject.Find("Text_world").GetComponent<RubyTextMeshProUGUI>().m_text;
+                    string stageName = GameObject.Find("Text_stage").GetComponent<RubyTextMeshProUGUI>().m_text;
+                    GameObject player = GameObject.Find("Player(Clone)");
+                    client.SetPresence(new RichPresence()
+                    {
+                        Details = $"Currently playing {modeName}: {CultureInfo.CurrentCulture.TextInfo.ToTitleCase(stageName)}",
+                        State = $"Playing as {characters[(player.GetComponent<Player>().charaKind)]}"
+                    });
+                    break;
+            }
+                
         }
         private static void BananaBlitzHDRPC()
         {

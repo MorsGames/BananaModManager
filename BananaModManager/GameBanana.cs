@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Diagnostics;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -76,6 +77,7 @@ namespace BananaModManager
 
         public static void InstallMod(string downloadUrl, string modID)
         {
+            string modsDirectory = AppDomain.CurrentDomain.BaseDirectory + "mods\\";
             using (var client = new WebClient())
             {
                 // Isolate the File ID for API usage
@@ -124,10 +126,10 @@ namespace BananaModManager
                 try
                 {
                     // Download the zip
-                    client.DownloadFile(downloadUrl, AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName);
+                    client.DownloadFile(downloadUrl, modsDirectory + fileName);
 
                     // Check if the mod is installed and prompt to overwrite
-                    string[] ExistingVersions = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\", DLL, SearchOption.AllDirectories);
+                    string[] ExistingVersions = Directory.GetFiles(modsDirectory, DLL, SearchOption.AllDirectories);
                     if (ExistingVersions.Length != 0)
                     {
                         if (MessageBox.Show("It appears you have a version of this mod installed! Would you like to overwrite/update it?", "Overwrite?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
@@ -135,7 +137,7 @@ namespace BananaModManager
                             try
                             {
                                 // Find directory of the DLL regardless of name and delete the contents. 
-                                string[] path = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\", DLL, SearchOption.AllDirectories);
+                                string[] path = Directory.GetFiles(modsDirectory, DLL, SearchOption.AllDirectories);
                                 Directory.Delete(path[0].Remove(path[0].Length - DLL.Length, DLL.Length), true);
                             }
                             catch (Exception e)
@@ -146,26 +148,50 @@ namespace BananaModManager
                         // If the user says no, just delete the downloaded zip.
                         else
                         {
-                            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName))
+                            if (File.Exists(modsDirectory + fileName))
                             {
-                                File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName);
+                                File.Delete(modsDirectory + fileName);
                             }
                             return;
                         }
                     }
                     // Create the directory for the mod
-                    Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + $"\\mods\\{modName}\\");
+                    Directory.CreateDirectory(modsDirectory + modName);
                     // Check for only DLL files and json files
                     bool moreFiles = false;
-                    var zip = ZipFile.OpenRead(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName);
+                    var zip = ZipFile.OpenRead(modsDirectory + fileName);
+                    string entryDirectory = null;
                     foreach (ZipArchiveEntry entry in zip.Entries)
                     {
-                        if (entry.FullName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) || (entry.FullName.EndsWith(".json", StringComparison.OrdinalIgnoreCase)))
+                        string entryName = entry.FullName;
+                        
+                        if (entryName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) || (entryName.EndsWith(".json", StringComparison.OrdinalIgnoreCase)))
                         {
                             {
-                                entry.ExtractToFile(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + entry.FullName);
+                                MessageBox.Show(modsDirectory + entryName);
+                                // Extract DLL or Json File
+                                entry.ExtractToFile(modsDirectory + entryName);
+                                // Store the directory within the zip file in case there's non-DLL or non-Json files in there
+                                if(entryDirectory == null)
+                                {
+                                    entryDirectory = entryName.Remove(entryName.Length - entry.Name.Length, entry.Name.Length);
+                                }
+                                continue;
                             }
                         }
+                        // If the file is in the mod's main directory, extract it
+                        string fixedslashes = entryName.Replace("/", "\\");
+                        if (entryDirectory != null && entry.FullName.Contains(entryDirectory))
+                            {
+                            if (!Directory.Exists(modsDirectory + fixedslashes) && fixedslashes.EndsWith("\\"))
+                            {
+                                Directory.CreateDirectory(modsDirectory + fixedslashes);
+                            }
+                            else
+                            {
+                                entry.ExtractToFile(modsDirectory + fixedslashes);
+                            }
+                            }
                         else
                         {
                             moreFiles = true;
