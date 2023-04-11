@@ -31,9 +31,9 @@ namespace BananaModManager.Shared
                 ShowWindow(handle, SW_SHOW);
         }
 
-        public static void StartModLoader(out List<Mod> mods, out bool speedrunMode)
+        public static void StartModLoader(out List<Mod> mods, out bool speedrunMode, out bool saveMode)
         {
-            Mods.Load(out var activeMods, out var consoleWindow, out speedrunMode, out bool oneClick, out bool fastRestart, out bool saveMode);
+            Mods.Load(out var activeMods, out var consoleWindow, out speedrunMode, out bool oneClick, out bool fastRestart, out saveMode);
 
             if (consoleWindow)
                 ShowConsoleWindow();

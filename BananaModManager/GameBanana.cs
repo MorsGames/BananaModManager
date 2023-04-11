@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.IO.Compression;
@@ -75,7 +76,6 @@ namespace BananaModManager
 
         public static void InstallMod(string downloadUrl, string modID)
         {
-            
             using (var client = new WebClient())
             {
                 // Isolate the File ID for API usage
@@ -88,11 +88,8 @@ namespace BananaModManager
                 string fileContents = client.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=File&itemid={fileID}&fields=Metadata%28%29.aArchiveFilesList%28%29&format=json_min&flags=JSON_UNESCAPED_SLASHES");
 
                 // Remove the extra json junk
-                char[] stuff = {'[', ']', ']', '"', '[', '\"'};
-                foreach (char c in fileContents)
-                {
-                    fileContents = fileContents.Trim('[', ']', '\"');
-                }
+                char[] stuff = {'[', ']', '"', '\"'};
+                fileContents = fileContents.Trim(stuff);
                 // Sort through the files and find the DLL
                 string[] files = fileContents.Split(',');
                 string DLL = "";
@@ -156,21 +153,38 @@ namespace BananaModManager
                             return;
                         }
                     }
-                    // If the zip contains a folder with the mod inside, just extract to "smbbm\mods"
-                    if (fileContents.Contains("/"))
+                    // Create the directory for the mod
+                    Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + $"\\mods\\{modName}\\");
+                    // Check for only DLL files and json files
+                    bool moreFiles = false;
+                    var zip = ZipFile.OpenRead(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName);
+                    foreach (ZipArchiveEntry entry in zip.Entries)
                     {
-                        ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName, AppDomain.CurrentDomain.BaseDirectory + "\\mods\\");
+                        if (entry.FullName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) || (entry.FullName.EndsWith(".json", StringComparison.OrdinalIgnoreCase)))
+                        {
+                            {
+                                entry.ExtractToFile(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + entry.FullName);
+                            }
+                        }
+                        else
+                        {
+                            moreFiles = true;
+                        }
                     }
-                    // If the zip doesn't contain a folder with the mod inside, make one with the mod name we pulled earlier and extract
+                    if (moreFiles)
+                    {
+                        // WE DID IT!
+                        MessageBox.Show($"\"{modName}\" has been installed! Following this message box, the zip for {modName} will be opened. Please install the additional files to their appropriate directory. If you're stuck, try checking the GameBanana page for the mod or looking for a \"readme.txt\" file.", "Additional Files Detected!");
+                        Process.Start(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName);
+                    }
                     else
                     {
-                        Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + $"\\mods\\{modName}\\");
-                        ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName, AppDomain.CurrentDomain.BaseDirectory + $"\\mods\\{modName}\\");
+                        // Remove the zip
+                        File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName);
+                        // WE DID IT!
+                        MessageBox.Show($"\"{modName}\" has been installed!", "Success!");
                     }
-                    // Remove the zip
-                    File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName);
-                    // WE DID IT!
-                    MessageBox.Show($"\"{modName}\" has been installed! It is recommended you check the newly created directory for a \"README.txt\".\nSometimes mods have additional files that need to be placed elsewhere!", "Success!");
+
                 }
                 catch (Exception e)
                 {

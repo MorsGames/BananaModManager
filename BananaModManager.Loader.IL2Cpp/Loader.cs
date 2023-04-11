@@ -15,6 +15,7 @@ using UnhollowerBaseLib.Runtime;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using Console = System.Console;
 using ConsoleColor = System.ConsoleColor;
 using Delegate = System.Delegate;
@@ -23,6 +24,7 @@ using IntPtr = System.IntPtr;
 using Math = System.Math;
 using Object = UnityEngine.Object;
 using Version = System.Version;
+using DiscordRPC;
 
 namespace BananaModManager.Loader.IL2Cpp
 {
@@ -33,16 +35,21 @@ namespace BananaModManager.Loader.IL2Cpp
 
         private static List<Mod> _mods;
         private static bool _speedrunMode;
+        private static bool _saveMode;
+        private static bool _discordRPC = false;
+        private static string ClientID;
 
         private static List<string> _SpeedrunList = new List<string>();
         private static float _modListSlide = 1f;
 
         private static UserConfig userConfig;
         private static Game currentGame;
+        private static DiscordRpcClient client;
 
         public static List<Mod> Mods => _mods;
         public static Dictionary<string, string> AssetBundles { get; private set; } = new Dictionary<string, string>();
         public static bool SpeedrunMode => _speedrunMode;
+        public static bool SaveMode => _saveMode;
 
         public static List<MethodInfo> UpdateMethods { get; set; } = new List<MethodInfo>();
         public static List<MethodInfo> FixedUpdateMethods { get; set; } = new List<MethodInfo>();
@@ -53,7 +60,7 @@ namespace BananaModManager.Loader.IL2Cpp
         {
             try
             {
-                Startup.StartModLoader(out _mods, out _speedrunMode);
+                Startup.StartModLoader(out _mods, out _speedrunMode, out _saveMode);
 
                 Console.WriteLine("Setting up the hooks...");
 
@@ -97,6 +104,30 @@ namespace BananaModManager.Loader.IL2Cpp
 
                 ClassInjector.Detour = new UnhollowerDetour();
 
+                // Discord RPC Setup
+                if (_discordRPC)
+                {
+                    switch (currentGame.AppID)
+                    {
+                        case "1061730":
+                            ClientID = "1095161758357930164";
+                            break;
+                        case "1316910":
+                            ClientID = "1094498140335378472";
+                            break;
+                    }
+                    client = new DiscordRpcClient(ClientID, -1);
+                    client.Initialize();
+                    client.SetPresence(new RichPresence()
+                    {
+                        Details = $"Loading in!"
+                    });
+                }
+                
+                
+                
+                // Set default presence
+
                 Console.WriteLine("All done!");
 
                 new Thread(() =>
@@ -110,7 +141,7 @@ namespace BananaModManager.Loader.IL2Cpp
                             LeaderboardsDelegateInstance = Dummy;
                             ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0x296130),LeaderboardsDelegateInstance);
                         }
-                        if (Mods.Count > 0 && !userConfig.SaveMode)
+                        if (!_saveMode)
                         {
                             SaveDelegateInstance = Dummy2;
                             ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0xE5B820), SaveDelegateInstance);
@@ -239,6 +270,7 @@ namespace BananaModManager.Loader.IL2Cpp
         public static void InvokeUpdate()
         {
             foreach (var method in UpdateMethods) method.Invoke(null, null);
+            // If F11 is pressed, restart and toggle Speedrun Mode
             if (AppInput.GetKeyDown(KeyCode.F11) && userConfig.FastRestart == true)
             {
                 Shared.Mods.Save(userConfig.ActiveMods, userConfig.ConsoleWindow, !userConfig.SpeedrunMode, userConfig.OneClick, userConfig.FastRestart, userConfig.SaveMode);
@@ -249,6 +281,7 @@ namespace BananaModManager.Loader.IL2Cpp
                 });
                 Process.GetCurrentProcess().Kill();
             }
+            // Add the Discord stuff in here
         }
 
         public static void InvokeFixedUpdate()
@@ -332,5 +365,15 @@ namespace BananaModManager.Loader.IL2Cpp
 
             GUI.Label(r, t, style);
         }
+        private static void BananaManiaRPC()
+        {
+
+        }
+        private static void BananaBlitzHDRPC()
+        {
+
+        }
     }
+
+    
 }

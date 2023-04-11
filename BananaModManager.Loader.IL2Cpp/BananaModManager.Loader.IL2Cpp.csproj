@@ -45,6 +45,9 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>H:\SteamLibrary\steamapps\common\smbbm\managed\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="DiscordRPC">
+      <HintPath>..\..\References\DiscordRPC.dll</HintPath>
+    </Reference>
     <Reference Include="Il2CppMono.Security">
       <HintPath>H:\SteamLibrary\steamapps\common\smbbm\managed\Il2CppMono.Security.dll</HintPath>
     </Reference>
