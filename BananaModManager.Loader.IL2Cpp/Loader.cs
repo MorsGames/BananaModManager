@@ -37,7 +37,7 @@ namespace BananaModManager.Loader.IL2Cpp
         private static List<Mod> _mods;
         private static bool _speedrunMode;
         private static bool _saveMode;
-        private static bool _discordRPC = false;
+        private static bool _discordRPC = true;
         private static string ClientID = null;
 
         private static List<string> _SpeedrunList = new List<string>();
@@ -81,7 +81,7 @@ namespace BananaModManager.Loader.IL2Cpp
                 };
 
                 Console.WriteLine("Carrying over user config and checking current game...");
-                
+
                 // Carries over the entire user config for use in other areas
                 userConfig = Shared.Mods.LoadUserConfig();
                 foreach (Game game in Games.List)
@@ -140,7 +140,7 @@ namespace BananaModManager.Loader.IL2Cpp
                         if (Mods.Count > 0 && !_speedrunMode)
                         {
                             LeaderboardsDelegateInstance = Dummy;
-                            ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0x296130),LeaderboardsDelegateInstance);
+                            ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0x296130), LeaderboardsDelegateInstance);
                         }
                         if (!_saveMode)
                         {
@@ -199,7 +199,7 @@ namespace BananaModManager.Loader.IL2Cpp
         public delegate void LeaderboardsDelegate();
         public delegate void SaveDelegate();
         public static LeaderboardsDelegate LeaderboardsDelegateInstance;
-        public static SaveDelegate SaveDelegateInstance; 
+        public static SaveDelegate SaveDelegateInstance;
 
         public static void Dummy()
         {
@@ -284,15 +284,18 @@ namespace BananaModManager.Loader.IL2Cpp
             }
             if (_discordRPC)
             {
-                switch (ClientID)
+                new Thread(() =>
                 {
-                    case "1094498140335378472":
-                        BananaManiaRPC();
-                        break;
-                    case "1095161758357930164":
-                        BananaBlitzHDRPC();
-                        break;
-                }
+                    switch (ClientID)
+                    {
+                        case "1094498140335378472":
+                            BananaManiaRPC();
+                            break;
+                        case "1095161758357930164":
+                            BananaBlitzHDRPC();
+                            break;
+                    }
+                }).Start();
             }
         }
 
@@ -381,64 +384,230 @@ namespace BananaModManager.Loader.IL2Cpp
 
             GUI.Label(r, t, style);
         }
-        private static void BananaManiaRPC()
+        public static void BananaManiaRPC()
         {
-            // Set up to show who you're playing as
-            Dictionary<Chara.eKind, string> characters = new Dictionary<Chara.eKind, string>();
-            characters.Add(Chara.eKind.Aiai, "Aiai");
-            characters.Add(Chara.eKind.Meemee, "Meemee");
-            characters.Add(Chara.eKind.Baby, "Baby");
-            characters.Add(Chara.eKind.Gongon, "Gongon");
-            characters.Add(Chara.eKind.Yanyan, "Yanyan");
-            characters.Add(Chara.eKind.Doctor, "Doctor");
-            characters.Add(Chara.eKind.Jam, "Jam");
-            characters.Add(Chara.eKind.Jet, "Jet");
-            characters.Add(Chara.eKind.Sonic, "Sonic");
-            characters.Add(Chara.eKind.Tails, "Tails");
-            characters.Add(Chara.eKind.Kiryu, "Kiryu");
-            characters.Add(Chara.eKind.Beat, "Beat");
-            characters.Add(Chara.eKind.Dlc01, "Hello Kitty");
-            characters.Add(Chara.eKind.Dlc02, "Morgana");
-            characters.Add(Chara.eKind.Dlc03, "Suezo");
-            characters.Add(Chara.eKind.GameGear, "the Game Gear");
-            characters.Add(Chara.eKind.SegaSaturn, "the Sega Saturn");
-            characters.Add(Chara.eKind.Dreamcast, "the Sega Dreamcast");
-
-            switch (SceneManager.GetActiveScene().name)
+            try
             {
-                case "Title":
-                    client.SetPresence(new RichPresence()
-                    {
-                        Details = $"At the Title Screen!"
-                    });
-                    break;
-                case "MainMenu":
-                    client.SetPresence(new RichPresence()
-                    {
-                        Details = $"Browsing the Main Menu!"
-                    });
-                    break;
-                default:
-                    if (!SceneManager.GetSceneByName("MainGame").isLoaded) return;
-                    if (GameObject.FindObjectOfType<MainGameStage>() == null) return;
-                    if (GameObject.FindObjectOfType<Player>() == null) return;
-                    string modeName = GameObject.Find("Text_world").GetComponent<RubyTextMeshProUGUI>().m_text;
-                    string stageName = GameObject.Find("Text_stage").GetComponent<RubyTextMeshProUGUI>().m_text;
-                    GameObject player = GameObject.Find("Player(Clone)");
-                    client.SetPresence(new RichPresence()
-                    {
-                        Details = $"Currently playing {modeName}: {CultureInfo.CurrentCulture.TextInfo.ToTitleCase(stageName)}",
-                        State = $"Playing as {characters[(player.GetComponent<Player>().charaKind)]}"
-                    });
-                    break;
+                // Set up to show who you're playing as
+                Dictionary<Chara.eKind, string> characters = new Dictionary<Chara.eKind, string>();
+                characters.Add(Chara.eKind.Aiai, "Aiai");
+                characters.Add(Chara.eKind.Meemee, "Meemee");
+                characters.Add(Chara.eKind.Baby, "Baby");
+                characters.Add(Chara.eKind.Gongon, "Gongon");
+                characters.Add(Chara.eKind.Yanyan, "Yanyan");
+                characters.Add(Chara.eKind.Doctor, "Doctor");
+                characters.Add(Chara.eKind.Jam, "Jam");
+                characters.Add(Chara.eKind.Jet, "Jet");
+                characters.Add(Chara.eKind.Sonic, "Sonic");
+                characters.Add(Chara.eKind.Tails, "Tails");
+                characters.Add(Chara.eKind.Kiryu, "Kiryu");
+                characters.Add(Chara.eKind.Beat, "Beat");
+                characters.Add(Chara.eKind.Dlc01, "Hello Kitty");
+                characters.Add(Chara.eKind.Dlc02, "Morgana");
+                characters.Add(Chara.eKind.Dlc03, "Suezo");
+                characters.Add(Chara.eKind.GameGear, "the Game Gear");
+                characters.Add(Chara.eKind.SegaSaturn, "the Sega Saturn");
+                characters.Add(Chara.eKind.Dreamcast, "the Sega Dreamcast");
+                var scene = SceneManager.GetActiveScene().name;
+                switch (scene)
+                {
+                    case "Title":
+                        client.SetPresence(new RichPresence()
+                        {
+                            Details = "At the Title Screen!"
+                        });
+                        break;
+                    case "MainMenu":
+                        client.SetPresence(new RichPresence()
+                        {
+                            Details = "Browsing the Main Menu!"
+                        });
+                        break;
+                    default:
+                        if (SceneManager.GetSceneByName("PgRace").isLoaded)
+                        {
+                            if (GameObject.FindObjectOfType<PgRaceSequence>() == null) return;
+                            string raceName = GameObject.FindObjectOfType<SelPgRaceCourseData>().selectedContentText;
+                            client.SetPresence(new RichPresence()
+                            {
+                                Details = "Currently playing Monkey Race!",
+                                State = $"Racing on {raceName}"
+                            });
+                            return;
+                        }
+                        if (SceneManager.GetSceneByName("PgFight").isLoaded)
+                        {
+                            if (GameObject.FindObjectOfType<PgFightSequence>() == null) return;
+                            string fightName = GameObject.FindObjectOfType<SelPgFightCourseData>().selectedContentText;
+                            client.SetPresence(new RichPresence()
+                            {
+                                Details = "Currently playing Monkey Fight!",
+                                State = $"Fighting on {fightName}"
+                            });
+                            return;
+                        }
+                        if (SceneManager.GetSceneByName("PgTarget").isLoaded)
+                        {
+                            if (GameObject.FindObjectOfType<PgTargetSequence>() == null) return;
+                            int roundNumber = GameObject.FindObjectOfType<PgTargetSequence>()._currentRoundIndex_k__BackingField;
+                            client.SetPresence(new RichPresence()
+                            {
+                                Details = "Currently playing Monkey Target!",
+                                State = $"Flying in Round {roundNumber + 1}"
+                            });
+                            return;
+                        }
+                        if (SceneManager.GetSceneByName("PgBilliards").isLoaded)
+                        {
+                            if (GameObject.FindObjectOfType<PgBilliardsSequence>() == null) return;
+                            string rulesName = GameObject.FindObjectOfType<SelPgBilliardsRuleData>().selectedContentText;
+                            client.SetPresence(new RichPresence()
+                            {
+                                Details = "Currently playing Monkey Billiards!",
+                                State = $"Playing {rulesName}"
+                            });
+                            return;
+                        }
+                        if (SceneManager.GetSceneByName("PgBowling").isLoaded)
+                        {
+                            if (GameObject.FindObjectOfType<PgBowlingSequence>() == null) return;
+                            string rulesName = GameObject.FindObjectOfType<SelPgBilliardsRuleData>().selectedContentText;
+                            client.SetPresence(new RichPresence()
+                            {
+                                Details = "Currently playing Monkey Bowling!",
+                                State = $"Playing with {rulesName} rules."
+                            });
+                            return;
+                        }
+                        if (SceneManager.GetSceneByName("PgGolf").isLoaded)
+                        {
+                            if (GameObject.FindObjectOfType<PgGolfSequence>() == null) return;
+                            string rulesName = GameObject.FindObjectOfType<SelPgGolfHoleData>().selectedContentText;
+                            int holeCount = GameObject.FindObjectOfType<PgGolfSequence>().m_golfMode.m_holeNo;
+                            client.SetPresence(new RichPresence()
+                            {
+                                Details = "Currently playing Monkey Bowling!",
+                                State = $"Playing {rulesName} holes, currently on Hole {holeCount}."
+                            });
+                            return;
+                        }
+                        if (SceneManager.GetSceneByName("PgBoat").isLoaded)
+                        {
+                            if (GameObject.FindObjectOfType<PgBoatSequence>() == null) return;
+                            string raceName = GameObject.FindObjectOfType<SelPgBoatCourseData>().selectedContentText;
+                            client.SetPresence(new RichPresence()
+                            {
+                                Details = "Currently playing Monkey Boat!",
+                                State = $"On the waters of the {raceName}"
+                            });
+                            return;
+                        }
+                        if (SceneManager.GetSceneByName("PgDogfight").isLoaded)
+                        {
+                            if (GameObject.FindObjectOfType<PgDogfightSequence>() == null) return;
+                            string stageName = GameObject.FindObjectOfType<SelPgDogfightStageData>().selectedContentText;
+                            client.SetPresence(new RichPresence()
+                            {
+                                Details = "Currently playing Monkey Dogfight!",
+                                State = $"Mid-fight on {stageName}"
+                            });
+                            return;
+                        }
+                        if (SceneManager.GetSceneByName("PgFutsal").isLoaded)
+                        {
+                            if (GameObject.FindObjectOfType<PgFutsalSequence>() == null) return;
+                            int lScore= (int)GameObject.FindObjectOfType<PgFutsalGameInfo>().score[0];
+                            int rScore = (int)GameObject.FindObjectOfType<PgFutsalGameInfo>().score[1];
+                            client.SetPresence(new RichPresence()
+                            {
+                                Details = "Currently playing Monkey Soccer!",
+                                State = $"Current Game: {lScore} - {rScore}"
+                            });
+                            return;
+                        }
+                        if (SceneManager.GetSceneByName("PgBaseball").isLoaded)
+                        {
+                            if (GameObject.FindObjectOfType<PgBaseballSequence>() == null) return;
+                            string stadium = GameObject.FindObjectOfType<SelPgBaseballStadiumData>().selectedContentText;
+                            int lScore = GameObject.FindObjectOfType<PgBaseballSequence>().gameData.oneTeamData.totalScore;
+                            int rScore = GameObject.FindObjectOfType<PgBaseballSequence>().gameData.twoTeamData.totalScore;
+                            client.SetPresence(new RichPresence()
+                            {
+                                Details = $"Currently playing Monkey Baseball at {stadium}!",
+                                State = $"Current Game: {lScore} - {rScore}"
+                            });
+                            return;
+                        }
+                        if (SceneManager.GetSceneByName("PgTennis").isLoaded)
+                        {
+                            if (GameObject.FindObjectOfType<PgTennisSequence>() == null) return;
+                            string court = GameObject.FindObjectOfType<SelPgTennisCourtData>().selectedContentText;
+                            string lScore = GameObject.Find("Score0").GetComponent<PgTennisScore>().m_PointCount.count.ToString().Remove(0,1);
+                            string rScore = GameObject.Find("Score1").GetComponent<PgTennisScore>().m_PointCount.count.ToString().Remove(0, 1);
+                            client.SetPresence(new RichPresence()
+                            {
+                                Details = $"Currently playing Monkey Tennis on {court} Court!",
+                                State = $" Current Game: {lScore} - {rScore}"
+                            });
+                            return;
+                        }
+                        if (SceneManager.GetSceneByName("MainGame").isLoaded)
+                        {
+                            string modeName = "";
+                            string stageName = "";
+                            if (GameObject.FindObjectOfType<MainGameStage>() == null) return;
+                            GameObject MGS = GameObject.FindObjectOfType<MainGameStage>().gameObject;
+                            if (GameObject.FindObjectOfType<Player>() == null) return;
+                            string mode = MGS.GetComponent<MainGameStage>().m_GameKind.ToString();
+                            switch (mode)
+                            {
+                                case "Story":
+                                    modeName = "Story Mode " + GameObject.Find("Text_world").GetComponent<RubyTextMeshProUGUI>().m_text;
+                                    break;
+                                case "Challenge":
+                                    modeName = "Challenge Mode " + GameObject.Find("Text_world").GetComponent<RubyTextMeshProUGUI>().m_text;
+                                    break;
+                                case "Practice Mode":
+                                    modeName = "Practice Mode";
+                                    break;
+                                case "TimeAttack":
+                                    modeName = "Ranking Challenge " + GameObject.Find("Text_world").GetComponent<RubyTextMeshProUGUI>().m_text;
+                                    break;
+                                case "Reverse":
+                                    modeName = "Reverse Mode";
+                                    break;
+                                case "Rotten":
+                                    modeName = "Dark Banana Mode";
+                                    break;
+                                case "Golden":
+                                    modeName = "Golden Banana Mode";
+                                    break;
+                            }
+                            stageName = MGS.GetComponent<MainGameStage>().m_mgStageDatum.stageName;
+                            // Set Presence Details as {Mode}: {Stage Name}
+                            // Set Presence State as "Playing as {Character}
+                            GameObject player = GameObject.Find("Player(Clone)");
+                            // Every stage name is stored in all caps
+                            TextInfo fixCapitalization = new CultureInfo("en-US", false).TextInfo;
+                            client.SetPresence(new RichPresence()
+                            {
+                                Details = $"Currently playing {modeName}: {fixCapitalization.ToTitleCase(stageName)}",
+                                State = $"Playing as {characters[(player.GetComponent<Player>().charaKind)]}"
+                            });
+                        }
+                        break;
+                }
             }
-                
+            catch (Exception e)
+            {
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.WriteLine(e.ToString());
+                Console.BackgroundColor = ConsoleColor.Black;
+            }
         }
         private static void BananaBlitzHDRPC()
         {
 
         }
     }
-
-    
-}
+    }

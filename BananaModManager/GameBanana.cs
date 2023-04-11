@@ -180,6 +180,7 @@ namespace BananaModManager
                                     {
                                         if (subDirectoryEntry.FullName.Contains(entryDirectory) && subDirectoryEntry.Name != entry.Name)
                                         {
+
                                             string fixedslashes = subDirectoryEntry.FullName.Replace("/", "\\");
                                             if (!Directory.Exists(modsDirectory + fixedslashes) && fixedslashes.EndsWith("\\"))
                                             {
@@ -187,9 +188,10 @@ namespace BananaModManager
                                             }
                                             else
                                             {
-                                                entry.ExtractToFile(modsDirectory + fixedslashes);
+                                                subDirectoryEntry.ExtractToFile(modsDirectory + fixedslashes);
                                             }
                                         }
+
                                     }
                                     entryDirectory = null;
                                 }
