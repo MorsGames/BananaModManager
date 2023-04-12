@@ -62,35 +62,49 @@ namespace BananaModManager
             {
                 MessageBox.Show(e.ToString());
             }
-
-            InitializeComponent();
-            // Load the games
-            foreach (var game in Games.List)
+            try
             {
-                if (File.Exists(Path.Combine(Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath), game.ExecutableName + ".exe")))
+                InitializeComponent();
+                // Load the games
+                foreach (var game in Games.List)
                 {
-                    CurrentGame = game;
+                    if (File.Exists(Path.Combine(Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath), game.ExecutableName + ".exe")))
+                    {
+                        CurrentGame = game;
+                    }
+                    else
+                    {
+                        MessageBox.Show("BananaModManager could not find a game executable! Please place all of the contents of the BananaModManager zip in the EXACT SAME directory as your Super Monkey Ball game's executable!", "Could not find game!");
+                        Process.GetCurrentProcess().Kill();
+                    }
+                    ComboGames.Items.Add(game);
+                    
                 }
-                ComboGames.Items.Add(game);
+
+                // Set the currently selected game
+                ComboGames.SelectedItem = CurrentGame;
+                SetUpGame(CurrentGame);
+                ComboGames.SelectedIndexChanged += SetupCurrentGame;
+
+                // Load the mods as well as the mod order
+                LoadMods();
+
+                // Collapse the panels, only showing the mod list
+                ContainerMain.Panel2Collapsed = true;
+                ContainerList.Panel2Collapsed = true;
+
+                // Set the text stuff
+                var version = Assembly.GetExecutingAssembly().GetName().Version;
+                var versionString = "v" + version.Major + "." + version.Minor + "." + version.Build + "." + version.Revision;
+                LabelAboutVersion.Text = "Version " + versionString;
+                Text = "BananaModManager " + versionString;
             }
-
-            // Set the currently selected game
-            ComboGames.SelectedItem = CurrentGame;
-            SetUpGame(CurrentGame);
-            ComboGames.SelectedIndexChanged += SetupCurrentGame;
-
-            // Load the mods as well as the mod order
-            LoadMods();
-
-            // Collapse the panels, only showing the mod list
-            ContainerMain.Panel2Collapsed = true;
-            ContainerList.Panel2Collapsed = true;
-
-            // Set the text stuff
-            var version = Assembly.GetExecutingAssembly().GetName().Version;
-            var versionString = "v" + version.Major + "." + version.Minor + "." + version.Build + "." + version.Revision;
-            LabelAboutVersion.Text = "Version " + versionString;
-            Text = "BananaModManager " + versionString;
+            catch
+            {
+                MessageBox.Show("An error has occurred! Something is wrong with your mods folder. Please check that ONLY mod directories are in your mods folder, then try launching again.", "Error!");
+                Process.GetCurrentProcess().Kill();
+            }
+            
 
             
         }
