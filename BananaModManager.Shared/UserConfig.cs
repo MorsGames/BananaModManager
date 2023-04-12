@@ -42,5 +42,10 @@ namespace BananaModManager.Shared
         ///     Enables/Disables saving the game (For prevention of overwriting times).
         /// </summary>
         public bool SaveMode { get; set; } = true;
+
+        /// <summary>
+        ///     Enables Discord Rich Presence support
+        /// </summary>
+        public bool DiscordRPC { get; set; } = false;
     }
 }

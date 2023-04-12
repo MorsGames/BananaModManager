@@ -22,7 +22,7 @@ namespace BananaModManager.Shared
         ///     Loads all necessary data about all the mods
         /// </summary>
         /// <param name="activeMods">A list of all mods that are currently enabled, in a specific order.</param>
-        public static void Load(out List<string> activeMods, out bool consoleWindow, out bool speedrunMode, out bool oneClick, out bool fastRestart, out bool saveMode)
+        public static void Load(out List<string> activeMods, out bool consoleWindow, out bool speedrunMode, out bool oneClick, out bool fastRestart, out bool saveMode, out bool discordRPC)
         {
             // Load the config file
             var userConfig = LoadUserConfig();
@@ -34,6 +34,7 @@ namespace BananaModManager.Shared
             oneClick = userConfig.OneClick;
             fastRestart = userConfig.FastRestart;
             saveMode = userConfig.SaveMode;
+            discordRPC = userConfig.DiscordRPC;
 
 
             // Get the mods folder
@@ -181,7 +182,7 @@ namespace BananaModManager.Shared
         ///     Saves the user config of the mod manager.
         /// </summary>
         /// <param name="activeMods">A list of enabled mods, in a specific order.</param>
-        public static void Save(List<string> activeMods, bool consoleWindow, bool speedrunMode, bool oneClick, bool fastRestart, bool saveMode)
+        public static void Save(List<string> activeMods, bool consoleWindow, bool speedrunMode, bool oneClick, bool fastRestart, bool saveMode, bool discordRPC)
         {
             // Config object used for the user data
             var loaderConfig = new UserConfig
@@ -191,7 +192,8 @@ namespace BananaModManager.Shared
                 SpeedrunMode = speedrunMode,
                 OneClick = oneClick,
                 FastRestart = fastRestart,
-                SaveMode = saveMode
+                SaveMode = saveMode,
+                DiscordRPC = discordRPC
             };
 
             // Add the configs into it

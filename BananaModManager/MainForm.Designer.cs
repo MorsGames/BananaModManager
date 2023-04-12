@@ -74,6 +74,8 @@ namespace BananaModManager
             this.LabelAboutTitle = new System.Windows.Forms.Label();
             this.SaveModeCheckbox = new System.Windows.Forms.CheckBox();
             this.SaveModeLabel = new System.Windows.Forms.Label();
+            this.DiscordRPC = new System.Windows.Forms.CheckBox();
+            this.DiscordRPCLabel = new System.Windows.Forms.Label();
             this.MenuConfig.SuspendLayout();
             this.MenuMods.SuspendLayout();
             this.TabControl.SuspendLayout();
@@ -372,6 +374,8 @@ namespace BananaModManager
             this.PanelSettings.Controls.Add(this.label2);
             this.PanelSettings.Controls.Add(this.SaveModeCheckbox);
             this.PanelSettings.Controls.Add(this.SaveModeLabel);
+            this.PanelSettings.Controls.Add(this.DiscordRPC);
+            this.PanelSettings.Controls.Add(this.DiscordRPCLabel);
             this.PanelSettings.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PanelSettings.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.PanelSettings.Location = new System.Drawing.Point(2, 2);
@@ -540,6 +544,25 @@ namespace BananaModManager
             this.SaveModeLabel.Text = "When enabled the game will save your best clears of each stage. When disabled it " +
     "will not save your best clears.";
             // 
+            // DiscordRPC
+            // 
+            this.DiscordRPC.AutoSize = true;
+            this.DiscordRPC.Location = new System.Drawing.Point(3, 250);
+            this.DiscordRPC.Name = "DiscordRPC";
+            this.DiscordRPC.Size = new System.Drawing.Size(84, 19);
+            this.DiscordRPC.TabIndex = 9;
+            this.DiscordRPC.Text = "Discord Rich Presence";
+            this.DiscordRPC.UseVisualStyleBackColor = true;
+            // 
+            // DiscordRPCLabel
+            // 
+            this.DiscordRPCLabel.AutoSize = true;
+            this.DiscordRPCLabel.Location = new System.Drawing.Point(3, 264);
+            this.DiscordRPCLabel.Name = "DiscordRPCLabel";
+            this.DiscordRPCLabel.Size = new System.Drawing.Size(591, 15);
+            this.DiscordRPCLabel.TabIndex = 10;
+            this.DiscordRPCLabel.Text = "When enabled, friends can see more information about what game mode you're playing on Discord!";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -616,6 +639,8 @@ namespace BananaModManager
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox SaveModeCheckbox;
         private System.Windows.Forms.Label SaveModeLabel;
+        private System.Windows.Forms.CheckBox DiscordRPC;
+        private System.Windows.Forms.Label DiscordRPCLabel;
     }
 }
 
