@@ -391,7 +391,7 @@ namespace BananaModManager.Loader.IL2Cpp
         {
             try
             {
-                // Set up to show who you're playing as
+                // MainGame Character Dictionary - Character.eKind => Character Name
                 Dictionary<Chara.eKind, string> characters = new Dictionary<Chara.eKind, string>();
                 characters.Add(Chara.eKind.Aiai, "Aiai");
                 characters.Add(Chara.eKind.Meemee, "Meemee");
@@ -411,6 +411,58 @@ namespace BananaModManager.Loader.IL2Cpp
                 characters.Add(Chara.eKind.GameGear, "the Game Gear");
                 characters.Add(Chara.eKind.SegaSaturn, "the Sega Saturn");
                 characters.Add(Chara.eKind.Dreamcast, "the Sega Dreamcast");
+
+                // Race Course Dict - Find Course GameObject.name => Course Name
+                Dictionary<PgRaceDefine.ePgRaceCourseKind, string> races = new Dictionary<PgRaceDefine.ePgRaceCourseKind, string>();
+                races.Add(PgRaceDefine.ePgRaceCourseKind.JungleCircuit, "Jungle Circuit");
+                races.Add(PgRaceDefine.ePgRaceCourseKind.CaptivatingBananaRoad, "Charming Banana Road");
+                races.Add(PgRaceDefine.ePgRaceCourseKind.AquaOfRoad, "Aqua Offroad");
+                races.Add(PgRaceDefine.ePgRaceCourseKind.LovelyAmusementPark, "Lovely Heart Ring");
+                races.Add(PgRaceDefine.ePgRaceCourseKind.FrozenHighway, "Frozen Highway");
+                races.Add(PgRaceDefine.ePgRaceCourseKind.TicktackGearSlope, "Clock Tower Hill");
+                races.Add(PgRaceDefine.ePgRaceCourseKind.SkyDownTown, "Sky Downtown");
+                races.Add(PgRaceDefine.ePgRaceCourseKind.AtchitchiCircuit, "Cannonball Circuit");
+                races.Add(PgRaceDefine.ePgRaceCourseKind.PipeWarpTunnel, "Pipe Warp Tunnel");
+                races.Add(PgRaceDefine.ePgRaceCourseKind.SinkingStreet, "Submarine Street");
+                races.Add(PgRaceDefine.ePgRaceCourseKind.SpeedDessert, "Speed Desert");
+                races.Add(PgRaceDefine.ePgRaceCourseKind.SpaceColony, "Starlight Highway");
+
+                // Billiards Dict - Find Billiards.eRule => Rules Full Name
+                Dictionary<PartyGameDef.Billiards.eRule, string> billiardsRules = new Dictionary<PartyGameDef.Billiards.eRule, string>();
+                billiardsRules.Add(PartyGameDef.Billiards.eRule.NineBall, "US Nine-Ball");
+                billiardsRules.Add(PartyGameDef.Billiards.eRule.JapanNineBall, "Japan Nine-Ball");
+                billiardsRules.Add(PartyGameDef.Billiards.eRule.Rotation, "Rotation");
+                billiardsRules.Add(PartyGameDef.Billiards.eRule.EightBall, "Eight-Ball");
+
+                // Boat Dict - Find Course GameObject.name => Course Name
+                Dictionary<string, string> boatCourses = new Dictionary<string, string>();
+                boatCourses.Add("BoatCourse01(Clone)", "Flower Garden Path");
+                boatCourses.Add("BoatCourse02(Clone)", "Wooden Arch River");
+                boatCourses.Add("BoatCourse03(Clone)", "Water Dragon Route");
+
+                // Shot Dict - Find Stage GameObject.name => Stage Name
+                Dictionary<string, string> shotStages = new Dictionary<string, string>();
+                shotStages.Add("ShotBg01(Clone)", "Jungle Wars");
+                shotStages.Add("ShotBg02(Clone)", "Ocean Attack");
+                shotStages.Add("ShotBg03(Clone)", "Planet Monkeys");
+
+                // Dogfight Dict - Find Stage GameObject.name => Stage Name
+                Dictionary<string, string> dogfightStages = new Dictionary<string, string>();
+                dogfightStages.Add("DogfightStage01(Clone)", "Turtle Island");
+                dogfightStages.Add("DogfightStage02(Clone)", "Midair Battlefield");
+                dogfightStages.Add("DogfightStage03(Clone)", "Space Monkey Wars");
+
+                // Baseball Dict - GameObject.name => Stadium Name
+                Dictionary<string, string> baseballStadium = new Dictionary<string, string>();
+                baseballStadium.Add("BaseballStage01(Clone)", "Banana Stadium");
+                baseballStadium.Add("BaseballStage02(Clone)", "Monkey Dome");
+
+                // Tennis Dict - bgObj.name => Court Name
+                Dictionary<string, string> tennisCourts = new Dictionary<string, string>();
+                tennisCourts.Add("TennisCourt01(Clone)", "Monkey Jungle");
+                tennisCourts.Add("TennisCourt02(Clone)", "Kingdom Stadium");
+                tennisCourts.Add("TennisCourt03(Clone)", "Paradise Street");
+
                 var scene = SceneManager.GetActiveScene().name;
                 switch (scene)
                 {
@@ -430,9 +482,11 @@ namespace BananaModManager.Loader.IL2Cpp
                         if (SceneManager.GetSceneByName("PgRace").isLoaded)
                         {
                             if (GameObject.FindObjectOfType<PgRaceSequence>() == null) return;
+                            PgRaceDefine.ePgRaceCourseKind raceKind = GameObject.FindObjectOfType<PgRaceCourse>()._courseKind_k__BackingField;
                             client.SetPresence(new RichPresence()
                             {
-                                Details = "Currently playing Monkey Race!"
+                                Details = "Currently playing Monkey Race!",
+                                State = $"Racing on {races[raceKind]}."
                             });
                             return;
                         }
@@ -463,7 +517,8 @@ namespace BananaModManager.Loader.IL2Cpp
                             if (GameObject.FindObjectOfType<PgBilliardsSequence>() == null) return;
                             client.SetPresence(new RichPresence()
                             {
-                                Details = "Currently playing Monkey Billiards!"
+                                Details = "Currently playing Monkey Billiards!",
+                                State = $"Playing {billiardsRules[GameObject.FindObjectOfType<PgBilliardsRuleInfo>().m_Rule]}."
                             });
                             return;
                         }
@@ -489,12 +544,24 @@ namespace BananaModManager.Loader.IL2Cpp
                         }
                         if (SceneManager.GetSceneByName("PgBoat").isLoaded)
                         {
+                            // PgBoatSequence._course_k__BackingField
                             if (GameObject.FindObjectOfType<PgBoatSequence>() == null) return;
                             client.SetPresence(new RichPresence()
                             {
                                 Details = "Currently playing Monkey Boat!",
+                                State = $"On the waters of {boatCourses[GameObject.FindObjectOfType<PgBoatCourse>().name]}."
                             });
                             return;
+                        }
+                        if (SceneManager.GetSceneByName("PgShot").isLoaded)
+                        {
+                            if (GameObject.FindObjectOfType<PgShotSequence>() == null) return;
+                            string stageName = Object.FindObjectOfType<PgShotSequence>().bgObj.name;
+                            client.SetPresence(new RichPresence()
+                            {
+                                Details = "Currently playing Monkey Shot!",
+                                State = $"Shooting through {shotStages[stageName]}.",
+                            });
                         }
                         if (SceneManager.GetSceneByName("PgDogfight").isLoaded)
                         {
@@ -502,6 +569,7 @@ namespace BananaModManager.Loader.IL2Cpp
                             client.SetPresence(new RichPresence()
                             {
                                 Details = "Currently playing Monkey Dogfight!",
+                                State = $"In aerial combat on {dogfightStages[GameObject.FindObjectOfType<PgDogfightSequence>().m_CurrentStageObj.name]}"
                             });
                             return;
                         }
@@ -524,8 +592,8 @@ namespace BananaModManager.Loader.IL2Cpp
                             int rScore = GameObject.FindObjectOfType<PgBaseballSequence>().gameData.twoTeamData.totalScore;
                             client.SetPresence(new RichPresence()
                             {
-                                Details = $"Currently playing Monkey Baseball!",
-                                State = $"Current Game: {lScore} - {rScore}"
+                                Details = $"Playing Monkey Baseball at {baseballStadium[GameObject.FindObjectOfType<PgBaseballStage>().name]}!",
+                                State = $"Current Game Score: {lScore} - {rScore}"
                             });
                             return;
                         }
@@ -536,8 +604,8 @@ namespace BananaModManager.Loader.IL2Cpp
                             string rScore = GameObject.Find("Score1").GetComponent<PgTennisScore>().m_PointCount.count.ToString().Remove(0, 1);
                             client.SetPresence(new RichPresence()
                             {
-                                Details = $"Currently playing Monkey Tennis!",
-                                State = $" Current Game: {lScore} - {rScore}"
+                                Details = $"Playing Monkey Tennis on {tennisCourts[GameObject.FindObjectOfType<PgTennisCourt>().name]}!",
+                                State = $" Current Game Score: {lScore} - {rScore}"
                             });
                             return;
                         }

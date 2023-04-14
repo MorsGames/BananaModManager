@@ -72,13 +72,13 @@ namespace BananaModManager
                     {
                         CurrentGame = game;
                     }
-                    else
-                    {
-                        MessageBox.Show("BananaModManager could not find a game executable! Please place all of the contents of the BananaModManager zip in the EXACT SAME directory as your Super Monkey Ball game's executable!", "Could not find game!");
-                        Process.GetCurrentProcess().Kill();
-                    }
                     ComboGames.Items.Add(game);
                     
+                }
+                if (CurrentGame == null)
+                {
+                    MessageBox.Show("BananaModManager could not find a game executable! Please place all of the contents of the BananaModManager zip in the EXACT SAME directory as your Super Monkey Ball game's executable!", "Could not find game!");
+                    Process.GetCurrentProcess().Kill();
                 }
 
                 // Set the currently selected game
