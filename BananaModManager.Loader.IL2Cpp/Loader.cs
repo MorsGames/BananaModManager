@@ -625,7 +625,7 @@ namespace BananaModManager.Loader.IL2Cpp
                                 case "Challenge":
                                     modeName = "In " + GameObject.Find("Text_world").GetComponent<RubyTextMeshProUGUI>().m_text;
                                     break;
-                                case "Practice Mode":
+                                case "Practice":
                                     modeName = "In Practice Mode:";
                                     break;
                                 case "TimeAttack":
@@ -648,21 +648,45 @@ namespace BananaModManager.Loader.IL2Cpp
                             // Every stage name is stored in all caps
                             client.SetPresence(new RichPresence()
                             {
-                                Details = $"{modeName}: {stageName.Substring(0, 1) + stageName.Remove(0,1).ToLower()}",
+                                Details = $"{modeName} {CapitalizeStageName(stageName)}",
                                 State = $"Playing as {characters[(player.GetComponent<Player>().charaKind)]}"
                             });
                         }
                         break;
                 }
             }
-            catch
+            catch (Exception ex)
             {
-
+                Console.WriteLine(ex.ToString());
             }
         }
         private static void BananaBlitzHDRPC()
         {
 
+        }
+        private static string CapitalizeStageName(string stageName)
+        {
+            int i = 0;
+            bool capital = true;
+            string corrected = "";
+            while (i < stageName.Length)
+            {
+                if (capital)
+                {
+                    corrected += stageName[i]; 
+                }
+                else
+                {
+                    corrected += stageName[i].ToString().ToLower();
+                }
+                if (stageName[i] == ' ' || stageName[i] == '-')
+                {
+                    capital = true;
+                }
+                else capital = false;
+                i++;
+            }
+            return corrected;
         }
     }
     }
