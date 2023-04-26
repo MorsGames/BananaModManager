@@ -51,7 +51,7 @@ namespace BananaModManager.Loader.IL2Cpp
         public static Dictionary<string, string> AssetBundles { get; private set; } = new Dictionary<string, string>();
         public static bool SpeedrunMode => _speedrunMode;
         public static bool SaveMode => _saveMode;
-
+        
         public static List<MethodInfo> UpdateMethods { get; set; } = new List<MethodInfo>();
         public static List<MethodInfo> FixedUpdateMethods { get; set; } = new List<MethodInfo>();
         public static List<MethodInfo> LateUpdateMethods { get; set; } = new List<MethodInfo>();
@@ -146,12 +146,15 @@ namespace BananaModManager.Loader.IL2Cpp
                         if (Mods.Count > 0 && !_speedrunMode)
                         {
                             LeaderboardsDelegateInstance = Dummy;
-                            ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0x296130), LeaderboardsDelegateInstance);
+                            // Old 0x296130
+                            // Block checking 0x4BD1A0
+                            ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0x7CDCB0), LeaderboardsDelegateInstance);
                         }
                         if (!_saveMode)
                         {
                             SaveDelegateInstance = Dummy2;
-                            ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0xE5B820), SaveDelegateInstance);
+                            // Old 0xE5B820
+                            ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0xE58840), SaveDelegateInstance);
                         }
                         Console.WriteLine("Initializing the mods...");
                         CreateCodeRunner();
@@ -576,7 +579,7 @@ namespace BananaModManager.Loader.IL2Cpp
                         if (SceneManager.GetSceneByName("PgFutsal").isLoaded)
                         {
                             if (GameObject.FindObjectOfType<PgFutsalGameInfo>() == null) return;
-                            int lScore= (int)GameObject.FindObjectOfType<PgFutsalGameInfo>().score[0];
+                            int lScore = (int)GameObject.FindObjectOfType<PgFutsalGameInfo>().score[0];
                             int rScore = (int)GameObject.FindObjectOfType<PgFutsalGameInfo>().score[1];
                             client.SetPresence(new RichPresence()
                             {
@@ -600,7 +603,7 @@ namespace BananaModManager.Loader.IL2Cpp
                         if (SceneManager.GetSceneByName("PgTennis").isLoaded)
                         {
                             if (GameObject.FindObjectOfType<PgTennisScore>().m_PointCount == null) return;
-                            string lScore = GameObject.Find("Score0").GetComponent<PgTennisScore>().m_PointCount.count.ToString().Remove(0,1);
+                            string lScore = GameObject.Find("Score0").GetComponent<PgTennisScore>().m_PointCount.count.ToString().Remove(0, 1);
                             string rScore = GameObject.Find("Score1").GetComponent<PgTennisScore>().m_PointCount.count.ToString().Remove(0, 1);
                             client.SetPresence(new RichPresence()
                             {
@@ -655,9 +658,9 @@ namespace BananaModManager.Loader.IL2Cpp
                         break;
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine(ex.ToString());
+
             }
         }
         private static void BananaBlitzHDRPC()
