@@ -79,7 +79,7 @@ namespace BananaModManager.Shared
                     if (!currentGame.Whitelist.Contains(Hash) && currentGame.WhitelistNames.Contains(mod.Info.DLLFile))
                     {
                         Console.BackgroundColor = ConsoleColor.DarkRed;
-                        Console.WriteLine("Nice try, cheater! " + mod.Info.Title + "'s Hash is different. The file is modified!");
+                        Console.WriteLine("Nice try! " + mod.Info.Title + "'s Hash is different. The file is not the speedrun-legal version!");
                         Console.BackgroundColor = ConsoleColor.Black;
                         continue;
                     }

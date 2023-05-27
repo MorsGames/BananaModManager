@@ -232,48 +232,56 @@ namespace BananaModManager.Loader.IL2Cpp
             ClassInjector.RegisterTypeInIl2Cpp<CodeRunner>();
 
             var runner = new CodeRunner(obj.AddComponent(Il2CppType.Of<CodeRunner>()).Pointer);
-
-            // Go through each mod
-            foreach (var mod in Mods)
+            int priorityCheck = 0;
+            while (priorityCheck < 6)
             {
-                // Register the types
-                if (mod.Types != null)
+                // Go through each mod
+                foreach (var mod in Mods)
                 {
-                    foreach (var usedType in mod.Types)
+
+                    if (priorityCheck == Convert.ToInt32(mod.Info.Priority))
                     {
-                        ClassInjector.RegisterTypeInIl2Cpp(usedType);
+                        // Register the types
+                        if (mod.Types != null)
+                        {
+                            foreach (var usedType in mod.Types)
+                            {
+                                ClassInjector.RegisterTypeInIl2Cpp(usedType);
+                            }
+                        }
+
+                        // Check each class if there's an assembly
+                        if (mod.GetAssembly() == null)
+                            continue;
+
+                        foreach (var type in mod.GetAssembly().GetTypes())
+                        {
+                            // Only look for one that's called "Main"
+                            if (type.Name != "Main")
+                                continue;
+
+                            // Add it to the code runner
+                            type.GetMethod("OnModStart")?.Invoke(null, null);
+
+                            var update = type.GetMethod("OnModUpdate");
+                            if (update != null)
+                                UpdateMethods.Add(update);
+
+                            var fixedUpdate = type.GetMethod("OnModFixedUpdate");
+                            if (fixedUpdate != null)
+                                FixedUpdateMethods.Add(fixedUpdate);
+
+                            var lateUpdate = type.GetMethod("OnModLateUpdate");
+                            if (lateUpdate != null)
+                                LateUpdateMethods.Add(lateUpdate);
+
+                            var gui = type.GetMethod("OnModGUI");
+                            if (gui != null)
+                                GUIMethods.Add(gui);
+                        }
                     }
                 }
-
-                // Check each class if there's an assembly
-                if (mod.GetAssembly() == null)
-                    continue;
-
-                foreach (var type in mod.GetAssembly().GetTypes())
-                {
-                    // Only look for one that's called "Main"
-                    if (type.Name != "Main")
-                        continue;
-
-                    // Add it to the code runner
-                    type.GetMethod("OnModStart")?.Invoke(null, null);
-
-                    var update = type.GetMethod("OnModUpdate");
-                    if (update != null)
-                        UpdateMethods.Add(update);
-
-                    var fixedUpdate = type.GetMethod("OnModFixedUpdate");
-                    if (fixedUpdate != null)
-                        FixedUpdateMethods.Add(fixedUpdate);
-
-                    var lateUpdate = type.GetMethod("OnModLateUpdate");
-                    if (lateUpdate != null)
-                        LateUpdateMethods.Add(lateUpdate);
-
-                    var gui = type.GetMethod("OnModGUI");
-                    if (gui != null)
-                        GUIMethods.Add(gui);
-                }
+                priorityCheck++;
             }
         }
 

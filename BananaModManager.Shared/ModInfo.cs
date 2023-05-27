@@ -59,6 +59,11 @@ namespace BananaModManager.Shared
 
 
         /// <summary>
+        ///     The priority in which the mod should be loaded. Defaults to 5. 0 is the earliest, 5 is the latest.
+        /// </summary>
+        public string Priority { get; set; } = "5";
+
+        /// <summary>
         ///     Returns the internal ID string of the mod.
         /// </summary>
         /// <returns>ID string of the mod.</returns>
