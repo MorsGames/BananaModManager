@@ -32,7 +32,6 @@ namespace BananaModManager
         /// </summary>
         private void InitializeComponent()
         {
-            this.Icon = Properties.Resources.ProgramIcon;
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.MenuConfig = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -68,14 +67,16 @@ namespace BananaModManager
             this.OneClickLabel = new System.Windows.Forms.Label();
             this.CheckFastRestart = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.PageAbout = new System.Windows.Forms.TabPage();
-            this.TextInfo = new System.Windows.Forms.TextBox();
-            this.LabelAboutVersion = new System.Windows.Forms.Label();
-            this.LabelAboutTitle = new System.Windows.Forms.Label();
             this.SaveModeCheckbox = new System.Windows.Forms.CheckBox();
             this.SaveModeLabel = new System.Windows.Forms.Label();
             this.DiscordRPC = new System.Windows.Forms.CheckBox();
             this.DiscordRPCLabel = new System.Windows.Forms.Label();
+            this.PageAbout = new System.Windows.Forms.TabPage();
+            this.TextInfo = new System.Windows.Forms.TextBox();
+            this.LabelAboutVersion = new System.Windows.Forms.Label();
+            this.LabelAboutTitle = new System.Windows.Forms.Label();
+            this.legacyModeCheckbox = new System.Windows.Forms.CheckBox();
+            this.legacyModeLabel = new System.Windows.Forms.Label();
             this.MenuConfig.SuspendLayout();
             this.MenuMods.SuspendLayout();
             this.TabControl.SuspendLayout();
@@ -212,7 +213,7 @@ namespace BananaModManager
             this.ContainerList.Panel2.Controls.Add(this.LabelTitle);
             this.ContainerList.Panel2.Controls.Add(this.TextDescription);
             this.ContainerList.Size = new System.Drawing.Size(409, 339);
-            this.ContainerList.SplitterDistance = 265;
+            this.ContainerList.SplitterDistance = 266;
             this.ContainerList.SplitterWidth = 3;
             this.ContainerList.TabIndex = 0;
             // 
@@ -231,7 +232,7 @@ namespace BananaModManager
             this.ListMods.Location = new System.Drawing.Point(0, 0);
             this.ListMods.Margin = new System.Windows.Forms.Padding(2);
             this.ListMods.Name = "ListMods";
-            this.ListMods.Size = new System.Drawing.Size(409, 265);
+            this.ListMods.Size = new System.Drawing.Size(409, 266);
             this.ListMods.TabIndex = 9;
             this.ListMods.UseCompatibleStateImageBehavior = false;
             this.ListMods.View = System.Windows.Forms.View.Details;
@@ -274,7 +275,7 @@ namespace BananaModManager
             this.TextDescription.Multiline = true;
             this.TextDescription.Name = "TextDescription";
             this.TextDescription.ReadOnly = true;
-            this.TextDescription.Size = new System.Drawing.Size(409, 71);
+            this.TextDescription.Size = new System.Drawing.Size(409, 70);
             this.TextDescription.TabIndex = 0;
             // 
             // GridConfig
@@ -376,6 +377,8 @@ namespace BananaModManager
             this.PanelSettings.Controls.Add(this.SaveModeLabel);
             this.PanelSettings.Controls.Add(this.DiscordRPC);
             this.PanelSettings.Controls.Add(this.DiscordRPCLabel);
+            this.PanelSettings.Controls.Add(this.legacyModeCheckbox);
+            this.PanelSettings.Controls.Add(this.legacyModeLabel);
             this.PanelSettings.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PanelSettings.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.PanelSettings.Location = new System.Drawing.Point(2, 2);
@@ -478,6 +481,46 @@ namespace BananaModManager
     " Mode in the process.";
             this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
+            // SaveModeCheckbox
+            // 
+            this.SaveModeCheckbox.AutoSize = true;
+            this.SaveModeCheckbox.Location = new System.Drawing.Point(3, 214);
+            this.SaveModeCheckbox.Name = "SaveModeCheckbox";
+            this.SaveModeCheckbox.Size = new System.Drawing.Size(84, 19);
+            this.SaveModeCheckbox.TabIndex = 9;
+            this.SaveModeCheckbox.Text = "Save Mode";
+            this.SaveModeCheckbox.UseVisualStyleBackColor = true;
+            // 
+            // SaveModeLabel
+            // 
+            this.SaveModeLabel.AutoSize = true;
+            this.SaveModeLabel.Location = new System.Drawing.Point(3, 236);
+            this.SaveModeLabel.Name = "SaveModeLabel";
+            this.SaveModeLabel.Size = new System.Drawing.Size(591, 15);
+            this.SaveModeLabel.TabIndex = 10;
+            this.SaveModeLabel.Text = "When enabled the game will save your best clears of each stage. When disabled it " +
+    "will not save your best clears.";
+            // 
+            // DiscordRPC
+            // 
+            this.DiscordRPC.AutoSize = true;
+            this.DiscordRPC.Location = new System.Drawing.Point(3, 254);
+            this.DiscordRPC.Name = "DiscordRPC";
+            this.DiscordRPC.Size = new System.Drawing.Size(142, 19);
+            this.DiscordRPC.TabIndex = 9;
+            this.DiscordRPC.Text = "Discord Rich Presence";
+            this.DiscordRPC.UseVisualStyleBackColor = true;
+            // 
+            // DiscordRPCLabel
+            // 
+            this.DiscordRPCLabel.AutoSize = true;
+            this.DiscordRPCLabel.Location = new System.Drawing.Point(3, 276);
+            this.DiscordRPCLabel.Name = "DiscordRPCLabel";
+            this.DiscordRPCLabel.Size = new System.Drawing.Size(535, 15);
+            this.DiscordRPCLabel.TabIndex = 10;
+            this.DiscordRPCLabel.Text = "When enabled, friends can see more information about what game mode you\'re playin" +
+    "g on Discord!";
+            // 
             // PageAbout
             // 
             this.PageAbout.BackColor = System.Drawing.SystemColors.Control;
@@ -524,44 +567,25 @@ namespace BananaModManager
             this.LabelAboutTitle.TabIndex = 3;
             this.LabelAboutTitle.Text = "BananaModManager";
             // 
-            // SaveModeCheckbox
+            // legacyModeCheckbox
             // 
-            this.SaveModeCheckbox.AutoSize = true;
-            this.SaveModeCheckbox.Location = new System.Drawing.Point(3, 214);
-            this.SaveModeCheckbox.Name = "SaveModeCheckbox";
-            this.SaveModeCheckbox.Size = new System.Drawing.Size(84, 19);
-            this.SaveModeCheckbox.TabIndex = 9;
-            this.SaveModeCheckbox.Text = "Save Mode";
-            this.SaveModeCheckbox.UseVisualStyleBackColor = true;
+            this.legacyModeCheckbox.AutoSize = true;
+            this.legacyModeCheckbox.Location = new System.Drawing.Point(3, 294);
+            this.legacyModeCheckbox.Name = "legacyModeCheckbox";
+            this.legacyModeCheckbox.Size = new System.Drawing.Size(97, 19);
+            this.legacyModeCheckbox.TabIndex = 11;
+            this.legacyModeCheckbox.Text = "Legacy Mode";
+            this.legacyModeCheckbox.UseVisualStyleBackColor = true;
             // 
-            // SaveModeLabel
+            // legacyModeLabel
             // 
-            this.SaveModeLabel.AutoSize = true;
-            this.SaveModeLabel.Location = new System.Drawing.Point(3, 236);
-            this.SaveModeLabel.Name = "SaveModeLabel";
-            this.SaveModeLabel.Size = new System.Drawing.Size(591, 15);
-            this.SaveModeLabel.TabIndex = 10;
-            this.SaveModeLabel.Text = "When enabled the game will save your best clears of each stage. When disabled it " +
-    "will not save your best clears.";
-            // 
-            // DiscordRPC
-            // 
-            this.DiscordRPC.AutoSize = true;
-            this.DiscordRPC.Location = new System.Drawing.Point(3, 250);
-            this.DiscordRPC.Name = "DiscordRPC";
-            this.DiscordRPC.Size = new System.Drawing.Size(84, 19);
-            this.DiscordRPC.TabIndex = 9;
-            this.DiscordRPC.Text = "Discord Rich Presence";
-            this.DiscordRPC.UseVisualStyleBackColor = true;
-            // 
-            // DiscordRPCLabel
-            // 
-            this.DiscordRPCLabel.AutoSize = true;
-            this.DiscordRPCLabel.Location = new System.Drawing.Point(3, 264);
-            this.DiscordRPCLabel.Name = "DiscordRPCLabel";
-            this.DiscordRPCLabel.Size = new System.Drawing.Size(591, 15);
-            this.DiscordRPCLabel.TabIndex = 10;
-            this.DiscordRPCLabel.Text = "When enabled, friends can see more information about what game mode you're playing on Discord!";
+            this.legacyModeLabel.AutoSize = true;
+            this.legacyModeLabel.Location = new System.Drawing.Point(3, 316);
+            this.legacyModeLabel.Name = "legacyModeLabel";
+            this.legacyModeLabel.Size = new System.Drawing.Size(569, 30);
+            this.legacyModeLabel.TabIndex = 12;
+            this.legacyModeLabel.Text = "When enabled, Speedrun Mode and Save Mode will work on version 1.0.0 of the game." +
+    " If unsure, leave this unchecked.";
             // 
             // MainForm
             // 
@@ -570,6 +594,7 @@ namespace BananaModManager
             this.ClientSize = new System.Drawing.Size(627, 449);
             this.Controls.Add(this.TabControl);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Icon = global::BananaModManager.Properties.Resources.ProgramIcon;
             this.Margin = new System.Windows.Forms.Padding(2);
             this.MinimumSize = new System.Drawing.Size(635, 461);
             this.Name = "MainForm";
@@ -641,6 +666,8 @@ namespace BananaModManager
         private System.Windows.Forms.Label SaveModeLabel;
         private System.Windows.Forms.CheckBox DiscordRPC;
         private System.Windows.Forms.Label DiscordRPCLabel;
+        private System.Windows.Forms.CheckBox legacyModeCheckbox;
+        private System.Windows.Forms.Label legacyModeLabel;
     }
 }
 

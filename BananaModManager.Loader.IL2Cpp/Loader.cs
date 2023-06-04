@@ -35,6 +35,7 @@ namespace BananaModManager.Loader.IL2Cpp
         public static extern System.IntPtr GetModuleHandle(string lpModuleName);
 
         private static List<Mod> _mods;
+        private static bool _legacy;
         private static bool _speedrunMode;
         private static bool _saveMode;
         private static bool _discordRPC = true;
@@ -49,6 +50,7 @@ namespace BananaModManager.Loader.IL2Cpp
 
         public static List<Mod> Mods => _mods;
         public static Dictionary<string, string> AssetBundles { get; private set; } = new Dictionary<string, string>();
+        public static bool LegacyMode => _legacy;
         public static bool SpeedrunMode => _speedrunMode;
         public static bool SaveMode => _saveMode;
         
@@ -61,7 +63,7 @@ namespace BananaModManager.Loader.IL2Cpp
         {
             try
             {
-                Startup.StartModLoader(out _mods, out _speedrunMode, out _saveMode, out _discordRPC);
+                Startup.StartModLoader(out _mods, out _speedrunMode, out _saveMode, out _discordRPC, out _legacy);
 
                 Console.WriteLine("Setting up the hooks...");
 
@@ -146,15 +148,33 @@ namespace BananaModManager.Loader.IL2Cpp
                         if (Mods.Count > 0 && !_speedrunMode)
                         {
                             LeaderboardsDelegateInstance = Dummy;
+                            if (_legacy == true)
+                            {
+                                // Old
+                                ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0xa9d990), LeaderboardsDelegateInstance);
+                            }
+                            else
+                            {
+                                // New
+                                ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0x7CDCB0), LeaderboardsDelegateInstance);
+                            }
                             // Old 0x296130
                             // Block checking 0x4BD1A0
-                            ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0x7CDCB0), LeaderboardsDelegateInstance);
+                            
                         }
                         if (!_saveMode)
                         {
                             SaveDelegateInstance = Dummy2;
-                            // Old 0xE5B820
-                            ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0xE58840), SaveDelegateInstance);
+                            if (_legacy == true)
+                            {
+                                // Old
+                                ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0xE5B820), SaveDelegateInstance);
+                            }
+                            else
+                            {
+                                // New
+                                ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0xE58840), SaveDelegateInstance);
+                            }
                         }
                         Console.WriteLine("Initializing the mods...");
                         CreateCodeRunner();
@@ -291,7 +311,7 @@ namespace BananaModManager.Loader.IL2Cpp
             // If F11 is pressed, restart and toggle Speedrun Mode
             if (AppInput.GetKeyDown(KeyCode.F11) && userConfig.FastRestart == true)
             {
-                Shared.Mods.Save(userConfig.ActiveMods, userConfig.ConsoleWindow, !userConfig.SpeedrunMode, userConfig.OneClick, userConfig.FastRestart, userConfig.SaveMode, userConfig.DiscordRPC);
+                Shared.Mods.Save(userConfig.ActiveMods, userConfig.ConsoleWindow, !userConfig.SpeedrunMode, userConfig.OneClick, userConfig.FastRestart, userConfig.SaveMode, userConfig.DiscordRPC, userConfig.LegacyMode);
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = "steam://rungameid/" + currentGame.AppID,

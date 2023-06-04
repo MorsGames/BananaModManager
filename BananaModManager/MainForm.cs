@@ -126,7 +126,7 @@ namespace BananaModManager
         private void LoadMods()
         {
             // Load the mods
-            Mods.Load(out var modOrder, out var consoleWindow, out var speedrunMode, out var oneClick, out var fastRestart, out var saveMode, out var discordRPC);
+            Mods.Load(out var modOrder, out var consoleWindow, out var speedrunMode, out var oneClick, out var fastRestart, out var saveMode, out var discordRPC, out var legacyMode);
 
             // First add the mods based on their order
             foreach (var mod in modOrder.Select(_ => Mods.List[_]))
@@ -145,6 +145,7 @@ namespace BananaModManager
             CheckFastRestart.Checked = fastRestart;
             SaveModeCheckbox.Checked = saveMode;
             DiscordRPC.Checked = discordRPC;
+            legacyModeCheckbox.Checked = legacyMode;
         }
 
         private void AddMod(Mod mod)
@@ -280,7 +281,7 @@ namespace BananaModManager
             foreach (ListViewItem item in ListMods.Items)
                 if (item.Checked)
                     modOrder.Add(item.Name);
-            Mods.Save(modOrder, CheckConsole.Checked, CheckSpeedrun.Checked, CheckOneClick.Checked, CheckFastRestart.Checked, SaveModeCheckbox.Checked, DiscordRPC.Checked);
+            Mods.Save(modOrder, CheckConsole.Checked, CheckSpeedrun.Checked, CheckOneClick.Checked, CheckFastRestart.Checked, SaveModeCheckbox.Checked, DiscordRPC.Checked, legacyModeCheckbox.Checked);
 
             // We wanna reload everything now
             Mods.List.Clear();

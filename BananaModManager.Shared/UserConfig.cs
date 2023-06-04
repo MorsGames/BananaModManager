@@ -47,5 +47,10 @@ namespace BananaModManager.Shared
         ///     Enables Discord Rich Presence support
         /// </summary>
         public bool DiscordRPC { get; set; } = false;
+
+        /// <summary>
+        ///     Enables Speedrun Mode and Save Mode to run on version 1.0.0
+        /// </summary>
+        public bool LegacyMode { get; set; } = false;
     }
 }

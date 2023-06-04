@@ -31,9 +31,9 @@ namespace BananaModManager.Shared
                 ShowWindow(handle, SW_SHOW);
         }
 
-        public static void StartModLoader(out List<Mod> mods, out bool speedrunMode, out bool saveMode, out bool discordRPC)
+        public static void StartModLoader(out List<Mod> mods, out bool speedrunMode, out bool saveMode, out bool discordRPC, out bool legacyMode)
         {
-            Mods.Load(out var activeMods, out var consoleWindow, out speedrunMode, out bool oneClick, out bool fastRestart, out saveMode, out discordRPC);
+            Mods.Load(out var activeMods, out var consoleWindow, out speedrunMode, out bool oneClick, out bool fastRestart, out saveMode, out discordRPC, out legacyMode);
 
             if (consoleWindow)
                 ShowConsoleWindow();
@@ -56,65 +56,71 @@ namespace BananaModManager.Shared
             Console.WriteLine("Found " + activeMods.Count + " active mods out of " + Mods.List.Count + ".");
 
             mods = new List<Mod>();
-
-            foreach (var mod in activeMods.Select(modId => Mods.List[modId]))
+            int priorityCheck = 0;
+            while (priorityCheck < 6)
             {
-                if (speedrunMode)
+                foreach (var mod in activeMods.Select(modId => Mods.List[modId]))
                 {
-                    string Hash = "";
-                    byte[] hashvalue;
-                    using (SHA256 SHA256 = SHA256.Create())
+                    if (Convert.ToInt32(mod.Info.Priority) != priorityCheck) continue;
+                    if (speedrunMode)
                     {
-                        using (FileStream fileStream = File.OpenRead(mod.Directory.FullName + "\\" + mod.Info.DLLFile))
+                        string Hash = "";
+                        byte[] hashvalue;
+                        using (SHA256 SHA256 = SHA256.Create())
                         {
-                            fileStream.Position = 0;
-                            hashvalue = SHA256.ComputeHash(fileStream);
-                            for (int i = 0; i < hashvalue.Length; i++)
+                            using (FileStream fileStream = File.OpenRead(mod.Directory.FullName + "\\" + mod.Info.DLLFile))
                             {
-                                Hash += $"{hashvalue[i]:X2}";
+                                fileStream.Position = 0;
+                                hashvalue = SHA256.ComputeHash(fileStream);
+                                for (int i = 0; i < hashvalue.Length; i++)
+                                {
+                                    Hash += $"{hashvalue[i]:X2}";
+                                }
                             }
+
                         }
+                        if (!currentGame.Whitelist.Contains(Hash) && currentGame.WhitelistNames.Contains(mod.Info.DLLFile))
+                        {
+                            Console.BackgroundColor = ConsoleColor.DarkRed;
+                            Console.WriteLine("Nice try! " + mod.Info.Title + "'s Hash is different. The file is not the speedrun-legal version!");
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            continue;
+                        }
+                        if (!currentGame.WhitelistNames.Contains(mod.Info.DLLFile))
+                        {
+                            Console.BackgroundColor = ConsoleColor.DarkYellow;
+                            Console.WriteLine("Skipped loading " + mod.Info.Title + ". It's not whitelisted for the speedrun mode!");
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            continue;
+                        }
+                    }
 
-                    }
-                    if (!currentGame.Whitelist.Contains(Hash) && currentGame.WhitelistNames.Contains(mod.Info.DLLFile))
-                    {
-                        Console.BackgroundColor = ConsoleColor.DarkRed;
-                        Console.WriteLine("Nice try! " + mod.Info.Title + "'s Hash is different. The file is not the speedrun-legal version!");
-                        Console.BackgroundColor = ConsoleColor.Black;
+                    mods.Add(mod);
+
+                    Console.WriteLine("Loading " + mod.Info.Title + " (" + mod + ")");
+
+                    // Load the config dictionary
+                    var config = Mods.LoadModConfig(mod.Info, Mods.LoadUserConfig(),
+                        Mods.LoadDefaultModConfig(mod.Directory));
+
+                    // We need to convert it before we can pass it on
+                    var converted = Mods.ConvertConfig(config);
+
+                    // We add the directory as a config
+                    converted.Add("Directory", mod.Directory.FullName);
+
+                    // Time to invoke
+                    if (mod.GetAssembly() == null)
                         continue;
-                    }
-                    if (!currentGame.WhitelistNames.Contains(mod.Info.DLLFile))
+
+                    foreach (var type in mod.GetAssembly().GetTypes())
                     {
-                        Console.BackgroundColor = ConsoleColor.DarkYellow;
-                        Console.WriteLine("Skipped loading " + mod.Info.Title + ". It's not whitelisted for the speedrun mode!");
-                        Console.BackgroundColor = ConsoleColor.Black;
-                        continue;
+                        mod.Types = (List<Type>)type.GetMethod("OnModLoad")?.Invoke(null, new object[] { converted });
                     }
                 }
-
-                mods.Add(mod);
-
-                Console.WriteLine("Loading " + mod.Info.Title + " (" + mod + ")");
-
-                // Load the config dictionary
-                var config = Mods.LoadModConfig(mod.Info, Mods.LoadUserConfig(),
-                    Mods.LoadDefaultModConfig(mod.Directory));
-
-                // We need to convert it before we can pass it on
-                var converted = Mods.ConvertConfig(config);
-
-                // We add the directory as a config
-                converted.Add("Directory", mod.Directory.FullName);
-
-                // Time to invoke
-                if (mod.GetAssembly() == null)
-                    continue;
-
-                foreach (var type in mod.GetAssembly().GetTypes())
-                {
-                    mod.Types = (List<Type>)type.GetMethod("OnModLoad")?.Invoke(null, new object[] { converted });
-                }
+                priorityCheck++;
             }
+            
         }
         public static void ExceptionHandler(Exception e)
         {
