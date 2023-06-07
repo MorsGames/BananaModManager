@@ -71,12 +71,12 @@ namespace BananaModManager
             this.SaveModeLabel = new System.Windows.Forms.Label();
             this.DiscordRPC = new System.Windows.Forms.CheckBox();
             this.DiscordRPCLabel = new System.Windows.Forms.Label();
+            this.legacyModeCheckbox = new System.Windows.Forms.CheckBox();
+            this.legacyModeLabel = new System.Windows.Forms.Label();
             this.PageAbout = new System.Windows.Forms.TabPage();
             this.TextInfo = new System.Windows.Forms.TextBox();
             this.LabelAboutVersion = new System.Windows.Forms.Label();
             this.LabelAboutTitle = new System.Windows.Forms.Label();
-            this.legacyModeCheckbox = new System.Windows.Forms.CheckBox();
-            this.legacyModeLabel = new System.Windows.Forms.Label();
             this.MenuConfig.SuspendLayout();
             this.MenuMods.SuspendLayout();
             this.TabControl.SuspendLayout();
@@ -213,7 +213,7 @@ namespace BananaModManager
             this.ContainerList.Panel2.Controls.Add(this.LabelTitle);
             this.ContainerList.Panel2.Controls.Add(this.TextDescription);
             this.ContainerList.Size = new System.Drawing.Size(409, 339);
-            this.ContainerList.SplitterDistance = 266;
+            this.ContainerList.SplitterDistance = 267;
             this.ContainerList.SplitterWidth = 3;
             this.ContainerList.TabIndex = 0;
             // 
@@ -232,7 +232,7 @@ namespace BananaModManager
             this.ListMods.Location = new System.Drawing.Point(0, 0);
             this.ListMods.Margin = new System.Windows.Forms.Padding(2);
             this.ListMods.Name = "ListMods";
-            this.ListMods.Size = new System.Drawing.Size(409, 266);
+            this.ListMods.Size = new System.Drawing.Size(409, 267);
             this.ListMods.TabIndex = 9;
             this.ListMods.UseCompatibleStateImageBehavior = false;
             this.ListMods.View = System.Windows.Forms.View.Details;
@@ -275,7 +275,7 @@ namespace BananaModManager
             this.TextDescription.Multiline = true;
             this.TextDescription.Name = "TextDescription";
             this.TextDescription.ReadOnly = true;
-            this.TextDescription.Size = new System.Drawing.Size(409, 70);
+            this.TextDescription.Size = new System.Drawing.Size(409, 69);
             this.TextDescription.TabIndex = 0;
             // 
             // GridConfig
@@ -521,6 +521,26 @@ namespace BananaModManager
             this.DiscordRPCLabel.Text = "When enabled, friends can see more information about what game mode you\'re playin" +
     "g on Discord!";
             // 
+            // legacyModeCheckbox
+            // 
+            this.legacyModeCheckbox.AutoSize = true;
+            this.legacyModeCheckbox.Location = new System.Drawing.Point(3, 294);
+            this.legacyModeCheckbox.Name = "legacyModeCheckbox";
+            this.legacyModeCheckbox.Size = new System.Drawing.Size(97, 19);
+            this.legacyModeCheckbox.TabIndex = 11;
+            this.legacyModeCheckbox.Text = "Legacy Mode";
+            this.legacyModeCheckbox.UseVisualStyleBackColor = true;
+            // 
+            // legacyModeLabel
+            // 
+            this.legacyModeLabel.AutoSize = true;
+            this.legacyModeLabel.Location = new System.Drawing.Point(3, 316);
+            this.legacyModeLabel.Name = "legacyModeLabel";
+            this.legacyModeLabel.Size = new System.Drawing.Size(569, 30);
+            this.legacyModeLabel.TabIndex = 12;
+            this.legacyModeLabel.Text = "When enabled, Speedrun Mode and Save Mode will work on version 1.0.0 of the game." +
+    " If unsure, leave this unchecked.";
+            // 
             // PageAbout
             // 
             this.PageAbout.BackColor = System.Drawing.SystemColors.Control;
@@ -566,26 +586,6 @@ namespace BananaModManager
             this.LabelAboutTitle.Size = new System.Drawing.Size(520, 65);
             this.LabelAboutTitle.TabIndex = 3;
             this.LabelAboutTitle.Text = "BananaModManager";
-            // 
-            // legacyModeCheckbox
-            // 
-            this.legacyModeCheckbox.AutoSize = true;
-            this.legacyModeCheckbox.Location = new System.Drawing.Point(3, 294);
-            this.legacyModeCheckbox.Name = "legacyModeCheckbox";
-            this.legacyModeCheckbox.Size = new System.Drawing.Size(97, 19);
-            this.legacyModeCheckbox.TabIndex = 11;
-            this.legacyModeCheckbox.Text = "Legacy Mode";
-            this.legacyModeCheckbox.UseVisualStyleBackColor = true;
-            // 
-            // legacyModeLabel
-            // 
-            this.legacyModeLabel.AutoSize = true;
-            this.legacyModeLabel.Location = new System.Drawing.Point(3, 316);
-            this.legacyModeLabel.Name = "legacyModeLabel";
-            this.legacyModeLabel.Size = new System.Drawing.Size(569, 30);
-            this.legacyModeLabel.TabIndex = 12;
-            this.legacyModeLabel.Text = "When enabled, Speedrun Mode and Save Mode will work on version 1.0.0 of the game." +
-    " If unsure, leave this unchecked.";
             // 
             // MainForm
             // 

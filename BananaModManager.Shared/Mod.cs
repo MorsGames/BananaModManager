@@ -69,7 +69,7 @@ namespace BananaModManager.Shared
         /// <returns>Assembly of the mod DLL.</returns>
         public Assembly GetAssembly()
         {
-            return Info.DLLFile == "" ? null : Assembly.LoadFile(GetFullPath());
+            return Info.DLLFile == "" ? null : Assembly.LoadFrom(GetFullPath());
         }
     }
 }
