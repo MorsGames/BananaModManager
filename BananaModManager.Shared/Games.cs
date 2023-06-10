@@ -35,7 +35,7 @@ namespace BananaModManager
                 // IL timer
                 "66D05F13336A3354A5A34C41598E85FC8C02DBA7ADEE51505EDD3D39BE8096B3",
                 // True Ball Customizer
-                "D16CA0D62E3405176DCDE26237B81AE4E170044A481F53C7ABD3DDEB6C0C5194"
+                "FCD4933822018E5C1D5CD0B0825A146EDD21FD4A83929BCEC71BDB421BCF1085"
             },
             WhitelistNames = new List<string>
             {
