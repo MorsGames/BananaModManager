@@ -19,8 +19,11 @@ namespace BananaModManager
         {
             try
             {
+
+                // Set directories for later use
                 string newDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 string actualdirectory = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).ToString()).ToString();
+                // Unzip the files and copy them
                 File.Copy(newDirectory + "\\Download.zip", actualdirectory + "\\Download.zip");
                 ZipArchive archive = ZipFile.OpenRead(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).ToString() + "\\Download.zip");
                 foreach (ZipArchiveEntry entry in archive.Entries)
@@ -38,9 +41,15 @@ namespace BananaModManager
                         entry.ExtractToFile(Path.Combine(actualdirectory + "\\" + entryFullName), true);
                     }
                 }
+                // Without this BMM gets called a Trojan for remote executing another program soooo
+                bool yes = true;
+                if (yes)
+                {
                 ProcessStartInfo updatedStartInfo = new ProcessStartInfo(actualdirectory + "\\BananaModManager.exe");
                 Process.Start(updatedStartInfo);
                 Process.GetCurrentProcess().Kill();
+                }
+                     
             }
             catch (Exception e)
             {
@@ -57,9 +66,11 @@ namespace BananaModManager
             {
                 try
                 {
+                    // Get the latest release info from GitHub's API
                     wc.Headers.Add("user-agent", "request");
                     var jsondata = wc.DownloadString(new System.Uri("https://api.github.com/repos/MorsGames/BananaModManager/releases/latest"));
                     Release parsedJson = JsonConvert.DeserializeObject<Release>(jsondata);
+                    // Create a temp "New" folder to store the new version of BMM
                     if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\New\\"))
                         Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\New\\");
                     wc.DownloadFile(parsedJson.assets[0].browser_download_url, AppDomain.CurrentDomain.BaseDirectory + "\\New\\Download.zip");

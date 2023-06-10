@@ -34,8 +34,8 @@ namespace BananaModManager
                 "62B4D876FF957A5E681E8820B0CAD61126A86B5890DB6C6FB23CF32BCFCFD517",
                 // IL timer
                 "66D05F13336A3354A5A34C41598E85FC8C02DBA7ADEE51505EDD3D39BE8096B3",
-                // Monkey Replacer
-                "8E3ECB9360433EC334D5C404EB6525E2E0BE64EC9EB3D34072B2366FEB0D39D8"
+                // True Ball Customizer
+                "D16CA0D62E3405176DCDE26237B81AE4E170044A481F53C7ABD3DDEB6C0C5194"
             },
             WhitelistNames = new List<string>
             {
@@ -46,7 +46,7 @@ namespace BananaModManager
                 "TimerSound.dll",
                 "UI Enhancements.dll",
                 "ILBattleTimer.dll",
-                "Monkey Replacer.dll"
+                "TrueBallCustomizer.dll"
             }
         };
 
