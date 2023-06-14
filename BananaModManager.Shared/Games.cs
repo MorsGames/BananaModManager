@@ -35,7 +35,11 @@ namespace BananaModManager
                 // IL timer
                 "66D05F13336A3354A5A34C41598E85FC8C02DBA7ADEE51505EDD3D39BE8096B3",
                 // True Ball Customizer
-                "FCD4933822018E5C1D5CD0B0825A146EDD21FD4A83929BCEC71BDB421BCF1085"
+                "FCD4933822018E5C1D5CD0B0825A146EDD21FD4A83929BCEC71BDB421BCF1085",
+                // BMOnline
+                "B3810E36B069F0BD53EDB4963B6D5B987DF200DE205488A6453C4DC7303A88DB",
+                "CAD9AC07692C06DDA7929415DC5DA4C8EB736EAFE7E1233881C178B9E8F9A303",
+                "A4DC6B1DDFD54C642D3AB18E8A1CF928666166333ED830B48A26223DB2E57B93"
             },
             WhitelistNames = new List<string>
             {
@@ -46,7 +50,10 @@ namespace BananaModManager
                 "TimerSound.dll",
                 "UI Enhancements.dll",
                 "ILBattleTimer.dll",
-                "TrueBallCustomizer.dll"
+                "TrueBallCustomizer.dll",
+                "BMOnline.Client.dll",
+                "BMOnline.Common.dll",
+                "BMOnline.Mod.dll"
             }
         };
 

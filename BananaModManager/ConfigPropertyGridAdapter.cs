@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using BananaModManager.Shared;
 
 namespace BananaModManager
@@ -14,7 +15,7 @@ namespace BananaModManager
 
         public ConfigPropertyGridAdapter(Dictionary<string, ConfigItem> currentConfig,
             Dictionary<string, ConfigItem> defaultConfig)
-        {
+        {   
             _currentConfig = currentConfig;
             _defaultConfig = defaultConfig;
         }

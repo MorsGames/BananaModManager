@@ -81,36 +81,46 @@ namespace BananaModManager
             using (var client = new WebClient())
             {
                 // Isolate the File ID for API usage
-                string fileID = downloadUrl.Remove(0, downloadUrl.Length - 6);
-
+                string[] fileID = downloadUrl.Split(',');
+                fileID[0] = fileID[0].Replace("https://gamebanana.com/mmdl/", "");
                 // GameBanana API requests
                 // Get the name of the archive
-                string fileName = client.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=File&itemid={fileID}&fields=file&format=json_min");
+                string fileName = client.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=File&itemid={fileID[0]}&fields=file&format=json_min");
                 // Get the entire archive contents
-                string fileContents = client.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=File&itemid={fileID}&fields=Metadata%28%29.aArchiveFilesList%28%29&format=json_min&flags=JSON_UNESCAPED_SLASHES");
-
+                string fileContents = client.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=File&itemid={fileID[0]}&fields=Metadata%28%29.aArchiveFilesList%28%29&format=json_min&flags=JSON_UNESCAPED_SLASHES");
                 // Remove the extra json junk
-                char[] stuff = {'[', ']', '"', '\"'};
+                char[] stuff = {'[', ']', '"', '"', '`', '\'', '"'};
                 fileContents = fileContents.Trim(stuff);
                 // Sort through the files and find the DLL
                 string[] files = fileContents.Split(',');
                 string DLL = "";
+                string folder = "";
+                string DLLFolder = "";
                 foreach (string i in files)
                 {
                     string file = i;
-                    // If it has a directory, remove it
-                    if (file.Contains("/"))
+                    foreach (char character in stuff)
                     {
+                        file = file.Replace(character.ToString(), "");
+                    }
+                    // If it has a directory, remove it
+                    if (file.Contains("/") || file.Contains ("\\"))
+                    {
+                        folder = file.Substring(0, file.IndexOf('/'));
                         file = file.Substring(file.IndexOf('/') + 1);
                     }
                     // Check the extension
-                    if (file.Contains(".dll"))
+                    if (file.Contains(".dll") || file.Contains(".DLL"))
                     {
+                        DLLFolder = folder;
                         DLL = file.Remove(file.Length -1, 1);
                     }
                     
                 }
-                fileName = fileName.Trim(stuff);
+                foreach(char character in stuff)
+                {
+                    fileName = fileName.Replace(character.ToString(), "");
+                }
                 string modName;
                 // Grab the mod name from the title of the main page
                 if (client.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=Mod&itemid={modID}&fields=Game%28%29.name&format=json_min").Contains("Mania"))
@@ -127,7 +137,6 @@ namespace BananaModManager
                 {
                     // Download the zip
                     client.DownloadFile(downloadUrl, modsDirectory + fileName);
-
                     // Check if the mod is installed and prompt to overwrite
                     string[] ExistingVersions = Directory.GetFiles(modsDirectory, DLL, SearchOption.AllDirectories);
                     if (ExistingVersions.Length != 0)
@@ -156,59 +165,61 @@ namespace BananaModManager
                         }
                     }
                     // Create the directory for the mod
-                    Directory.CreateDirectory(modsDirectory + modName);
+                    else
+                    {
+                        Directory.CreateDirectory(modsDirectory + modName);
+                    }
                     // Check for only DLL files and json files
                     bool moreFiles = false;
                     var zip = ZipFile.OpenRead(modsDirectory + fileName);
-                    string entryDirectory = null;
                     foreach (ZipArchiveEntry entry in zip.Entries)
                     {
-                        if (entry.FullName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) || (entry.FullName.EndsWith(".json", StringComparison.OrdinalIgnoreCase)))
-                        {
-                            {
-                                // Extract DLL or Json File
-                                if (!File.Exists(modsDirectory + entry.FullName))
-                                {
-                                    entry.ExtractToFile(modsDirectory + entry.FullName);
-                                    entryDirectory = entry.FullName.Remove(entry.FullName.Length - entry.Name.Length, entry.Name.Length);
-                                }
-                                // Store the directory within the zip file in case there's non-DLL or non-Json files in there
-                                if(entryDirectory != null)
-                                {
-                                    // If the file is in the mod's main directory, extract it
-                                    foreach (ZipArchiveEntry subDirectoryEntry in zip.Entries)
-                                    {
-                                        if (subDirectoryEntry.FullName.Contains(entryDirectory) && subDirectoryEntry.Name != entry.Name)
-                                        {
-
-                                            string fixedslashes = subDirectoryEntry.FullName.Replace("/", "\\");
-                                            if (!Directory.Exists(modsDirectory + fixedslashes) && fixedslashes.EndsWith("\\"))
-                                            {
-                                                Directory.CreateDirectory(modsDirectory + fixedslashes);
-                                            }
-                                            else
-                                            {
-                                                subDirectoryEntry.ExtractToFile(modsDirectory + fixedslashes);
-                                            }
-                                        }
-
-                                    }
-                                    entryDirectory = null;
-                                }
-                                continue;
-                            }
-                        }
-                        
-                        else
+                        // If it's not a dll or json, there's extra files somewhere in there
+                        if (!entry.FullName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) || !entry.FullName.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
                         {
                             moreFiles = true;
+                        }
+                        // Extract from the zip
+                        if (!File.Exists(modsDirectory + modName + "\\" + entry.Name) && !entry.FullName.EndsWith("/"))
+                        {
+                            // Check if there's an extra folder in the file's path
+                            if (DLLFolder != "" && entry.FullName.Contains(DLLFolder))
+                            {
+                                // Check if the directory needs to be created
+                                if (entry.FullName.Contains("/") || entry.FullName.Contains("\\") && !entry.FullName.EndsWith("/"))
+                                {
+                                    if (!Directory.Exists(modsDirectory + modName + "\\" + Path.GetDirectoryName(entry.FullName.Substring(DLLFolder.Length + 1))))
+                                    {
+                                        Directory.CreateDirectory(modsDirectory + modName + "\\" + Path.GetDirectoryName(entry.FullName.Substring(DLLFolder.Length + 1)));
+                                    }
+                                }
+                                // If it's not a folder, extract it
+                                if (!entry.FullName.EndsWith("/"))
+                                {
+                                    entry.ExtractToFile(modsDirectory + modName + "\\" + entry.FullName.Substring(DLLFolder.Length + 1));
+                                }
+                            }
+                            // If there isn't an extra folder, just extract
+                            else
+                            {
+                                if (!Directory.Exists(modsDirectory + modName + "\\" + Path.GetDirectoryName(entry.FullName)))
+                                {
+                                    Directory.CreateDirectory(modsDirectory + modName + "\\" + Path.GetDirectoryName(entry.FullName));
+                                }
+                                if (!entry.FullName.EndsWith("/"))
+                                {
+                                    entry.ExtractToFile(modsDirectory + modName + "\\" + entry.FullName.Substring(DLLFolder.Length + 1));
+                                }
+                            }
                         }
                     }
                     if (moreFiles)
                     {
                         // WE DID IT!
                         MessageBox.Show($"\"{modName}\" has been installed! Following this message box, the zip for {modName} will be opened. Please install the additional files to their appropriate directory. If you're stuck, try checking the GameBanana page for the mod or looking for a \"readme.txt\" file.", "Additional Files Detected!");
-                        Process.Start(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName);
+                        GC.WaitForPendingFinalizers();
+                        File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName); 
+                        Process.Start(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + modName);
                     }
                     else
                     {

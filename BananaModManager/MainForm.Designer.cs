@@ -213,7 +213,7 @@ namespace BananaModManager
             this.ContainerList.Panel2.Controls.Add(this.LabelTitle);
             this.ContainerList.Panel2.Controls.Add(this.TextDescription);
             this.ContainerList.Size = new System.Drawing.Size(409, 339);
-            this.ContainerList.SplitterDistance = 267;
+            this.ContainerList.SplitterDistance = 268;
             this.ContainerList.SplitterWidth = 3;
             this.ContainerList.TabIndex = 0;
             // 
@@ -232,7 +232,7 @@ namespace BananaModManager
             this.ListMods.Location = new System.Drawing.Point(0, 0);
             this.ListMods.Margin = new System.Windows.Forms.Padding(2);
             this.ListMods.Name = "ListMods";
-            this.ListMods.Size = new System.Drawing.Size(409, 267);
+            this.ListMods.Size = new System.Drawing.Size(409, 268);
             this.ListMods.TabIndex = 9;
             this.ListMods.UseCompatibleStateImageBehavior = false;
             this.ListMods.View = System.Windows.Forms.View.Details;
@@ -275,7 +275,7 @@ namespace BananaModManager
             this.TextDescription.Multiline = true;
             this.TextDescription.Name = "TextDescription";
             this.TextDescription.ReadOnly = true;
-            this.TextDescription.Size = new System.Drawing.Size(409, 69);
+            this.TextDescription.Size = new System.Drawing.Size(409, 68);
             this.TextDescription.TabIndex = 0;
             // 
             // GridConfig
