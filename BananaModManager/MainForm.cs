@@ -275,9 +275,12 @@ namespace BananaModManager
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
-            foreach(KeyValuePair<string, ConfigItem> pair in SelectedMod.Config)
+            if (ContainerMain.Panel2Collapsed != true)
             {
-                ConfigItem item = pair.Value;
+                foreach (KeyValuePair<string, ConfigItem> pair in SelectedMod.Config)
+                {
+                    ConfigItem item = pair.Value;
+                }
             }
             // Get the mod order
             var modOrder = new List<string>();
