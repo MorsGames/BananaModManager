@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -120,7 +121,7 @@ namespace BananaModManager
         }
 
         private Game CurrentGame { get; set; }
-
+        private ConfigPropertyGridAdapter configPropertyGridAdapter;
         public Mod SelectedMod => Mods.List[ListMods.SelectedItems[0].Name];
 
         private void LoadMods()
@@ -251,10 +252,10 @@ namespace BananaModManager
             if (ListMods.SelectedItems.Count > 0)
             {
                 var mod = SelectedMod;
-
+                configPropertyGridAdapter = new ConfigPropertyGridAdapter(mod.Config, mod.DefaultConfig);
                 ContainerMain.Panel2Collapsed = mod.DefaultConfig.Count == 0;
                 ContainerList.Panel2Collapsed = false;
-                GridConfig.SelectedObject = new ConfigPropertyGridAdapter(mod.Config, mod.DefaultConfig);
+                GridConfig.SelectedObject = configPropertyGridAdapter;
                 LabelTitle.Text = mod.Info.Title + " by " + mod.Info.Author;
                 if (mod.Info.AuthorURL == "") 
                     LabelTitle.LinkArea = new LinkArea(0, 0);
@@ -275,20 +276,6 @@ namespace BananaModManager
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
-            try
-            {
-                if (ContainerMain.Panel2Collapsed != true)
-                {
-                    foreach (KeyValuePair<string, ConfigItem> pair in SelectedMod.Config)
-                    {
-                        ConfigItem item = pair.Value;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
             // Get the mod order
             var modOrder = new List<string>();
             foreach (ListViewItem item in ListMods.Items)
@@ -397,6 +384,17 @@ namespace BananaModManager
         private void label2_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void GridConfig_PropertyValueChanged_1(object s, PropertyValueChangedEventArgs e)
+        {
+            foreach(KeyValuePair<string, ConfigItem> kvp in SelectedMod.Config)
+            {
+                if (kvp.Key == e.ChangedItem.PropertyDescriptor.Name.Replace(" ", ""))
+                {
+                    kvp.Value.Value = e.ChangedItem.Value.ToString();
+                }
+            }
         }
     }
 }

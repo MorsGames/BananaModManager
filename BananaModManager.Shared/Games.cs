@@ -26,8 +26,10 @@ namespace BananaModManager
                 "B678793A497954A4E05A76352781A07EC209087946506308E1E7722D5F2BFBAD",
                 // Dynamic Roll
                 "5B0BA8297E40FCF0ACFA47A6E2B12BB65DA96BD96202AF4C242715F31EEE2BDC",
+                "F80B3B59886695EF5784DF29E8468425866554BECE13A1E9EADCB5541DAE6EC0",
                 // Guest Characters
                 "27F4B47A9F37B36BAC14FC4B10C7CBA399D7571E7879CADE9C961697CAE6F8FB",
+                "46C9EEF7A4A41D378E726739129D76852A00A930EE1C6AA8D5D905C342F7FC99",
                 // Timer Sound
                 "F62DB98D3F1F77717ACE38D706EA431663780EBF5BBB8A751010B92F24AA889F",
                 // UI
@@ -46,7 +48,9 @@ namespace BananaModManager
                 "GraphicalTweaks.dll",
                 "NoPrompt.dll",
                 "DynamicSounds.dll",
+                "DynamicSoundsPlusMultiplayer.dll",
                 "GuestCharacters.dll",
+                "GuestCharactersMultiplayer.dll",
                 "TimerSound.dll",
                 "UI Enhancements.dll",
                 "ILBattleTimer.dll",
