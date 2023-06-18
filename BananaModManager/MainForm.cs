@@ -392,7 +392,7 @@ namespace BananaModManager
             {
                 if (kvp.Key == e.ChangedItem.PropertyDescriptor.Name.Replace(" ", ""))
                 {
-                    kvp.Value.Value = e.ChangedItem.Value.ToString();
+                    kvp.Value.Value = e.ChangedItem.Value;
                 }
             }
         }
