@@ -134,6 +134,7 @@ namespace BananaModManager
             // 
             // TabControl
             // 
+            this.TabControl.Appearance = System.Windows.Forms.TabAppearance.Buttons;
             this.TabControl.Controls.Add(this.PageMods);
             this.TabControl.Controls.Add(this.PageSettings);
             this.TabControl.Controls.Add(this.PageAbout);
@@ -213,12 +214,13 @@ namespace BananaModManager
             this.ContainerList.Panel2.Controls.Add(this.LabelTitle);
             this.ContainerList.Panel2.Controls.Add(this.TextDescription);
             this.ContainerList.Size = new System.Drawing.Size(409, 339);
-            this.ContainerList.SplitterDistance = 269;
+            this.ContainerList.SplitterDistance = 272;
             this.ContainerList.SplitterWidth = 3;
             this.ContainerList.TabIndex = 0;
             // 
             // ListMods
             // 
+            this.ListMods.BackColor = System.Drawing.SystemColors.Window;
             this.ListMods.CheckBoxes = true;
             this.ListMods.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.ColName,
@@ -232,7 +234,7 @@ namespace BananaModManager
             this.ListMods.Location = new System.Drawing.Point(0, 0);
             this.ListMods.Margin = new System.Windows.Forms.Padding(2);
             this.ListMods.Name = "ListMods";
-            this.ListMods.Size = new System.Drawing.Size(409, 269);
+            this.ListMods.Size = new System.Drawing.Size(409, 272);
             this.ListMods.TabIndex = 9;
             this.ListMods.UseCompatibleStateImageBehavior = false;
             this.ListMods.View = System.Windows.Forms.View.Details;
@@ -275,7 +277,7 @@ namespace BananaModManager
             this.TextDescription.Multiline = true;
             this.TextDescription.Name = "TextDescription";
             this.TextDescription.ReadOnly = true;
-            this.TextDescription.Size = new System.Drawing.Size(409, 67);
+            this.TextDescription.Size = new System.Drawing.Size(409, 64);
             this.TextDescription.TabIndex = 0;
             // 
             // GridConfig
@@ -587,11 +589,13 @@ namespace BananaModManager
             this.LabelAboutTitle.Size = new System.Drawing.Size(520, 65);
             this.LabelAboutTitle.TabIndex = 3;
             this.LabelAboutTitle.Text = "BananaModManager";
+            this.LabelAboutTitle.Click += new System.EventHandler(this.LabelAboutTitle_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.BackColor = System.Drawing.Color.DarkSlateGray;
             this.ClientSize = new System.Drawing.Size(627, 449);
             this.Controls.Add(this.TabControl);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));

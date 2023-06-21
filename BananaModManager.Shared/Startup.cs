@@ -31,9 +31,9 @@ namespace BananaModManager.Shared
                 ShowWindow(handle, SW_SHOW);
         }
 
-        public static void StartModLoader(out List<Mod> mods, out bool speedrunMode, out bool saveMode, out bool discordRPC, out bool legacyMode)
+        public static void StartModLoader(out List<Mod> mods, out bool speedrunMode, out bool saveMode, out bool discordRPC, out bool legacyMode, out bool darkMode)
         {
-            Mods.Load(out var activeMods, out var consoleWindow, out speedrunMode, out bool oneClick, out bool fastRestart, out saveMode, out discordRPC, out legacyMode);
+            Mods.Load(out var activeMods, out var consoleWindow, out speedrunMode, out bool oneClick, out bool fastRestart, out saveMode, out discordRPC, out legacyMode, out darkMode);
 
             if (consoleWindow)
                 ShowConsoleWindow();

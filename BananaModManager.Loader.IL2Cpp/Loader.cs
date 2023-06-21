@@ -63,7 +63,7 @@ namespace BananaModManager.Loader.IL2Cpp
         {
             try
             {
-                Startup.StartModLoader(out _mods, out _speedrunMode, out _saveMode, out _discordRPC, out _legacy);
+                Startup.StartModLoader(out _mods, out _speedrunMode, out _saveMode, out _discordRPC, out _legacy, out _);
 
                 Console.WriteLine("Setting up the hooks...");
 
@@ -311,7 +311,7 @@ namespace BananaModManager.Loader.IL2Cpp
             // If F11 is pressed, restart and toggle Speedrun Mode
             if (AppInput.GetKeyDown(KeyCode.F11) && userConfig.FastRestart == true)
             {
-                Shared.Mods.Save(userConfig.ActiveMods, userConfig.ConsoleWindow, !userConfig.SpeedrunMode, userConfig.OneClick, userConfig.FastRestart, userConfig.SaveMode, userConfig.DiscordRPC, userConfig.LegacyMode);
+                Shared.Mods.Save(userConfig.ActiveMods, userConfig.ConsoleWindow, !userConfig.SpeedrunMode, userConfig.OneClick, userConfig.FastRestart, userConfig.SaveMode, userConfig.DiscordRPC, userConfig.LegacyMode, userConfig.DarkMode);
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = "steam://rungameid/" + currentGame.AppID,

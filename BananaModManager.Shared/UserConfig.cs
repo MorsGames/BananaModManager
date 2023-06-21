@@ -52,5 +52,11 @@ namespace BananaModManager.Shared
         ///     Enables Speedrun Mode and Save Mode to run on version 1.0.0
         /// </summary>
         public bool LegacyMode { get; set; } = false;
+
+
+        /// <summary>
+        /// Activates the hidden dark mode
+        /// </summary>
+        public bool DarkMode { get; set; } = false;
     }
 }

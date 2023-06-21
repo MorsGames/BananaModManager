@@ -18,6 +18,8 @@ namespace BananaModManager
 {
     public partial class MainForm : Form
     {
+        private bool darkModeEnabled;
+        
         public MainForm()
         {
             // Check for updates to Banana Mod Manager
@@ -86,10 +88,10 @@ namespace BananaModManager
                 ComboGames.SelectedItem = CurrentGame;
                 SetUpGame(CurrentGame);
                 ComboGames.SelectedIndexChanged += SetupCurrentGame;
-
+                
                 // Load the mods as well as the mod order
                 LoadMods();
-
+                DarkMode();
                 // Collapse the panels, only showing the mod list
                 ContainerMain.Panel2Collapsed = true;
                 ContainerList.Panel2Collapsed = true;
@@ -109,7 +111,6 @@ namespace BananaModManager
 
             
         }
-
         private void SetupCurrentGame(object sender, EventArgs e)
         {
             var game = (Game) ComboGames.SelectedItem;
@@ -127,7 +128,7 @@ namespace BananaModManager
         private void LoadMods()
         {
             // Load the mods
-            Mods.Load(out var modOrder, out var consoleWindow, out var speedrunMode, out var oneClick, out var fastRestart, out var saveMode, out var discordRPC, out var legacyMode);
+            Mods.Load(out var modOrder, out var consoleWindow, out var speedrunMode, out var oneClick, out var fastRestart, out var saveMode, out var discordRPC, out var legacyMode, out var darkMode);
 
             // First add the mods based on their order
             foreach (var mod in modOrder.Select(_ => Mods.List[_]))
@@ -147,6 +148,7 @@ namespace BananaModManager
             SaveModeCheckbox.Checked = saveMode;
             DiscordRPC.Checked = discordRPC;
             legacyModeCheckbox.Checked = legacyMode;
+            darkModeEnabled = darkMode;
         }
 
         private void AddMod(Mod mod)
@@ -281,7 +283,7 @@ namespace BananaModManager
             foreach (ListViewItem item in ListMods.Items)
                 if (item.Checked)
                     modOrder.Add(item.Name);
-            Mods.Save(modOrder, CheckConsole.Checked, CheckSpeedrun.Checked, CheckOneClick.Checked, CheckFastRestart.Checked, SaveModeCheckbox.Checked, DiscordRPC.Checked, legacyModeCheckbox.Checked);
+            Mods.Save(modOrder, CheckConsole.Checked, CheckSpeedrun.Checked, CheckOneClick.Checked, CheckFastRestart.Checked, SaveModeCheckbox.Checked, DiscordRPC.Checked, legacyModeCheckbox.Checked, darkModeEnabled);
 
             // We wanna reload everything now
             Mods.List.Clear();
@@ -388,13 +390,144 @@ namespace BananaModManager
 
         private void GridConfig_PropertyValueChanged_1(object s, PropertyValueChangedEventArgs e)
         {
-            foreach(KeyValuePair<string, ConfigItem> kvp in SelectedMod.Config)
+            try
             {
-                if (kvp.Key == e.ChangedItem.PropertyDescriptor.Name.Replace(" ", ""))
+                foreach (KeyValuePair<string, ConfigItem> kvp in SelectedMod.Config)
                 {
-                    kvp.Value.Value = e.ChangedItem.Value;
+                    if (kvp.Key == e.ChangedItem.PropertyDescriptor.Name.Replace(" ", ""))
+                    {
+                        kvp.Value.Value = e.ChangedItem.Value;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occured saving your mods! Please re-select the mod you're saving, then try again.");
+            }
+        }
+        private void SetColors(Control control, string color)
+        {
+            
+            if (color == "Black")
+            {
+                this.BackColor = Color.DarkSlateGray;
+                if (control is PropertyGrid)
+                {
+                    SetColorsPropGrid((PropertyGrid)control, color);
+                }
+                this.BackColor = Color.DarkSlateGray;
+                this.ForeColor = Color.White;
+                if (control.ForeColor != Color.White)
+                {
+                    control.ForeColor = Color.White;
+                }
+                if (control.BackColor != Color.DarkSlateGray)
+                {
+                    control.BackColor = Color.DarkSlateGray;
+                }
+                if (control.HasChildren)
+                {
+                    foreach (Control controlChild in control.Controls)
+                    {
+                        SetColors(controlChild, color);
+                    }
+                }
+            }
+            if (color == "White")
+            {
+                if (control is PropertyGrid)
+                {
+                    SetColorsPropGrid((PropertyGrid)control, color);
+                }
+                this.BackColor = SystemColors.Window;
+                this.ForeColor = SystemColors.WindowText;
+                if (control.ForeColor != SystemColors.ControlText)
+                {
+                    control.ForeColor = SystemColors.ControlText;
+                }
+                if (control.BackColor != SystemColors.Window)
+                {
+                    control.BackColor = SystemColors.Window;
+                }
+                if (control.HasChildren)
+                {
+                    foreach (Control controlChild in control.Controls)
+                    {
+                        SetColors(controlChild, color);
+                    }
+                }
+            }
+        }
+        private void SetColorsPropGrid(PropertyGrid propgrid, string color)
+        {
+            if (color == "Black")
+            {
+                propgrid.ViewForeColor = Color.DarkSlateGray;
+                propgrid.CategoryForeColor = Color.White;
+                propgrid.CategorySplitterColor = Color.White;
+                propgrid.CommandsBackColor = Color.DarkSlateGray;
+                propgrid.HelpBackColor = Color.DarkSlateGray;
+                propgrid.LineColor = Color.DarkSlateGray;
+                propgrid.HelpForeColor = Color.White;
+                propgrid.CommandsBorderColor = Color.White;
+                propgrid.CommandsForeColor = Color.White;
+            }
+            else
+            {
+                propgrid.ViewForeColor = SystemColors.HighlightText;
+                propgrid.CategoryForeColor = SystemColors.Control;
+                propgrid.CategorySplitterColor = SystemColors.Control;
+                propgrid.CommandsBackColor = SystemColors.Control;
+                propgrid.HelpBackColor = SystemColors.Control;
+                propgrid.LineColor = SystemColors.InactiveBorder;
+                propgrid.HelpForeColor = SystemColors.ControlText;
+                propgrid.CommandsBorderColor = SystemColors.ControlDark;
+                propgrid.CommandsForeColor = SystemColors.Control;
+            }
+        }
+
+        private void DarkMode()
+        {
+            if (darkModeEnabled)
+            {
+                foreach (Control control in this.Controls)
+                {
+                    SetColors(control, "Black");
+                }
+            }
+            else
+            {
+                foreach (Control control in this.Controls)
+                {
+                    SetColors(control, "White");
+                }
+            }
+        }
+
+        private void LabelAboutTitle_Click(object sender, EventArgs e)
+        {
+            darkModeEnabled = !darkModeEnabled;
+            if (darkModeEnabled)
+            {
+                DarkMode();
+                MessageBox.Show("Dark Mode enabled!");
+            }
+            else
+            {
+                DarkMode();
+                MessageBox.Show("Returning to the light...");
+            }
+
+            var modOrder = new List<string>();
+            foreach (ListViewItem item in ListMods.Items)
+                if (item.Checked)
+                    modOrder.Add(item.Name);
+            Mods.Save(modOrder, CheckConsole.Checked, CheckSpeedrun.Checked, CheckOneClick.Checked, CheckFastRestart.Checked, SaveModeCheckbox.Checked, DiscordRPC.Checked, legacyModeCheckbox.Checked, darkModeEnabled);
+
+            // We wanna reload everything now
+            Mods.List.Clear();
+            ListMods.Items.Clear();
+            LoadMods();
         }
     }
 }

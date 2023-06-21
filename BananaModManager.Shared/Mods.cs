@@ -22,7 +22,7 @@ namespace BananaModManager.Shared
         ///     Loads all necessary data about all the mods
         /// </summary>
         /// <param name="activeMods">A list of all mods that are currently enabled, in a specific order.</param>
-        public static void Load(out List<string> activeMods, out bool consoleWindow, out bool speedrunMode, out bool oneClick, out bool fastRestart, out bool saveMode, out bool discordRPC, out bool legacyMode)
+        public static void Load(out List<string> activeMods, out bool consoleWindow, out bool speedrunMode, out bool oneClick, out bool fastRestart, out bool saveMode, out bool discordRPC, out bool legacyMode, out bool darkMode)
         {
             // Load the config file
             var userConfig = LoadUserConfig();
@@ -36,6 +36,7 @@ namespace BananaModManager.Shared
             saveMode = userConfig.SaveMode;
             discordRPC = userConfig.DiscordRPC;
             legacyMode = userConfig.LegacyMode;
+            darkMode = userConfig.DarkMode;
 
 
             // Get the mods folder
@@ -183,7 +184,7 @@ namespace BananaModManager.Shared
         ///     Saves the user config of the mod manager.
         /// </summary>
         /// <param name="activeMods">A list of enabled mods, in a specific order.</param>
-        public static void Save(List<string> activeMods, bool consoleWindow, bool speedrunMode, bool oneClick, bool fastRestart, bool saveMode, bool discordRPC, bool legacyMode)
+        public static void Save(List<string> activeMods, bool consoleWindow, bool speedrunMode, bool oneClick, bool fastRestart, bool saveMode, bool discordRPC, bool legacyMode, bool darkMode)
         {
             // Config object used for the user data
             var loaderConfig = new UserConfig
@@ -195,7 +196,8 @@ namespace BananaModManager.Shared
                 FastRestart = fastRestart,
                 SaveMode = saveMode,
                 DiscordRPC = discordRPC,
-                LegacyMode = legacyMode
+                LegacyMode = legacyMode,
+                DarkMode = darkMode
         };
 
             // Add the configs into it
