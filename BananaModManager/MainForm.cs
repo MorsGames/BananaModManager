@@ -358,9 +358,10 @@ namespace BananaModManager
             DeleteMod();
         }
 
+        // the fact that this still references the discord server internally could become an issue later, but it's fine for right now (i will regret saying this later)
         private void BtnDiscord_Click(object sender, EventArgs e)
         {
-            Process.Start("https://discord.gg/vuZWDMzzye");
+            LoadMods();
         }
 
         private void BtnSave2_Click(object sender, EventArgs e)
