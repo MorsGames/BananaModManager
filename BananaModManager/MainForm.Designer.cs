@@ -309,7 +309,7 @@ namespace BananaModManager
             this.BtnDiscord.Name = "BtnDiscord";
             this.BtnDiscord.Size = new System.Drawing.Size(102, 26);
             this.BtnDiscord.TabIndex = 10;
-            this.BtnDiscord.Text = "Reload Mods";
+            this.BtnDiscord.Text = "Refresh List";
             this.BtnDiscord.Click += new System.EventHandler(this.BtnDiscord_Click);
             // 
             // BtnSaveAndPlay
