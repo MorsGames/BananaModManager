@@ -34,14 +34,16 @@ namespace BananaModManager
                 "9E9B316CC6D5F349011694CCF0A1172E1621BF6D3B30D7562B0EB179A0661563",
                 // Timer Sound
                 "F62DB98D3F1F77717ACE38D706EA431663780EBF5BBB8A751010B92F24AA889F",
-                // UI
-                "62B4D876FF957A5E681E8820B0CAD61126A86B5890DB6C6FB23CF32BCFCFD517",
-                // IL timer
+                // UI Enhancements
+                "4A9B5B06FEFF81B2C3E7D0E287D7AF285357F8A12EC1DAA9F266A8C84F7B2BAD",
+                // IL Timer
                 "F8C8CC2FA8130722AC0E03AFA506EF94BDD4BF40F6C28DC0218FCF1439835ACD",
                 // True Ball Customizer
                 "FCD4933822018E5C1D5CD0B0825A146EDD21FD4A83929BCEC71BDB421BCF1085",
+                // Bingo UI
+                "BB6403BEED413CC04E2EC600F283C5AD2604B7FDC843E6738EF3D1B3811BA069",
                 // BMOnline
-                "4B7D7C62DC706095C236DE178EA97DDB11FDEC567B8FFC0EB192D572300E9EAD"
+                "C10831F1C77AAEE71DCC85DD49F7CC9B9209BA4C1249441E6976B7A3C455C066"
             },
             WhitelistNames = new List<string>
             {
@@ -55,6 +57,7 @@ namespace BananaModManager
                 "UI Enhancements.dll",
                 "ILBattleTimer.dll",
                 "TrueBallCustomizer.dll",
+                "BingoUI.dll",
                 "BMOnline.Client.dll",
                 "BMOnline.Common.dll",
                 "BMOnline.Mod.dll"
