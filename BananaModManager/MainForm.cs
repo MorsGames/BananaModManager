@@ -35,6 +35,8 @@ namespace BananaModManager
                     {
                         if (MessageBox.Show("Your version of BananaModManager is out of date! Would you like to download the latest version?" + "\n \n Patch Notes: \n" + parsedJson.body, "Update Available!", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                         {
+                            // Run before updating to make sure that the folder is clean for updating
+                            ClearLeftovers();
                             BananaModManager.Update.Download();
                             ProcessStartInfo startInfo = new ProcessStartInfo(AppDomain.CurrentDomain.BaseDirectory + "\\New\\BananaModManager.exe");
                             startInfo.Arguments = "--update";
@@ -48,23 +50,10 @@ namespace BananaModManager
                     MessageBox.Show(e.ToString());
                 }
             }
-            
-            //Check for leftovers from update process
-            try
-            {
-                if (Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\New\\"))
-                {
-                    Directory.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\New\\", true);
-                }
-                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Download.zip"))
-                {
-                    File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\Download.zip");
-                }
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.ToString());
-            }
+
+            // Run to check for leftovers in the update process
+            ClearLeftovers();
+
             try
             {
                 InitializeComponent();
@@ -119,6 +108,27 @@ namespace BananaModManager
 
             CurrentGame = game;
             SetUpGame(CurrentGame);
+        }
+
+        // a private function to clear the leftover files from a previous update (attempt)
+        private void ClearLeftovers()
+        {
+            try
+            {
+                if (Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\New\\"))
+                {
+                    Directory.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\New\\", true);
+                }
+                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Download.zip"))
+                {
+                    File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\Download.zip");
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+                
+            }
         }
 
         private Game CurrentGame { get; set; }
