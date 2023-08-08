@@ -36,14 +36,16 @@ namespace BananaModManager
                 "F62DB98D3F1F77717ACE38D706EA431663780EBF5BBB8A751010B92F24AA889F",
                 // UI Enhancements
                 "4A9B5B06FEFF81B2C3E7D0E287D7AF285357F8A12EC1DAA9F266A8C84F7B2BAD",
-                // IL Timer
-                "F8C8CC2FA8130722AC0E03AFA506EF94BDD4BF40F6C28DC0218FCF1439835ACD",
+                // IL Battle Timer
+                "6E63EA9F81735FF6B87C8A3E093D6569045890B9B4ADC90D1EF03B3DE08F0B60",
                 // True Ball Customizer
                 "FCD4933822018E5C1D5CD0B0825A146EDD21FD4A83929BCEC71BDB421BCF1085",
                 // Bingo UI
-                "BB6403BEED413CC04E2EC600F283C5AD2604B7FDC843E6738EF3D1B3811BA069",
+                "74925F51E9D3EF58026599FD524872F6F684125F325CE6E5026B4F346B9F7EEB",
                 // BMOnline
-                "C10831F1C77AAEE71DCC85DD49F7CC9B9209BA4C1249441E6976B7A3C455C066"
+                "C10831F1C77AAEE71DCC85DD49F7CC9B9209BA4C1249441E6976B7A3C455C066",
+                // Online IL Battle Timer
+                "DBBC59AD3316D0CD8022653D646CFFDAF5047D7A6FCC5ED5DD64EAE37B9229DF"
             },
             WhitelistNames = new List<string>
             {
@@ -55,9 +57,10 @@ namespace BananaModManager
                 "GuestCharactersMultiplayer.dll",
                 "TimerSound.dll",
                 "UI Enhancements.dll",
-                "ILBattleTimer.dll",
+                "IL Battle Timer.dll",
                 "TrueBallCustomizer.dll",
                 "BingoUI.dll",
+                "OnlineILBattleTimer.dll",
                 "BMOnline.Client.dll",
                 "BMOnline.Common.dll",
                 "BMOnline.Mod.dll"
