@@ -388,6 +388,11 @@ namespace BananaModManager.Loader.IL2Cpp
                 DrawTextOutline(new Rect(Screen.width - offset.x - offset2 + _modListSlide, offset.y + style.fontSize * i, offset2 - offset.x, style.fontSize),
                     _SpeedrunList[i], outlineSize, style);
             }
+
+            // Add custom Speedrunner Hash
+            DrawTextOutline(new Rect(Screen.width - offset.x - offset2 + _modListSlide, offset.y + style.fontSize * (_SpeedrunList.Count + 1), offset2 - offset.x, style.fontSize),
+                    AntiCheat.SpeedrunModeCode(), outlineSize, style);
+
         }
         public static void OnDisable()
         {
