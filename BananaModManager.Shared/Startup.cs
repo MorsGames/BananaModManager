@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Runtime.InteropServices;
 using BananaModManager.Loader;
+using System.Diagnostics;
 
 namespace BananaModManager.Shared
 {
@@ -42,7 +44,7 @@ namespace BananaModManager.Shared
             Console.WriteLine("BananaModManager by Mors!");
             Console.WriteLine("Speedrun fixes created by iswimfly!");
             Console.ForegroundColor = ConsoleColor.White;
-
+            
             // Get the current game
             Game currentGame = null;
             foreach (var game in Games.List)
