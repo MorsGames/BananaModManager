@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace BananaModManager.Shared
 {
-    internal class Class1
+    public static class AntiCheat
     {
+        public static string SpeedrunModeCode()
+        {
+            string customHash = "";
+            return customHash;
+        }
     }
 }
