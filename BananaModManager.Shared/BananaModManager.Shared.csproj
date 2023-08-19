@@ -102,6 +102,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AntiCheat.cs" />
     <Compile Include="ConfigItem.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Games.cs" />

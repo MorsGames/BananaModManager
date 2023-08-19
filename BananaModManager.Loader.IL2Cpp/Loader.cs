@@ -371,9 +371,9 @@ namespace BananaModManager.Loader.IL2Cpp
             var offset = new Vector2(156f - _modListSlide * 384f, 160f) * ratio;
             var offset2 = 160f * ratio;
 
-            // Draw the title
+            // Draw the title and mod loader version
             DrawTextOutline(new Rect(Screen.width - offset.x - offset2 + _modListSlide, offset.y, Screen.width, style.fontSize),
-                "Loaded Mods:", (int)Mathf.Ceil(ratio), style);
+                $"Loaded Mods (v{Assembly.LoadFile(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\BananaModManager.exe").GetName().Version}):", (int)Mathf.Ceil(ratio), style);
 
             // Change the font size and add extra offset for the rest
             style.fontSize = Math.Max(12, (int)(16.0f * ratio));
@@ -388,7 +388,6 @@ namespace BananaModManager.Loader.IL2Cpp
                 DrawTextOutline(new Rect(Screen.width - offset.x - offset2 + _modListSlide, offset.y + style.fontSize * i, offset2 - offset.x, style.fontSize),
                     _SpeedrunList[i], outlineSize, style);
             }
-
             // Add custom Speedrunner Hash
             DrawTextOutline(new Rect(Screen.width - offset.x - offset2 + _modListSlide, offset.y + style.fontSize * (_SpeedrunList.Count + 1), offset2 - offset.x, style.fontSize),
                     AntiCheat.SpeedrunModeCode(), outlineSize, style);
