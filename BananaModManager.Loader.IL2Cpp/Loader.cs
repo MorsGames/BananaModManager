@@ -145,7 +145,7 @@ namespace BananaModManager.Loader.IL2Cpp
                     {
                         Thread.Sleep(12000);
 
-                        if (Mods.Count > 0 && !_speedrunMode)
+                        if (Mods.Count > 0 && !_speedrunMode || AntiCheat.SpeedrunModeCode() == "")
                         {
                             LeaderboardsDelegateInstance = Dummy;
                             if (_legacy == true)
