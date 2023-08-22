@@ -1,4 +1,4 @@
-# List of Speedrun Legal Mods
+# List of Speedrun Legal Mods (Gamebanana Links may or may not be updated!)
 
 - Graphical Tweaks: https://gamebanana.com/mods/327537
 - No Helper Prompt (Only legal for the purpose of IL submissions, use with caution): https://gamebanana.com/mods/327404
@@ -7,5 +7,8 @@
 - Timer Sound: https://gamebanana.com/sounds/56772
 - UI Enhancements: https://gamebanana.com/mods/382591 
 - Indivdual Level Battle Timer: https://gamebanana.com/mods/428681
+- Banana Mania Online: https://gamebanana.com/mods/449887
+- Bingo UI: https://github.com/iswimfly/iswimflyBananaManiaMods/tree/main/Bingo%20UI
+- Online IL Battle Timer: https://github.com/iswimfly/iswimflyBananaManiaMods/tree/main/Online%20IL%20Battle%20Timer
 
 A full collection of all legal mods will be included with each [release](https://github.com/iswimfly/BananaModManager/releases)
