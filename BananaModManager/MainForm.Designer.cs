@@ -77,6 +77,7 @@ namespace BananaModManager
             this.TextInfo = new System.Windows.Forms.TextBox();
             this.LabelAboutVersion = new System.Windows.Forms.Label();
             this.LabelAboutTitle = new System.Windows.Forms.Label();
+            this.UpdateBananaManiaSpeedrunMods = new System.Windows.Forms.Button();
             this.MenuConfig.SuspendLayout();
             this.MenuMods.SuspendLayout();
             this.TabControl.SuspendLayout();
@@ -214,7 +215,7 @@ namespace BananaModManager
             this.ContainerList.Panel2.Controls.Add(this.LabelTitle);
             this.ContainerList.Panel2.Controls.Add(this.TextDescription);
             this.ContainerList.Size = new System.Drawing.Size(409, 339);
-            this.ContainerList.SplitterDistance = 272;
+            this.ContainerList.SplitterDistance = 279;
             this.ContainerList.SplitterWidth = 3;
             this.ContainerList.TabIndex = 0;
             // 
@@ -234,7 +235,7 @@ namespace BananaModManager
             this.ListMods.Location = new System.Drawing.Point(0, 0);
             this.ListMods.Margin = new System.Windows.Forms.Padding(2);
             this.ListMods.Name = "ListMods";
-            this.ListMods.Size = new System.Drawing.Size(409, 272);
+            this.ListMods.Size = new System.Drawing.Size(409, 279);
             this.ListMods.TabIndex = 9;
             this.ListMods.UseCompatibleStateImageBehavior = false;
             this.ListMods.View = System.Windows.Forms.View.Details;
@@ -277,7 +278,7 @@ namespace BananaModManager
             this.TextDescription.Multiline = true;
             this.TextDescription.Name = "TextDescription";
             this.TextDescription.ReadOnly = true;
-            this.TextDescription.Size = new System.Drawing.Size(409, 64);
+            this.TextDescription.Size = new System.Drawing.Size(409, 57);
             this.TextDescription.TabIndex = 0;
             // 
             // GridConfig
@@ -382,13 +383,14 @@ namespace BananaModManager
             this.PanelSettings.Controls.Add(this.DiscordRPCLabel);
             this.PanelSettings.Controls.Add(this.legacyModeCheckbox);
             this.PanelSettings.Controls.Add(this.legacyModeLabel);
-            this.PanelSettings.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.PanelSettings.Controls.Add(this.UpdateBananaManiaSpeedrunMods);
             this.PanelSettings.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.PanelSettings.Location = new System.Drawing.Point(2, 2);
             this.PanelSettings.Margin = new System.Windows.Forms.Padding(6);
             this.PanelSettings.Name = "PanelSettings";
             this.PanelSettings.Size = new System.Drawing.Size(615, 413);
             this.PanelSettings.TabIndex = 0;
+            this.PanelSettings.WrapContents = false;
             // 
             // LabelGame
             // 
@@ -591,6 +593,16 @@ namespace BananaModManager
             this.LabelAboutTitle.Text = "BananaModManager";
             this.LabelAboutTitle.Click += new System.EventHandler(this.LabelAboutTitle_Click);
             // 
+            // UpdateBananaManiaSpeedrunMods
+            // 
+            this.UpdateBananaManiaSpeedrunMods.Location = new System.Drawing.Point(3, 349);
+            this.UpdateBananaManiaSpeedrunMods.Name = "UpdateBananaManiaSpeedrunMods";
+            this.UpdateBananaManiaSpeedrunMods.Size = new System.Drawing.Size(257, 23);
+            this.UpdateBananaManiaSpeedrunMods.TabIndex = 13;
+            this.UpdateBananaManiaSpeedrunMods.Text = "Update Speedrun Legal Mods (BM)";
+            this.UpdateBananaManiaSpeedrunMods.UseVisualStyleBackColor = true;
+            this.UpdateBananaManiaSpeedrunMods.Click += new System.EventHandler(this.UpdateBananaManiaSpeedrunMods_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -673,6 +685,7 @@ namespace BananaModManager
         private System.Windows.Forms.Label DiscordRPCLabel;
         private System.Windows.Forms.CheckBox legacyModeCheckbox;
         private System.Windows.Forms.Label legacyModeLabel;
+        private System.Windows.Forms.Button UpdateBananaManiaSpeedrunMods;
     }
 }
 

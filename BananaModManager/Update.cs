@@ -83,5 +83,106 @@ namespace BananaModManager
             }
             
         }
+
+        public static void UpdateSpeedrunLegalMods()
+        {
+            bool installAll = false;
+            if (MessageBox.Show("Would you like to install all other Speedrun-legal mods in addition to updating the mods you already have installed?", "Install New Mods?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+            {
+                installAll = true;
+            }
+            using (WebClient wc = new WebClient())
+            {
+                try
+                {
+                    // Get the latest release info from GitHub's API
+                    wc.Headers.Add("user-agent", "request");
+                    var jsondata = wc.DownloadString(new System.Uri("https://api.github.com/repos/MorsGames/BananaModManager/releases/latest"));
+                    Release parsedJson = JsonConvert.DeserializeObject<Release>(jsondata);
+                    // Delete leftover if it's there for some reason
+                    if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\LegalMods.zip"))
+                    {
+                        File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\LegalMods.zip");
+                    }
+                    wc.DownloadFile(parsedJson.assets[1].browser_download_url, AppDomain.CurrentDomain.BaseDirectory + "\\LegalMods.zip");
+
+                    // Get path of mods folder and whitelisted mods list
+                    string pathModsFolder = AppDomain.CurrentDomain.BaseDirectory + "mods\\";
+                    List<string> whitelistedMods = Games.BananaMania.WhitelistNames;
+
+                    // Prep objects for handling the zip file
+                    ZipArchive zipArchive = ZipFile.OpenRead(AppDomain.CurrentDomain.BaseDirectory + "\\LegalMods.zip");
+
+                    foreach (string modDLL in whitelistedMods)
+                    {
+                        string[] pathInstalledModLocation = Directory.GetFiles(pathModsFolder, modDLL, SearchOption.AllDirectories);
+                        // If the mod was already installed
+                        if (pathInstalledModLocation.Length > 0)
+                        {
+                            // Cut down the full path to the DLL to just be the path to the mod folder
+                            string pathInstalledModFolder = pathInstalledModLocation[0].Substring(0, (pathInstalledModLocation[0].Length - modDLL.Length));
+                            DirectoryInfo directoryInfo = new DirectoryInfo(pathInstalledModFolder);
+                            // Clear out the old directory
+                            foreach (FileInfo file in directoryInfo.GetFiles())
+                            {
+                                // file.Delete();
+                            }
+                            // Find the equivalent mod folder in the downloaded zip
+                            string path = null;
+                            foreach (ZipArchiveEntry entry in zipArchive.Entries)
+                            {
+                                if (entry.Name.Contains(modDLL))
+                                {
+                                   path = entry.FullName.Substring(0, entry.FullName.Length - modDLL.Length);
+                                }
+                            }
+                            // Iterate over every file in the found folder, overwrite if it wasn't deleted.
+                            foreach (ZipArchiveEntry entry in zipArchive.Entries)
+                            {
+                                if (entry.FullName.Contains(path) && entry.FullName.Substring(path.Length - 1 ) == path && !entry.FullName.EndsWith("/"))
+                                {
+                                    string fixedpath = (pathInstalledModFolder.Substring(0, pathInstalledModFolder.Length - 1) + entry.FullName.Substring(path.Length - 1).Replace('/', '\\'));
+                                    entry.ExtractToFile(fixedpath, true);
+                                }
+                            }
+
+                        }
+                        // If the mod was not already installed
+                        else
+                        {
+                            if (installAll)
+                            {
+                                string path = null;
+                                foreach (ZipArchiveEntry entry in zipArchive.Entries)
+                                {
+                                    if (entry.Name.Contains(modDLL))
+                                    {
+                                        path = entry.FullName.Substring(0, entry.FullName.Length - modDLL.Length);
+                                    }
+                                }
+                                foreach (ZipArchiveEntry entry in zipArchive.Entries)
+                                {
+                                    if (entry.FullName.Contains(path) && entry.FullName.EndsWith("/"))
+                                    {
+                                        Directory.CreateDirectory((pathModsFolder + entry.FullName).Replace('/', '\\'));
+                                    }
+                                    if (entry.FullName.Contains(path) && !entry.FullName.EndsWith("/"))
+                                    {
+                                        entry.ExtractToFile((pathModsFolder + entry.FullName).Replace('/', '\\'), true);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    MessageBox.Show("Successfully updated all mods!");
+                    zipArchive.Dispose();
+
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.ToString());
+                }
+            }
+        }
     }
 }

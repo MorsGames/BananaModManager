@@ -61,8 +61,6 @@ namespace BananaModManager
                 "TrueBallCustomizer.dll",
                 "BingoUI.dll",
                 "OnlineILBattleTimer.dll",
-                "BMOnline.Client.dll",
-                "BMOnline.Common.dll",
                 "BMOnline.Mod.dll"
             }
         };
