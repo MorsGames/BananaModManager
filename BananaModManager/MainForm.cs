@@ -539,5 +539,13 @@ namespace BananaModManager
             ListMods.Items.Clear();
             LoadMods();
         }
+
+        private void UpdateBananaManiaSpeedrunMods_Click(object sender, EventArgs e)
+        {
+            BananaModManager.Update.UpdateSpeedrunLegalMods();
+            Mods.List.Clear();
+            ListMods.Items.Clear();
+            LoadMods();
+        }
     }
 }

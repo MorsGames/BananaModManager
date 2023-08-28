@@ -40,6 +40,7 @@ namespace BananaModManager.Loader.IL2Cpp
         private static bool _saveMode;
         private static bool _discordRPC = true;
         private static string ClientID = null;
+        private static string SpeedrunHash = null;
 
         private static List<string> _SpeedrunList = new List<string>();
         private static float _modListSlide = 1f;
@@ -133,7 +134,7 @@ namespace BananaModManager.Loader.IL2Cpp
                     Console.BackgroundColor = ConsoleColor.Black;
                 }
 
-
+                SpeedrunHash = AntiCheat.SpeedrunModeCode();
 
                 // Set default presence
 
@@ -145,7 +146,7 @@ namespace BananaModManager.Loader.IL2Cpp
                     {
                         Thread.Sleep(12000);
 
-                        if (Mods.Count > 0 && !_speedrunMode || AntiCheat.SpeedrunModeCode() == "")
+                        if (Mods.Count > 0 && !_speedrunMode || SpeedrunHash != null)
                         {
                             LeaderboardsDelegateInstance = Dummy;
                             if (_legacy == true)
@@ -390,7 +391,7 @@ namespace BananaModManager.Loader.IL2Cpp
             }
             // Add custom Speedrunner Hash
             DrawTextOutline(new Rect(Screen.width - offset.x - offset2 + _modListSlide, offset.y + style.fontSize * (_SpeedrunList.Count + 1), offset2 - offset.x, style.fontSize),
-                    AntiCheat.SpeedrunModeCode(), outlineSize, style);
+                    SpeedrunHash, outlineSize, style);
 
         }
         public static void OnDisable()
