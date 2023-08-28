@@ -176,7 +176,7 @@ namespace BananaModManager
                     }
                     MessageBox.Show("Successfully updated all mods!");
                     zipArchive.Dispose();
-
+                    File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\LegalMods.zip");
                 }
                 catch (Exception e)
                 {
