@@ -421,20 +421,13 @@ namespace BananaModManager
             if (color == "Black")
             {
                 this.BackColor = Color.DarkSlateGray;
+                this.ForeColor = Color.White;
                 if (control is PropertyGrid)
                 {
                     SetColorsPropGrid((PropertyGrid)control, color);
                 }
-                this.BackColor = Color.DarkSlateGray;
-                this.ForeColor = Color.White;
-                if (control.ForeColor != Color.White)
-                {
-                    control.ForeColor = Color.White;
-                }
-                if (control.BackColor != Color.DarkSlateGray)
-                {
-                    control.BackColor = Color.DarkSlateGray;
-                }
+                control.ForeColor = Color.White;
+                control.BackColor = Color.DarkSlateGray;
                 if (control.HasChildren)
                 {
                     foreach (Control controlChild in control.Controls)
@@ -451,14 +444,8 @@ namespace BananaModManager
                 }
                 this.BackColor = SystemColors.Window;
                 this.ForeColor = SystemColors.WindowText;
-                if (control.ForeColor != SystemColors.ControlText)
-                {
-                    control.ForeColor = SystemColors.ControlText;
-                }
-                if (control.BackColor != SystemColors.Window)
-                {
-                    control.BackColor = SystemColors.Window;
-                }
+                control.ForeColor = SystemColors.ControlText;
+                control.BackColor = SystemColors.Window;
                 if (control.HasChildren)
                 {
                     foreach (Control controlChild in control.Controls)
