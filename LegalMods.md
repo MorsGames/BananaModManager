@@ -10,5 +10,6 @@
 - Banana Mania Online: https://gamebanana.com/mods/449887
 - Bingo UI: https://github.com/iswimfly/iswimflyBananaManiaMods/tree/main/Bingo%20UI
 - Online IL Battle Timer: https://github.com/iswimfly/iswimflyBananaManiaMods/tree/main/Online%20IL%20Battle%20Timer
+- True Ball Customizer: https://gamebanana.com/mods/448928
 
 An updated archive of all legal mods will always be included with each [release](https://github.com/MorsGames/BananaModManager/releases)
