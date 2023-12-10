@@ -11,4 +11,4 @@
 - Bingo UI: https://github.com/iswimfly/iswimflyBananaManiaMods/tree/main/Bingo%20UI
 - Online IL Battle Timer: https://github.com/iswimfly/iswimflyBananaManiaMods/tree/main/Online%20IL%20Battle%20Timer
 
-A full collection of all legal mods will be included with each [release](https://github.com/MorsGames/BananaModManager/releases)
+An updated archive of all legal mods will always be included with each [release](https://github.com/MorsGames/BananaModManager/releases)
