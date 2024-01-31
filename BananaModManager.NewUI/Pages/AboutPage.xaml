@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="BananaModManager.NewUI.AboutPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BananaModManager.NewUI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="Transparent">
+
+    <Page.Resources>
+        <Style TargetType="TextBox" x:Key="MonospaceStyle">
+            <Setter Property="FontFamily" Value="Courier New"/>
+        </Style>
+    </Page.Resources>
+
+
+    <ScrollViewer>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top">
+            <TextBlock Text="BananaModManager" Style="{StaticResource HeaderTextBlockStyle}" FontSize="72" FontWeight="Bold" Margin="0,0,0,-8"/>
+
+            <TextBlock x:Name="TextVersion" Text="Version " Style="{StaticResource SubheaderTextBlockStyle}" FontSize="40" Margin="12,0,0,8"/>
+
+            <TextBlock Text="by Mors, iswimfly, and the Super Monkey Ball community" Style="{StaticResource SubheaderTextBlockStyle}" FontSize="20" Margin="32,0,0,32"/>
+
+            <TextBlock Text="A mod loader and manager for Super Monkey Ball games made in Unity." Style="{StaticResource BodyTextBlockStyle}" FontSize="16" TextWrapping="Wrap" Margin="0,0,0,32"/>
+
+            <TextBox x:Name="TextBoxCredits" TextWrapping="Wrap" AcceptsReturn="True" IsReadOnly="True" Style="{StaticResource MonospaceStyle}" SelectionHighlightColor="#7F6E00" Height="256" Margin="0,0,0,16"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
+                <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/MorsGames/BananaModManager" Margin="8, 0"/>
+                <HyperlinkButton Content="Modding Community Discord" NavigateUri="https://discord.gg/dbNTKSU2Rt" Margin="8, 0"/>
+                <Button Content="Show the Welcome Screen" Margin="8, 0" Click="ButtonShowWelcome_OnClick"/>
+            </StackPanel>
+
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="BananaModManager.NewUI.GameConfigPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BananaModManager.NewUI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
+    mc:Ignorable="d"
+    Background="Transparent">
+
+    <ScrollViewer
+        Padding="36,0,36,24"
+        IsTabStop="False"
+        VerticalScrollBarVisibility="Auto"
+        VerticalScrollMode="Auto"
+        MaxWidth="1280"
+        HorizontalAlignment="Stretch">
+
+        <StackPanel>
+
+            <toolkit:SettingsCard x:Name="CardSpeedrunMode" Description="Enables the leaderboards, but only allows whitelisted mods, and displays active mods on the screen." Header="Enable Speedrun Mode">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE7C1;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <ToggleSwitch x:Name="ToggleSpeedrunMode" Toggled="ToggleSpeedrunMode_OnToggled" IsOn="True"/>
+            </toolkit:SettingsCard>
+
+            <toolkit:SettingsCard x:Name="CardFastRestart" Description="When enabled, pressing F11 while the game is open will fast restart the game, toggling Speedrun Mode in the process." Header="Add fast restart keybind to the Speedrun Mode">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE765;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <ToggleSwitch x:Name="ToggleFastRestart" Toggled="ToggleFastRestart_OnToggled"/>
+            </toolkit:SettingsCard>
+
+            <toolkit:SettingsCard x:Name="CardSaveMode" Description="When enabled, the game will automatically save your best clear times of each stage." Header="Auto-save clear times">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE74E;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <ToggleSwitch x:Name="ToggleSaveMode" Toggled="ToggleSaveMode_OnToggled"/>
+            </toolkit:SettingsCard>
+
+            <toolkit:SettingsCard x:Name="CardDiscordRPC" Description="When enabled, your friends will be able to see more information about what game mode you're playing on Discord!" Header="Discord Rich Presence">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE76E;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <ToggleSwitch x:Name="ToggleDiscordRPC" Toggled="ToggleDiscordRPC_OnToggled"/>
+            </toolkit:SettingsCard>
+
+            <toolkit:SettingsCard x:Name="CardLegacyMode" Description="When enabled, Speedrun Mode and Save Mode will work on version 1.0.0 of the game. If unsure, leave this unchecked." Header="Enable 1.0.0 support">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE913;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <ToggleSwitch x:Name="ToggleLegacyMode" Toggled="ToggleLegacyMode_OnToggled"/>
+            </toolkit:SettingsCard>
+
+            <toolkit:SettingsCard x:Name="CardUpdateSpeedrunMods" Description="Automatically download and install mods that are allowed in the Speedrun Mode." Header="Download and update speedrun legal mods">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE777;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <Button x:Name="ButtonUpdateSpeedrunMods" Style="{StaticResource AccentButtonStyle}" Content="Download and Update Speedrun Legal Mods" Margin="0,0,0,6" Click="ButtonUpdateSpeedrunMods_Click"/>
+            </toolkit:SettingsCard>
+
+            <toolkit:SettingsCard x:Name="CardOpenModsFolder" Description="Opens the mods folder in explorer." Header="Open mods folder" ActionIconToolTip="Open folder" IsClickEnabled="True" Click="CardOpenModsFolder_OnClick">
+                <toolkit:SettingsCard.HeaderIcon >
+                    <FontIcon Glyph="&#xE838;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <toolkit:SettingsCard.ActionIcon>
+                    <FontIcon Glyph="&#xE8A7;" />
+                </toolkit:SettingsCard.ActionIcon>
+            </toolkit:SettingsCard>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -35,10 +33,7 @@ namespace BananaModManager.Loader.IL2Cpp
         public static extern System.IntPtr GetModuleHandle(string lpModuleName);
 
         private static List<Mod> _mods;
-        private static bool _legacy;
-        private static bool _speedrunMode;
-        private static bool _saveMode;
-        private static bool _discordRPC = true;
+        private static UserConfig _userConfig;
         private static string ClientID = null;
         private static string SpeedrunHash = null;
 
@@ -50,11 +45,8 @@ namespace BananaModManager.Loader.IL2Cpp
         private static DiscordRpcClient client;
 
         public static List<Mod> Mods => _mods;
-        public static Dictionary<string, string> AssetBundles { get; private set; } = new Dictionary<string, string>();
-        public static bool LegacyMode => _legacy;
-        public static bool SpeedrunMode => _speedrunMode;
-        public static bool SaveMode => _saveMode;
-        
+        public static UserConfig UserConfig => _userConfig;
+
         public static List<MethodInfo> UpdateMethods { get; set; } = new List<MethodInfo>();
         public static List<MethodInfo> FixedUpdateMethods { get; set; } = new List<MethodInfo>();
         public static List<MethodInfo> LateUpdateMethods { get; set; } = new List<MethodInfo>();
@@ -64,7 +56,7 @@ namespace BananaModManager.Loader.IL2Cpp
         {
             try
             {
-                Startup.StartModLoader(out _mods, out _speedrunMode, out _saveMode, out _discordRPC, out _legacy, out _);
+                Startup.StartModLoader(out _mods, out _userConfig);
 
                 Console.WriteLine("Setting up the hooks...");
 
@@ -86,7 +78,7 @@ namespace BananaModManager.Loader.IL2Cpp
                 Console.WriteLine("Carrying over user config and checking current game...");
 
                 // Carries over the entire user config for use in other areas
-                userConfig = Shared.Mods.LoadUserConfig();
+                userConfig = Shared.Mods.LoadUserConfig("");
                 foreach (Game game in Games.List)
                 {
                     if (game.ExecutableName == System.Diagnostics.Process.GetCurrentProcess().ProcessName)
@@ -111,7 +103,7 @@ namespace BananaModManager.Loader.IL2Cpp
                 // Discord RPC Setup
                 try
                 {
-                    if (_discordRPC || ClientID != null)
+                    if (_userConfig.DiscordRPC || ClientID != null)
                     {
                         switch (currentGame.AppID)
                         {
@@ -146,10 +138,10 @@ namespace BananaModManager.Loader.IL2Cpp
                     {
                         Thread.Sleep(12000);
 
-                        if (Mods.Count > 0 && !_speedrunMode || SpeedrunHash != null)
+                        if (Mods.Count > 0 && !_userConfig.SpeedrunMode || SpeedrunHash != null)
                         {
                             LeaderboardsDelegateInstance = Dummy;
-                            if (_legacy == true)
+                            if (_userConfig.LegacyMode)
                             {
                                 // Old
                                 ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0xa9d990), LeaderboardsDelegateInstance);
@@ -161,12 +153,12 @@ namespace BananaModManager.Loader.IL2Cpp
                             }
                             // Old 0x296130
                             // Block checking 0x4BD1A0
-                            
+
                         }
-                        if (!_saveMode)
+                        if (!_userConfig.SaveMode)
                         {
                             SaveDelegateInstance = Dummy2;
-                            if (_legacy == true)
+                            if (_userConfig.LegacyMode)
                             {
                                 // Old
                                 ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0xE5B820), SaveDelegateInstance);
@@ -207,7 +199,7 @@ namespace BananaModManager.Loader.IL2Cpp
                 }*/
 
                 // Calculate the hashes to display in the speedrun mode
-                if (_speedrunMode)
+                if (_userConfig.SpeedrunMode)
                 {
                     Console.WriteLine("Passing mod names to Speedrun Mode display...");
 
@@ -312,7 +304,9 @@ namespace BananaModManager.Loader.IL2Cpp
             // If F11 is pressed, restart and toggle Speedrun Mode
             if (AppInput.GetKeyDown(KeyCode.F11) && userConfig.FastRestart == true)
             {
-                Shared.Mods.Save(userConfig.ActiveMods, userConfig.ConsoleWindow, !userConfig.SpeedrunMode, userConfig.OneClick, userConfig.FastRestart, userConfig.SaveMode, userConfig.DiscordRPC, userConfig.LegacyMode, userConfig.DarkMode);
+                userConfig.SpeedrunMode = !userConfig.SpeedrunMode;
+
+                Shared.Mods.Save(userConfig, "");
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = "steam://rungameid/" + currentGame.AppID,
@@ -320,7 +314,7 @@ namespace BananaModManager.Loader.IL2Cpp
                 });
                 Process.GetCurrentProcess().Kill();
             }
-            if (_discordRPC)
+            if (_userConfig.DiscordRPC)
             {
                     switch (ClientID)
                     {
@@ -348,7 +342,7 @@ namespace BananaModManager.Loader.IL2Cpp
         {
             foreach (var method in GUIMethods) method.Invoke(null, null);
 
-            if (!SpeedrunMode)
+            if (!_userConfig.SpeedrunMode)
                 return;
 
             try
@@ -709,7 +703,7 @@ namespace BananaModManager.Loader.IL2Cpp
             {
                 if (capital)
                 {
-                    corrected += stageName[i]; 
+                    corrected += stageName[i];
                 }
                 else
                 {

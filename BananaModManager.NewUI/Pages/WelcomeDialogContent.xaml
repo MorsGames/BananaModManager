@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="BananaModManager.NewUI.WelcomeDialogContent"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+
+        <TextBlock Margin="0,0,0,12" TextWrapping="Wrap" >
+            BananaModManager is a mod loader and manager for Super Monkey Ball games. It currently supports the following games:
+        </TextBlock>
+
+        <StackPanel Margin="16,0,0,16" x:Name="PanelGames" >
+        </StackPanel>
+
+        <TextBlock Margin="0,0,0,16" TextWrapping="Wrap" >
+            To get started, pick the path to the folder containing the game's files, and the mod loader will be installed if a game is detected. Once that's done, you're good to go! You can now download mods and start playing!
+        </TextBlock>
+
+        <Expander
+            ExpandDirection="Down"
+            VerticalAlignment="Top"
+            Header="There are a few ways of downloading and installing mods..."
+            Margin="0,0,0,16">
+
+            <Expander.Content>
+                <StackPanel>
+                    <TextBlock Margin="0,-8,0,8" TextWrapping="Wrap" >
+                        - You can download and install mods directly by extracting them into the "mods" folder present in the game's directory.
+                    </TextBlock>
+                    <TextBlock Margin="0,0,0,8" TextWrapping="Wrap" >
+                        - You can enable the "GameBanana One-Click support" feature, then install mods directly from GameBanana.
+                    </TextBlock>
+                    <TextBlock TextWrapping="Wrap" >
+                        - With SMB Banana Mania, you can go to the "Game Config" tab and click "Download and Update Speedrun Legal Mods" button to automatically download all mods that are allowed in the the Speedrun Mode. This is recommended even if you're not a speedrunner of the game, as it contains some really good hand picked mods.
+                    </TextBlock>
+                </StackPanel>
+            </Expander.Content>
+
+            </Expander>
+
+        <TextBlock Margin="0,0,0,16" TextWrapping="Wrap" >
+            BananaModManager is currently still in development and might have issues here and there. If you have any questions you can swing by the SMB Banana Mania Modding Discord server and ask them there!
+        </TextBlock>
+
+        <HyperlinkButton Content="Join Discord Server" NavigateUri="https://discord.gg/dbNTKSU2Rt" Margin="-12,0,0,0"/>
+    </StackPanel>
+
+</Page>

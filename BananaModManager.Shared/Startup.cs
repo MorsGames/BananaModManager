@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Runtime.InteropServices;
-using BananaModManager.Loader;
 using System.Diagnostics;
 
 namespace BananaModManager.Shared
@@ -33,18 +32,19 @@ namespace BananaModManager.Shared
                 ShowWindow(handle, SW_SHOW);
         }
 
-        public static void StartModLoader(out List<Mod> mods, out bool speedrunMode, out bool saveMode, out bool discordRPC, out bool legacyMode, out bool darkMode)
+        public static void StartModLoader(out List<Mod> mods, out UserConfig userConfig)
         {
-            Mods.Load(out var activeMods, out var consoleWindow, out speedrunMode, out bool oneClick, out bool fastRestart, out saveMode, out discordRPC, out legacyMode, out darkMode);
+            Mods.Load(out userConfig, "");
 
-            if (consoleWindow)
+            var activeMods = userConfig.ActiveMods;
+
+            if (userConfig.ConsoleWindow)
                 ShowConsoleWindow();
 
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("BananaModManager by Mors!");
-            Console.WriteLine("Speedrun fixes created by iswimfly!");
+            Console.WriteLine("BananaModManager by Mors, iswimfly, and co.");
             Console.ForegroundColor = ConsoleColor.White;
-            
+
             // Get the current game
             Game currentGame = null;
             foreach (var game in Games.List)
@@ -64,7 +64,7 @@ namespace BananaModManager.Shared
                 foreach (var mod in activeMods.Select(modId => Mods.List[modId]))
                 {
                     if (Convert.ToInt32(mod.Info.Priority) != priorityCheck) continue;
-                    if (speedrunMode)
+                    if (userConfig.SpeedrunMode)
                     {
                         string Hash = "";
                         byte[] hashvalue;
@@ -102,7 +102,7 @@ namespace BananaModManager.Shared
                     Console.WriteLine("Loading " + mod.Info.Title + " (" + mod + ")");
 
                     // Load the config dictionary
-                    var config = Mods.LoadModConfig(mod.Info, Mods.LoadUserConfig(),
+                    var config = Mods.LoadModConfig(mod.Info, userConfig,
                         Mods.LoadDefaultModConfig(mod.Directory));
 
                     // We need to convert it before we can pass it on
@@ -122,7 +122,7 @@ namespace BananaModManager.Shared
                 }
                 priorityCheck++;
             }
-            
+
         }
         public static void ExceptionHandler(Exception e)
         {

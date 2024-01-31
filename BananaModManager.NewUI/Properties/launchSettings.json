@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "BananaModManager.NewUI (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "BananaModManager.NewUI (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

@@ -1,16 +1,21 @@
 ﻿using System.Collections.Generic;
 
-namespace BananaModManager
+namespace BananaModManager.Shared
 {
     public static class Games
     {
+        public static Game Default = new()
+        {
+            Title = "No Game",
+        };
         public static Game BananaBlitzHD = new()
         {
             Title = "Super Monkey Ball: Banana Blitz HD",
             ExecutableName = "SMBBBHD",
             ExecutablePath = "SMBBBHD\\",
             AppID = "1061730",
-            Managed = true
+            Managed = true,
+            X64 = false
         };
         public static Game BananaMania = new()
         {
@@ -19,6 +24,13 @@ namespace BananaModManager
             ExecutablePath = "smbbm\\",
             AppID = "1316910",
             Managed = false,
+            X64 = true,
+            SpeedrunModeSupport = true,
+            FastRestartSupport = true,
+            SaveModeSupport = true,
+            DiscordRPCSupport = true,
+            LegacyModeSupport = true,
+
             Whitelist = new List<string>() {
                 //Graphical Tweaks
                 "D79D69527DF63DDF35389DD05464A655BCE156CA484026E3249F7576250A6A14",

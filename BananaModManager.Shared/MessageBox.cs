@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace BananaModManager.Loader
+namespace BananaModManager.Shared
 {
     public static class MessageBox
     {

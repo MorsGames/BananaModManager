@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace BananaModManager
+namespace BananaModManager.Shared
 {
     /// <summary>
     ///     A game that's supported by this mod manager
@@ -15,12 +15,13 @@ namespace BananaModManager
 
         /// <summary>
         ///     The executable name of the mod.
-        ///     Currently not used, Steam is used to launch the game instead.
+        ///     Used to detect which game is the mod is configured for.
         /// </summary>
         public string ExecutableName = "";
 
         /// <summary>
         ///     Location of the executable.
+        ///     Not used but it's there!
         /// </summary>
         public string ExecutablePath = "";
 
@@ -35,14 +36,48 @@ namespace BananaModManager
         public bool Managed = false;
 
         /// <summary>
+        ///     If the game is 64-bit.
+        /// </summary>
+        public bool X64 = false;
+
+        /// <summary>
+        ///     If the game supports speedrun mode.
+        /// </summary>
+        public bool SpeedrunModeSupport = false;
+
+        /// <summary>
+        ///     If the game supports the F11 restart thingy.
+        /// </summary>
+        public bool FastRestartSupport = false;
+
+        /// <summary>
+        ///     If the game supports automatic saving of the clear times.
+        /// </summary>
+        public bool SaveModeSupport = false;
+
+        /// <summary>
+        ///     If the game supports Discord RPC.
+        /// </summary>
+        public bool DiscordRPCSupport = false;
+
+        /// <summary>
+        ///     If the game has any need for a legacy mode setting.
+        /// </summary>
+        public bool LegacyModeSupport = false;
+
+
+        //TODO: Shouldn't the following two be a single list?
+
+        /// <summary>
         ///     Hashes of the alowed mods in speedrun mode.
         /// </summary>
         public List<string> Whitelist = new List<string>();
+
         /// <summary>
         ///     Names of the allowed mods in speedrun mode.
         /// </summary>
+        ///
         public List<string> WhitelistNames = new List<string>();
-        /// <returns></returns>
 
         public override string ToString()
         {

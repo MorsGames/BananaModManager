@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="BananaModManager.NewUI.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BananaModManager.NewUI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:animatedVisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
+    mc:Ignorable="d">
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop Kind="Base"/>
+    </Window.SystemBackdrop>
+
+    <Grid x:Name="RootGrid" x:FieldModifier="public">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- AppTitleBar Grid (Row 0) -->
+        <Grid x:Name="AppTitleBar" Height="36">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="LeftPaddingColumn" Width="0"/>
+                <ColumnDefinition/>
+                <ColumnDefinition x:Name="RightPaddingColumn" Width="0"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="TitleBarIcon"
+                       Text="🍌"
+                       FontSize="16"
+                       Grid.Column="1"
+                       VerticalAlignment="Center"
+                       Margin="8,-2,0,0"/>
+            <!--<Image x:Name="TitleBarIcon" Source="ms-appx:///Assets/StoreLogo.png"
+                   Grid.Column="1"
+                   HorizontalAlignment="Left"
+                   Width="16" Height="16"
+                   Margin="8,0,0,0"/>-->
+            <TextBlock x:Name="TitleBarTextBlock"
+                       Text="BananaModManager"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       Grid.Column="1"
+                       VerticalAlignment="Center"
+                       Margin="34,0,0,0"/>
+        </Grid>
+
+        <!-- NavigationView Grid (Row 1) -->
+        <NavigationView x:Name="NavView"
+                        Loaded="NavView_Loaded"
+                        SelectionChanged="NavView_SelectionChanged"
+                        ItemInvoked="NavView_OnItemInvoked"
+                        BackRequested="NavView_BackRequested"
+                        Grid.Row="1"
+                        IsBackButtonVisible="Collapsed"
+                        IsSettingsVisible="False"
+                        ShoulderNavigationEnabled="Always">
+
+            <NavigationView.MenuItems>
+                <NavigationViewItem x:Name="NavViewItemMods" Icon="Home" Content="Mods List" Tag="ModsPage"/>
+                <NavigationViewItem x:Name="NavViewItemGameConfig" Icon="Repair" Content="Game Config" Tag="GameConfigPage"/>
+                <NavigationViewItem Content="BananaModManager Settings" Tag="SettingsPage">
+                    <NavigationViewItem.Icon>
+                        <AnimatedIcon>
+                            <AnimatedIcon.Source>
+                                <animatedVisuals:AnimatedSettingsVisualSource/>
+                            </AnimatedIcon.Source>
+                            <AnimatedIcon.FallbackIconSource>
+                                <FontIconSource Glyph="&#xE713;"/>
+                            </AnimatedIcon.FallbackIconSource>
+                        </AnimatedIcon>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+
+            <NavigationView.FooterMenuItems>
+                <NavigationViewItem Icon="Help" Content="About" Tag="AboutPage"/>
+            </NavigationView.FooterMenuItems>
+
+            <Frame x:Name="ContentFrame" IsTabStop="True"
+                   NavigationFailed="ContentFrame_NavigationFailed"/>
+        </NavigationView>
+
+    </Grid>
+
+</Window>

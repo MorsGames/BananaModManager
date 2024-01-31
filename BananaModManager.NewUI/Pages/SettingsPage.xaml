@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="BananaModManager.NewUI.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BananaModManager.NewUI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
+    mc:Ignorable="d"
+    Background="Transparent">
+
+    <ScrollViewer
+        Padding="36,0,36,24"
+        IsTabStop="False"
+        VerticalScrollBarVisibility="Auto"
+        VerticalScrollMode="Auto"
+        MaxWidth="1280"
+        HorizontalAlignment="Stretch">
+
+        <StackPanel>
+
+            <!--<toolkit:SettingsCard Description="Select the game you want to mod" Header="Current game">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE7FC;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <ComboBox x:Name="ComboGames">
+                    <ComboBoxItem Content="Super Monkey Ball: Banana Blitz HD" Tag="SMBBBHD" />
+                    <ComboBoxItem Content="Super Monkey Ball: Banana Mania" Tag="SMBBM" />
+                </ComboBox>
+            </toolkit:SettingsCard>-->
+
+            <toolkit:SettingsExpander Description="The folder of the game you want to install mods to." Header="Game folder" IsExpanded="True">
+                <toolkit:SettingsExpander.HeaderIcon>
+                    <FontIcon Glyph="&#xE7FC;" />
+                </toolkit:SettingsExpander.HeaderIcon>
+                <Button Content="Browse..."
+                        Click="ButtonPickFolder_Click" Margin="0,0,0,10"/>
+                <toolkit:SettingsExpander.Items>
+                    <toolkit:SettingsCard ContentAlignment="Left">
+                        <StackPanel>
+                            <TextBox Width="512" x:Name="TextBoxGameDirectory" PlaceholderText="Folder path"  SelectionHighlightColor="#7F6E00" LostFocus="TextBoxGameDirectory_LostFocus" />
+                            <TextBlock x:Name="TextGameDirectoryStatus" Margin="0,8,0,0"/>
+                        </StackPanel>
+                    </toolkit:SettingsCard>
+                </toolkit:SettingsExpander.Items>
+            </toolkit:SettingsExpander>
+
+            <toolkit:SettingsCard x:Name="CardConsole" Description="Show the console window when the game boots, which has debug information related to the mod loader." Header="Show the console window">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE756;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <ToggleSwitch Name="ToggleConsole" Toggled="ToggleConsole_OnToggled"/>
+            </toolkit:SettingsCard>
+
+            <toolkit:SettingsCard x:Name="CardOneClick" Description="Enables One-Click support on GameBanana!" Header="Enable GameBanana One-Click support">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE8B0;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <ToggleSwitch x:Name="ToggleOneClick" Toggled="ToggleOneClick_OnToggled"/>
+            </toolkit:SettingsCard>
+
+            <toolkit:SettingsCard x:Name="CardTheme" Description="Select which app theme to display." Header="App theme">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE790;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <ComboBox x:Name="ComboTheme" AutomationProperties.AutomationId="themeModeComboBox" SelectionChanged="ComboTheme_SelectionChanged">
+                    <ComboBoxItem Content="Use system setting" Tag="Default" />
+                    <ComboBoxItem Content="Light" Tag="Light" />
+                    <ComboBoxItem Content="Dark" Tag="Dark" />
+                </ComboBox>
+            </toolkit:SettingsCard>
+
+            <toolkit:SettingsCard x:Name="CardLegacyLayout" Description="Move the navigation view to the top like the older versions of this mod manager." Header="Enable legacy layout">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="" /> <!-- There is no way im finding the code for this one... -->
+                </toolkit:SettingsCard.HeaderIcon>
+                <ToggleSwitch Name="ToggleLegacyLayout" Toggled="ToggleLegacyLayout_OnToggled"/>
+            </toolkit:SettingsCard>
+
+            <toolkit:SettingsCard x:Name="CardUpdateModLoader" Description="Required after a manual update!" Header="Update the mod loader">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE777;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <Button x:Name="ButtonUpdateModLoader" Style="{StaticResource AccentButtonStyle}" Content="Update Mod Loader" Margin="0,0,0,6" Click="ButtonUpdateModLoader_Click"/>
+            </toolkit:SettingsCard>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>

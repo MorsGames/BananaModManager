@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text.Json;
-using BananaModManager.Loader;
 
 namespace BananaModManager.Shared
 {
+    // TODO: Why is this static? Make it an instance of App on the new UI once the old one is depreciated
     public static class Mods
     {
         public const string ConfigFile = "BananaModManager.json";
@@ -21,26 +20,15 @@ namespace BananaModManager.Shared
         /// <summary>
         ///     Loads all necessary data about all the mods
         /// </summary>
-        /// <param name="activeMods">A list of all mods that are currently enabled, in a specific order.</param>
-        public static void Load(out List<string> activeMods, out bool consoleWindow, out bool speedrunMode, out bool oneClick, out bool fastRestart, out bool saveMode, out bool discordRPC, out bool legacyMode, out bool darkMode)
+        public static void Load(out UserConfig userConfig, string gameDirectory)
         {
             // Load the config file
-            var userConfig = LoadUserConfig();
-
-            // Set all the setting values
-            activeMods = userConfig.ActiveMods ?? new List<string>();
-            consoleWindow = userConfig.ConsoleWindow;
-            speedrunMode = userConfig.SpeedrunMode;
-            oneClick = userConfig.OneClick;
-            fastRestart = userConfig.FastRestart;
-            saveMode = userConfig.SaveMode;
-            discordRPC = userConfig.DiscordRPC;
-            legacyMode = userConfig.LegacyMode;
-            darkMode = userConfig.DarkMode;
-
+            userConfig = LoadUserConfig(gameDirectory);
+            userConfig.ActiveMods ??= new List<string>();
 
             // Get the mods folder
-            var modFolder = new DirectoryInfo(Folder);
+            var folder = Path.Combine(gameDirectory, Folder);
+            var modFolder = new DirectoryInfo(folder);
             if (!modFolder.Exists)
                 modFolder.Create();
 
@@ -75,9 +63,14 @@ namespace BananaModManager.Shared
         /// </summary>
         /// <param name="directory">Directory of the mod.</param>
         /// <returns>Mod information.</returns>
-        public static ModInfo LoadModInfo(DirectoryInfo directory)
+        private static ModInfo LoadModInfo(DirectoryInfo directory)
         {
-            var modInfo = JsonSerializer.Deserialize<ModInfo>(File.ReadAllText(directory.FullName + "\\mod.json"));
+            // Load the file into a string
+            var file = Path.Combine(directory.FullName, "mod.json");
+            var text = File.ReadAllText(file);
+
+            // Deserialize the string
+            var modInfo = JsonSerializer.Deserialize<ModInfo>(text);
             return modInfo;
         }
 
@@ -134,7 +127,7 @@ namespace BananaModManager.Shared
         /// <returns>Default config values of the mod.</returns>
         public static Dictionary<string, ConfigItem> LoadDefaultModConfig(DirectoryInfo directory)
         {
-            var file = directory.FullName + "\\config.json";
+            var file = Path.Combine(directory.FullName, "config.json");
 
             // If the file doesn't exist, return an empty dictionary
             if (!File.Exists(file))
@@ -158,15 +151,16 @@ namespace BananaModManager.Shared
         ///     Loads all the user config of the mod manager.
         /// </summary>
         /// <returns>Settings of the mod manager.</returns>
-        public static UserConfig LoadUserConfig()
+        public static UserConfig LoadUserConfig(string gameDirectory)
         {
             UserConfig userConfig;
             // Load and deserialize the mod loader config file if it exists
             // If it doesn't just create an empty one
             try
             {
-                if (File.Exists(Folder + ConfigFile))
-                    userConfig = JsonSerializer.Deserialize<UserConfig>(File.ReadAllText(Folder + ConfigFile)) ??
+                var configFilePath = Path.Combine(gameDirectory, Folder, ConfigFile);
+                if (File.Exists(configFilePath))
+                    userConfig = JsonSerializer.Deserialize<UserConfig>(File.ReadAllText(configFilePath)) ??
                                  new UserConfig();
                 else
                     userConfig = new UserConfig();
@@ -183,34 +177,21 @@ namespace BananaModManager.Shared
         /// <summary>
         ///     Saves the user config of the mod manager.
         /// </summary>
-        /// <param name="activeMods">A list of enabled mods, in a specific order.</param>
-        public static void Save(List<string> activeMods, bool consoleWindow, bool speedrunMode, bool oneClick, bool fastRestart, bool saveMode, bool discordRPC, bool legacyMode, bool darkMode)
+        /// <param name="userConfig">Settings of the mod manager.</param>
+        public static void Save(UserConfig userConfig, string gameDirectory)
         {
-            // Config object used for the user data
-            var loaderConfig = new UserConfig
-            {
-                ActiveMods = activeMods,
-                ConsoleWindow = consoleWindow,
-                SpeedrunMode = speedrunMode,
-                OneClick = oneClick,
-                FastRestart = fastRestart,
-                SaveMode = saveMode,
-                DiscordRPC = discordRPC,
-                LegacyMode = legacyMode,
-                DarkMode = darkMode
-        };
-
             // Add the configs into it
             foreach (var mod in List.Select(_ => _.Value))
             {
                 // Convert the config before adding it to the list so it doesn't contain unnecessary information
                 var config = ConvertConfig(mod.Config);
-                loaderConfig.ModConfigs.Add(mod.ToString(), config);
+                userConfig.ModConfigs.Remove(mod.ToString());
+                userConfig.ModConfigs.Add(mod.ToString(), config);
             }
 
             // Serialize and save it
-            var configJson = JsonSerializer.Serialize(loaderConfig);
-            File.WriteAllText(Folder + ConfigFile, configJson);
+            var configJson = JsonSerializer.Serialize(userConfig);
+            File.WriteAllText(Path.Combine(gameDirectory, Folder, ConfigFile), configJson);
         }
 
         /// <summary>
