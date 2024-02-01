@@ -11,6 +11,29 @@
     mc:Ignorable="d"
     Background="Transparent">
 
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="Outline" Color="#20000000" />
+                    <SolidColorBrush x:Key="AlternatingRow" Color="#10000000" />
+                    <SolidColorBrush x:Key="SidePanel" Color="#60FFFFFF" />
+                    <SolidColorBrush x:Key="SidePanelOutline" Color="#20000000" />
+                    <SolidColorBrush x:Key="ColumnHeader" Color="#20000000" />
+                    <SolidColorBrush x:Key="ColumnText" Color="Black" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="Outline" Color="#20FFFFFF" />
+                    <SolidColorBrush x:Key="AlternatingRow" Color="#10FFFFFF" />
+                    <SolidColorBrush x:Key="SidePanel" Color="#08FFFFFF" />
+                    <SolidColorBrush x:Key="SidePanelOutline" Color="Transparent" />
+                    <SolidColorBrush x:Key="ColumnHeader" Color="#60000000" />
+                    <SolidColorBrush x:Key="ColumnText" Color="White" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1.25*"/>
@@ -24,7 +47,7 @@
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
                 BorderThickness="1"
-                BorderBrush="#20FFFFFF"
+                BorderBrush="{ThemeResource Outline}"
                 Margin="24, 0, 12, 112"
                 CornerRadius="8">
                 <toolkit:DataGrid
@@ -37,9 +60,9 @@
                     CanUserSortColumns="True"
                     CanUserReorderColumns="True"
                     CanUserResizeColumns="True"
-                    AlternatingRowBackground="#10FFFFFF"
-                    HorizontalGridLinesBrush="#20FFFFFF"
-                    VerticalGridLinesBrush="#20FFFFFF"
+                    AlternatingRowBackground="{ThemeResource AlternatingRow}"
+                    HorizontalGridLinesBrush="{ThemeResource Outline}"
+                    VerticalGridLinesBrush="{ThemeResource Outline}"
                     GridLinesVisibility = "All"
                     CanDrag="True"
                     AllowDrop="True"
@@ -55,8 +78,8 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="primitives:DataGridColumnHeader">
-                                        <Grid Background="#60000000">
-                                            <TextBlock Text="{TemplateBinding Content}" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="12, 0, 0, 0"/>
+                                        <Grid Background="{ThemeResource ColumnHeader}">
+                                            <TextBlock Text="{TemplateBinding Content}" Foreground="{ThemeResource ColumnText}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="12, 0, 0, 0"/>
                                         </Grid>
                                     </ControlTemplate>
                                 </Setter.Value>
@@ -110,7 +133,12 @@
         </Grid>
 
         <!-- Right side content -->
-        <ScrollViewer Grid.Column="1" Background="#08FFFFFF" CornerRadius="8" Margin="12 0 24 24">
+        <ScrollViewer Grid.Column="1"
+                      Background="{ThemeResource SidePanel}"
+                      BorderThickness="1"
+                      BorderBrush="{ThemeResource SidePanelOutline}"
+                      CornerRadius="8"
+                      Margin="12 0 24 24">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
