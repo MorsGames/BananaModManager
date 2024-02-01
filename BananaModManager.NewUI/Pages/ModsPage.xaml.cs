@@ -116,7 +116,7 @@ public sealed partial class ModsPage : Page
 
     private async void TextModDescription_OnLinkClicked(object sender, LinkClickedEventArgs e)
     {
-        if (Uri.TryCreate(e.Link, UriKind.Absolute, out Uri link))
+        if (Uri.TryCreate(e.Link, UriKind.Absolute, out var link))
         {
             await Launcher.LaunchUriAsync(link);
         }

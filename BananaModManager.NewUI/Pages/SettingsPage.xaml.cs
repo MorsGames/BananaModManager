@@ -24,7 +24,6 @@ public sealed partial class SettingsPage : Page
 
         // Load the defaults!
         TextBoxGameDirectory.Text = App.GameDirectory;
-        ToggleConsole.IsOn = App.UserConfig.ConsoleWindow;
         ToggleOneClick.IsOn = App.UserConfig.OneClick;
         ComboTheme.SelectedIndex = (int) App.UserConfig.Theme;
         ToggleLegacyLayout.IsOn = App.UserConfig.LegacyLayout;
@@ -38,24 +37,11 @@ public sealed partial class SettingsPage : Page
         // We save all the other BMM settings on the game directory
         if (isDefaultGame)
         {
-            CardConsole.IsEnabled = false;
             CardOneClick.IsEnabled = false;
             CardTheme.IsEnabled = false;
             CardLegacyLayout.IsEnabled = false;
             CardUpdateModLoader.IsEnabled = false;
         }
-    }
-    private void ToggleConsole_OnToggled(object sender, RoutedEventArgs e)
-    {
-        // If unchanged then don't do anything
-        if (App.UserConfig.ConsoleWindow == ToggleConsole.IsOn)
-            return;
-
-        // Otherwise change the setting
-        App.UserConfig.ConsoleWindow = ToggleConsole.IsOn;
-
-        // Save the changes
-        App.SaveConfig();
     }
     private void ToggleOneClick_OnToggled(object sender, RoutedEventArgs e)
     {

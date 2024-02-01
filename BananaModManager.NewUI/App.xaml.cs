@@ -84,20 +84,22 @@ namespace BananaModManager.NewUI
             // Load the game directory first
             if (File.Exists(DirectoryFile))
             {
-                GameDirectory = File.ReadAllText(DirectoryFile);
+                GameDirectory = await File.ReadAllTextAsync(DirectoryFile);
             }
 
             // Load the settings and the mods
             Mods.Load(out UserConfig, GameDirectory);
 
             // Detect the current game
-            foreach (var game in Games.List)
+            if (GameDirectory != "")
             {
-                var path = GameDirectory;
-                if (path != "" && path.Contains(game.ExecutableName))
+                foreach (var game in Games.List)
                 {
-                    CurrentGame = game;
-                    break;
+                    if (File.Exists(Path.Combine(GameDirectory, $"{game.ExecutableName}.exe")))
+                    {
+                        CurrentGame = game;
+                        break;
+                    }
                 }
             }
 

@@ -16,6 +16,7 @@ public sealed partial class GameConfigPage : Page
         InitializeComponent();
 
         // Load the defaults!
+        ToggleConsole.IsOn = App.UserConfig.ConsoleWindow;
         ToggleSpeedrunMode.IsOn = App.UserConfig.SpeedrunMode;
         ToggleFastRestart.IsOn = App.UserConfig.FastRestart;
         ToggleSaveMode.IsOn = App.UserConfig.SaveMode;
@@ -45,6 +46,18 @@ public sealed partial class GameConfigPage : Page
         {
             CardLegacyMode.Visibility = Visibility.Collapsed;
         }
+    }
+    private void ToggleConsole_OnToggled(object sender, RoutedEventArgs e)
+    {
+        // If unchanged then don't do anything
+        if (App.UserConfig.ConsoleWindow == ToggleConsole.IsOn)
+            return;
+
+        // Otherwise change the setting
+        App.UserConfig.ConsoleWindow = ToggleConsole.IsOn;
+
+        // Save the changes
+        App.SaveConfig();
     }
     private void ToggleSpeedrunMode_OnToggled(object sender, RoutedEventArgs e)
     {

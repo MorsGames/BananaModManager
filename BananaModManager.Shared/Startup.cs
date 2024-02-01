@@ -32,7 +32,7 @@ namespace BananaModManager.Shared
                 ShowWindow(handle, SW_SHOW);
         }
 
-        public static void StartModLoader(out List<Mod> mods, out UserConfig userConfig)
+        public static void StartModLoader(out List<Mod> mods, out UserConfig userConfig, out Game currentGame)
         {
             Mods.Load(out userConfig, "");
 
@@ -46,7 +46,7 @@ namespace BananaModManager.Shared
             Console.ForegroundColor = ConsoleColor.White;
 
             // Get the current game
-            Game currentGame = null;
+            currentGame = null;
             foreach (var game in Games.List)
             {
                 if (game.ExecutableName == System.Diagnostics.Process.GetCurrentProcess().ProcessName)
@@ -58,7 +58,7 @@ namespace BananaModManager.Shared
             Console.WriteLine($"Found {activeMods.Count} active mods out of {Mods.List.Count}.");
 
             mods = new List<Mod>();
-            int priorityCheck = 0;
+            var priorityCheck = 0;
             while (priorityCheck < 6)
             {
                 foreach (var mod in activeMods.Select(modId => Mods.List[modId]))
@@ -66,15 +66,15 @@ namespace BananaModManager.Shared
                     if (Convert.ToInt32(mod.Info.Priority) != priorityCheck) continue;
                     if (userConfig.SpeedrunMode && currentGame.SpeedrunModeSupport)
                     {
-                        string Hash = "";
+                        var Hash = "";
                         byte[] hashvalue;
                         using (SHA256 SHA256 = SHA256.Create())
                         {
-                            using (FileStream fileStream = File.OpenRead(mod.Directory.FullName + "\\" + mod.Info.DLLFile))
+                            using (var fileStream = File.OpenRead(mod.Directory.FullName + "\\" + mod.Info.DLLFile))
                             {
                                 fileStream.Position = 0;
                                 hashvalue = SHA256.ComputeHash(fileStream);
-                                for (int i = 0; i < hashvalue.Length; i++)
+                                for (var i = 0; i < hashvalue.Length; i++)
                                 {
                                     Hash += $"{hashvalue[i]:X2}";
                                 }

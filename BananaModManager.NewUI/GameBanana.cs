@@ -18,11 +18,11 @@ public static class GameBanana
     {
         try
         {
-            WebClient wc = new WebClient();
-            string html = wc.DownloadString(link);
+            var wc = new WebClient();
+            var html = wc.DownloadString(link);
 
-            Regex x = new Regex("<title>(.*)</title>");
-            MatchCollection m = x.Matches(html);
+            var x = new Regex("<title>(.*)</title>");
+            var m = x.Matches(html);
 
             if (m.Count > 0)
             {
@@ -41,8 +41,8 @@ public static class GameBanana
     // This enables one-click capability by writing registry entries to redirect "bananamodmanager:" links to BMM.
     public static async void InstallOneClick()
     {
-        string ExeDirectory = Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, ".exe");
-        string protocol = $"bananamodmanager";
+        var ExeDirectory = Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, ".exe");
+        var protocol = $"bananamodmanager";
         try
         {
             var reg = Registry.CurrentUser.CreateSubKey(@"Software\Classes\BananaModManager");
@@ -76,37 +76,37 @@ public static class GameBanana
 
     public static async Task InstallMod(string downloadUrl, string modID)
     {
-        string modsDirectory = AppDomain.CurrentDomain.BaseDirectory + "mods\\";
+        var modsDirectory = AppDomain.CurrentDomain.BaseDirectory + "mods\\";
         using (var client = new WebClient())
         {
-            bool moreFiles = false;
+            var moreFiles = false;
             // Isolate the File ID for API usage
-            string[] fileID = downloadUrl.Split(',');
+            var fileID = downloadUrl.Split(',');
             fileID[0] = fileID[0].Replace("https://gamebanana.com/mmdl/", "");
             // GameBanana API requests
             // Get the name of the archive
-            string fileName = client.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=File&itemid={fileID[0]}&fields=file&format=json_min");
+            var fileName = client.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=File&itemid={fileID[0]}&fields=file&format=json_min");
             // Get the entire archive contents
-            string fileContents = client.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=File&itemid={fileID[0]}&fields=Metadata%28%29.aArchiveFilesList%28%29&format=json_min&flags=JSON_UNESCAPED_SLASHES");
+            var fileContents = client.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=File&itemid={fileID[0]}&fields=Metadata%28%29.aArchiveFilesList%28%29&format=json_min&flags=JSON_UNESCAPED_SLASHES");
             // Remove the extra json junk
             char[] stuff = {'[', ']', '"', '"', '`', '\'', '"'};
             fileContents = fileContents.Trim(stuff);
             // Sort through the files and find the DLL
-            string[] files = fileContents.Split(',');
-            string DLL = "";
-            string folder = "";
-            string DLLFolder = "";
-            foreach (string i in files)
+            var files = fileContents.Split(',');
+            var DLL = "";
+            var folder = "";
+            var DLLFolder = "";
+            foreach (var i in files)
             {
-                string file = i;
-                foreach (char character in stuff)
+                var file = i;
+                foreach (var character in stuff)
                 {
                     file = file.Replace(character.ToString(), "");
                 }
                 // If it has a directory, remove it
                 if (file.Contains("/") || file.Contains ("\\"))
                 {
-                    foreach (char character in file)
+                    foreach (var character in file)
                     {
                         if (character == '\\')
                         {
@@ -131,7 +131,7 @@ public static class GameBanana
                     moreFiles = true;
                 }
             }
-            foreach(char character in stuff)
+            foreach(var character in stuff)
             {
                 fileName = fileName.Replace(character.ToString(), "");
             }
@@ -158,7 +158,7 @@ public static class GameBanana
                 // Download the zip
                 client.DownloadFile(downloadUrl, modsDirectory + fileName);
                 // Check if the mod is installed and prompt to overwrite
-                string[] ExistingVersions = Directory.GetFiles(modsDirectory, DLL, SearchOption.AllDirectories);
+                var ExistingVersions = Directory.GetFiles(modsDirectory, DLL, SearchOption.AllDirectories);
 
                 if (ExistingVersions.Length != 0)
                 {
@@ -167,7 +167,7 @@ public static class GameBanana
                         try
                         {
                             // Find directory of the DLL regardless of folder name and delete the contents.
-                            string[] path = Directory.GetFiles(modsDirectory, DLL, SearchOption.AllDirectories);
+                            var path = Directory.GetFiles(modsDirectory, DLL, SearchOption.AllDirectories);
                             Directory.Delete(path[0].Remove(path[0].Length - DLL.Length, DLL.Length), true);
                         }
                         catch (Exception e)
@@ -192,7 +192,7 @@ public static class GameBanana
                 }
                 // Check for only DLL files and json files
                 var zip = ZipFile.OpenRead(modsDirectory + fileName);
-                foreach (ZipArchiveEntry entry in zip.Entries)
+                foreach (var entry in zip.Entries)
                 {
                     // Extract from the zip
                     if (!File.Exists(modsDirectory + modName + "\\" + entry.Name) && !entry.FullName.EndsWith("/"))

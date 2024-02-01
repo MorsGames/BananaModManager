@@ -46,13 +46,6 @@
                 </toolkit:SettingsExpander.Items>
             </toolkit:SettingsExpander>
 
-            <toolkit:SettingsCard x:Name="CardConsole" Description="Show the console window when the game boots, which has debug information related to the mod loader." Header="Show the console window">
-                <toolkit:SettingsCard.HeaderIcon>
-                    <FontIcon Glyph="&#xE756;" />
-                </toolkit:SettingsCard.HeaderIcon>
-                <ToggleSwitch Name="ToggleConsole" Toggled="ToggleConsole_OnToggled"/>
-            </toolkit:SettingsCard>
-
             <toolkit:SettingsCard x:Name="CardOneClick" Description="Enables One-Click support on GameBanana!" Header="Enable GameBanana One-Click support">
                 <toolkit:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE8B0;" />

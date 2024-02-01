@@ -86,6 +86,6 @@ namespace BananaModManager.Shared
             X64 = true
         };
 
-        public static List<Game> List = new List<Game> {BananaBlitzHD, BananaMania, Paperball};
+        public static List<Game> List = new() {BananaBlitzHD, BananaMania, Paperball};
     }
 }

@@ -16,7 +16,7 @@ namespace BananaModManager.Loader.Mono
         {
             try
             {
-                Startup.StartModLoader(out _mods, out var userConfig);
+                Startup.StartModLoader(out _mods, out var userConfig, out var currentGame);
 
                 new Thread(() =>
                 {
