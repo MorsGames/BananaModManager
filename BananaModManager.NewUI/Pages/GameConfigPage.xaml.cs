@@ -16,12 +16,12 @@ public sealed partial class GameConfigPage : Page
         InitializeComponent();
 
         // Load the defaults!
-        ToggleConsole.IsOn = App.UserConfig.ConsoleWindow;
-        ToggleSpeedrunMode.IsOn = App.UserConfig.SpeedrunMode;
-        ToggleFastRestart.IsOn = App.UserConfig.FastRestart;
-        ToggleSaveMode.IsOn = App.UserConfig.SaveMode;
-        ToggleDiscordRPC.IsOn = App.UserConfig.DiscordRPC;
-        ToggleLegacyMode.IsOn = App.UserConfig.LegacyMode;
+        ToggleConsole.IsOn = App.GameConfig.ConsoleWindow;
+        ToggleSpeedrunMode.IsOn = App.GameConfig.SpeedrunMode;
+        ToggleFastRestart.IsOn = App.GameConfig.FastRestart;
+        ToggleSaveMode.IsOn = App.GameConfig.SaveMode;
+        ToggleDiscordRPC.IsOn = App.GameConfig.DiscordRPC;
+        ToggleLegacyMode.IsOn = App.GameConfig.LegacyMode;
 
         // Hide the cards the game doesn't support
         // If the game doesn't support any of them then the page is hidden entirely
@@ -50,74 +50,74 @@ public sealed partial class GameConfigPage : Page
     private void ToggleConsole_OnToggled(object sender, RoutedEventArgs e)
     {
         // If unchanged then don't do anything
-        if (App.UserConfig.ConsoleWindow == ToggleConsole.IsOn)
+        if (App.GameConfig.ConsoleWindow == ToggleConsole.IsOn)
             return;
 
         // Otherwise change the setting
-        App.UserConfig.ConsoleWindow = ToggleConsole.IsOn;
+        App.GameConfig.ConsoleWindow = ToggleConsole.IsOn;
 
         // Save the changes
-        App.SaveConfig();
+        App.SaveGameConfig();
     }
     private void ToggleSpeedrunMode_OnToggled(object sender, RoutedEventArgs e)
     {
         // If unchanged then don't do anything
-        if (App.UserConfig.SpeedrunMode == ToggleSpeedrunMode.IsOn)
+        if (App.GameConfig.SpeedrunMode == ToggleSpeedrunMode.IsOn)
             return;
 
         // Otherwise change the setting
-        App.UserConfig.SpeedrunMode = ToggleSpeedrunMode.IsOn;
+        App.GameConfig.SpeedrunMode = ToggleSpeedrunMode.IsOn;
 
         // Save the changes
-        App.SaveConfig();
+        App.SaveGameConfig();
     }
     private void ToggleFastRestart_OnToggled(object sender, RoutedEventArgs e)
     {
         // If unchanged then don't do anything
-        if (App.UserConfig.FastRestart == ToggleFastRestart.IsOn)
+        if (App.GameConfig.FastRestart == ToggleFastRestart.IsOn)
             return;
 
         // Otherwise change the setting
-        App.UserConfig.FastRestart = ToggleFastRestart.IsOn;
+        App.GameConfig.FastRestart = ToggleFastRestart.IsOn;
 
         // Save the changes
-        App.SaveConfig();
+        App.SaveGameConfig();
     }
     private void ToggleSaveMode_OnToggled(object sender, RoutedEventArgs e)
     {
         // If unchanged then don't do anything
-        if (App.UserConfig.SaveMode == ToggleSaveMode.IsOn)
+        if (App.GameConfig.SaveMode == ToggleSaveMode.IsOn)
             return;
 
         // Otherwise change the setting
-        App.UserConfig.SaveMode = ToggleSaveMode.IsOn;
+        App.GameConfig.SaveMode = ToggleSaveMode.IsOn;
 
         // Save the changes
-        App.SaveConfig();
+        App.SaveGameConfig();
     }
     private void ToggleDiscordRPC_OnToggled(object sender, RoutedEventArgs e)
     {
         // If unchanged then don't do anything
-        if (App.UserConfig.DiscordRPC == ToggleDiscordRPC.IsOn)
+        if (App.GameConfig.DiscordRPC == ToggleDiscordRPC.IsOn)
             return;
 
         // Otherwise change the setting
-        App.UserConfig.DiscordRPC = ToggleDiscordRPC.IsOn;
+        App.GameConfig.DiscordRPC = ToggleDiscordRPC.IsOn;
 
         // Save the changes
-        App.SaveConfig();
+        App.SaveGameConfig();
     }
     private void ToggleLegacyMode_OnToggled(object sender, RoutedEventArgs e)
     {
         // If unchanged then don't do anything
-        if (App.UserConfig.LegacyMode == ToggleLegacyMode.IsOn)
+        if (App.GameConfig.LegacyMode == ToggleLegacyMode.IsOn)
             return;
 
         // Otherwise change the setting
-        App.UserConfig.LegacyMode = ToggleLegacyMode.IsOn;
+        App.GameConfig.LegacyMode = ToggleLegacyMode.IsOn;
 
         // Save the changes
-        App.SaveConfig();
+        App.SaveGameConfig();
     }
     private async void ButtonUpdateSpeedrunMods_Click(object sender, RoutedEventArgs e)
     {
@@ -131,6 +131,6 @@ public sealed partial class GameConfigPage : Page
     private void CardOpenModsFolder_OnClick(object sender, RoutedEventArgs e)
     {
         // Open the mods folder
-        Process.Start("explorer", System.IO.Path.Combine(App.GameDirectory, "mods"));
+        Process.Start("explorer", System.IO.Path.Combine(App.ManagerConfig.GameDirectory, "mods"));
     }
 }

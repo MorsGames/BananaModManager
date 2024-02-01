@@ -5,7 +5,7 @@ namespace BananaModManager.Shared
     /// <summary>
     ///     User managed config values of the mod manager.
     /// </summary>
-    public class UserConfig
+    public class GameConfig
     {
         /// <summary>
         ///     List of all currently enabled mods, in a specific order.
@@ -28,11 +28,6 @@ namespace BananaModManager.Shared
         /// </summary>
         public bool SpeedrunMode { get; set; } = true;
 
-        ///<summary>
-        ///     Enables One-Click support on GameBanana. Adding "bananamodmanager:" before any valid mod URL will also prompt the One-Click installation.
-        /// </summary>
-        public bool OneClick { get; set; } = false;
-
         /// <summary>
         ///     Enables fast restarting and toggling Speedrun Mode by pressing F12, a quicker way to toggle Speedrun Mode for speedrunners.
         /// </summary>
@@ -52,15 +47,5 @@ namespace BananaModManager.Shared
         ///     Enables Speedrun Mode and Save Mode to run on version 1.0.0
         /// </summary>
         public bool LegacyMode { get; set; } = false;
-
-        /// <summary>
-        /// Activates the not so hidden dark mode
-        /// </summary>
-        public Theme Theme { get; set; } = Theme.Default;
-
-        /// <summary>
-        /// Modifies the layout to look a bit more like the original mod manager
-        /// </summary>
-        public bool LegacyLayout { get; set; } = false;
     }
 }

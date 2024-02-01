@@ -19,11 +19,11 @@ namespace BananaModManager.Shared
         /// <summary>
         ///     Loads all necessary data about all the mods
         /// </summary>
-        public static void Load(out UserConfig userConfig, string gameDirectory)
+        public static void Load(out GameConfig gameConfig, string gameDirectory)
         {
             // Load the config file
-            userConfig = LoadUserConfig(gameDirectory);
-            userConfig.ActiveMods ??= new List<string>();
+            gameConfig = LoadGameConfig(gameDirectory);
+            gameConfig.ActiveMods ??= new List<string>();
 
             // Get the mods folder
             var folder = Path.Combine(gameDirectory, Folder);
@@ -41,7 +41,7 @@ namespace BananaModManager.Shared
                 var defaultConfig = LoadDefaultModConfig(directory);
 
                 // Load the mod config, either from the loader config file or the default configs file inside the mod folder
-                var modConfig = LoadModConfig(modInfo, userConfig, defaultConfig);
+                var modConfig = LoadModConfig(modInfo, gameConfig, defaultConfig);
 
                 // Mod object
                 var mod = new Mod
@@ -77,20 +77,20 @@ namespace BananaModManager.Shared
         ///     Loads the current config values of a specific mod.
         /// </summary>
         /// <param name="modInfo">Information about the mod.</param>
-        /// <param name="userConfig">The config values of the mod manager.</param>
+        /// <param name="gameConfig">The config values of the mod manager.</param>
         /// <param name="defaultConfig">Default values to fall back to if the values don't exist.</param>
         /// <returns>Config values of the mod.</returns>
-        public static Dictionary<string, ConfigItem> LoadModConfig(ModInfo modInfo, UserConfig userConfig,
+        public static Dictionary<string, ConfigItem> LoadModConfig(ModInfo modInfo, GameConfig gameConfig,
             Dictionary<string, ConfigItem> defaultConfig)
         {
             // If that config item is modified, change the value
-            if (userConfig.ModConfigs.ContainsKey(modInfo.ToString()))
+            if (gameConfig.ModConfigs.ContainsKey(modInfo.ToString()))
             {
                 var newConfig = new Dictionary<string, ConfigItem>();
                 for (var i = 0; i < defaultConfig.Count; i++)
                 {
                     var defaultElement = defaultConfig.ElementAt(i);
-                    var modConfig = userConfig.ModConfigs[modInfo.ToString()];
+                    var modConfig = gameConfig.ModConfigs[modInfo.ToString()];
 
                     ConfigItem item;
                     // If the config exists, load
@@ -146,49 +146,49 @@ namespace BananaModManager.Shared
         }
 
         /// <summary>
-        ///     Loads all the user config of the mod manager.
+        ///     Loads all the game config stuff.
         /// </summary>
-        /// <returns>Settings of the mod manager.</returns>
-        public static UserConfig LoadUserConfig(string gameDirectory)
+        /// <returns>Settings associated with the specific game.</returns>
+        public static GameConfig LoadGameConfig(string gameDirectory)
         {
-            UserConfig userConfig;
+            GameConfig gameConfig;
             // Load and deserialize the mod loader config file if it exists
             // If it doesn't just create an empty one
             try
             {
                 var configFilePath = Path.Combine(gameDirectory, Folder, ConfigFile);
                 if (File.Exists(configFilePath))
-                    userConfig = File.ReadAllText(configFilePath).Deserialize<UserConfig>() ??
-                                 new UserConfig();
+                    gameConfig = File.ReadAllText(configFilePath).Deserialize<GameConfig>() ??
+                                 new GameConfig();
                 else
-                    userConfig = new UserConfig();
+                    gameConfig = new GameConfig();
             }
             // At any error it's better to start fresh then to silently crash.
             catch (Exception e)
             {
                 MessageBox.Show($"An error has occured when reading your settings: {e.Message}", "Error!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
-                userConfig = new UserConfig();
+                gameConfig = new GameConfig();
             }
-            return userConfig;
+            return gameConfig;
         }
 
         /// <summary>
         ///     Saves the user config of the mod manager.
         /// </summary>
-        /// <param name="userConfig">Settings of the mod manager.</param>
-        public static void Save(UserConfig userConfig, string gameDirectory)
+        /// <param name="gameConfig">Settings of the mod manager.</param>
+        public static void Save(GameConfig gameConfig, string gameDirectory)
         {
             // Add the configs into it
             foreach (var mod in List.Select(_ => _.Value))
             {
                 // Convert the config before adding it to the list so it doesn't contain unnecessary information
                 var config = ConvertConfig(mod.Config);
-                userConfig.ModConfigs.Remove(mod.ToString());
-                userConfig.ModConfigs.Add(mod.ToString(), config);
+                gameConfig.ModConfigs.Remove(mod.ToString());
+                gameConfig.ModConfigs.Add(mod.ToString(), config);
             }
 
             // Serialize and save it
-            var configJson = userConfig.Serialize();
+            var configJson = gameConfig.Serialize();
             File.WriteAllText(Path.Combine(gameDirectory, Folder, ConfigFile), configJson);
         }
 

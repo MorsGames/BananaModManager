@@ -80,7 +80,7 @@ public sealed partial class MainWindow : Window
     // Apply the manager settings
     public void ApplyManagerConfig()
     {
-        if (App.UserConfig.LegacyLayout)
+        if (App.ManagerConfig.LegacyLayout)
         {
             NavView.PaneDisplayMode = NavigationViewPaneDisplayMode.Top;
             NavView.AlwaysShowHeader = false;
@@ -95,18 +95,18 @@ public sealed partial class MainWindow : Window
         }
 
         var content = (FrameworkElement) Content;
-        content.RequestedTheme = (ElementTheme) App.UserConfig.Theme;
-        switch (App.UserConfig.Theme)
+        content.RequestedTheme = (ElementTheme) App.ManagerConfig.Theme;
+        switch (App.ManagerConfig.Theme)
         {
-            case Theme.Default:
+            case 0:
             default:
                 var color = content.ActualTheme == ElementTheme.Dark ? Colors.White : Colors.Black;
                 _titleBar.ButtonForegroundColor = color;
                 break;
-            case Theme.Light:
+            case 1:
                 _titleBar.ButtonForegroundColor = Colors.Black;
                 break;
-            case Theme.Dark:
+            case 2:
                 _titleBar.ButtonForegroundColor = Colors.White;
                 break;
         }
@@ -197,7 +197,7 @@ public sealed partial class MainWindow : Window
         }
 
         // Check if a path is entered. If not, this is the first time we are opening this app!!! Probably
-        if (App.GameDirectory == "")
+        if (App.ManagerConfig.GameDirectory == "")
         {
             // Show the welcome message
             var dialog = new ContentDialog
@@ -223,7 +223,7 @@ public sealed partial class MainWindow : Window
         {
             await ModernMessageBox.Show("It seems like the mod loader is not installed! We will be doing that now.", "Umm...", "Alright!");
             Update.UpdateModLoader();
-            App.SaveConfig();
+            App.SaveGameConfig();
             await ModernMessageBox.Show("It's all done! Now you're ready to go and get some mods!", "Yay!!!");
         }
         // Show a message telling the users to install some mods!

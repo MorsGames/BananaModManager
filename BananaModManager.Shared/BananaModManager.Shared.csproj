@@ -117,8 +117,7 @@
     <Compile Include="MessageBox.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="ModInfo.cs" />
-    <Compile Include="Theme.cs" />
-    <Compile Include="UserConfig.cs" />
+    <Compile Include="GameConfig.cs" />
     <Compile Include="Mods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

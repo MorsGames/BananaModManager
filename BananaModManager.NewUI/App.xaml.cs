@@ -33,11 +33,11 @@ namespace BananaModManager.NewUI
     /// </summary>
     public partial class App : Application
     {
-        public static UserConfig UserConfig;
+        public static GameConfig GameConfig;
+        public static ManagerConfig ManagerConfig;
         public static MainWindow MainWindow;
         public static Game CurrentGame = Games.Default;
-        public static string GameDirectory = "";
-        public static readonly string DirectoryFile = "GameDirectory.txt";
+        public static readonly string ManagerConfigFile = "BananaModManager.json";
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -81,21 +81,26 @@ namespace BananaModManager.NewUI
                 }
             }
 
-            // Load the game directory first
-            if (File.Exists(DirectoryFile))
+            // Load the manager config
+            if (File.Exists(ManagerConfigFile))
             {
-                GameDirectory = await File.ReadAllTextAsync(DirectoryFile);
+                var configFile = await File.ReadAllTextAsync(ManagerConfigFile);
+                ManagerConfig = configFile.Deserialize<ManagerConfig>();
+            }
+            else
+            {
+                ManagerConfig = new ManagerConfig();
             }
 
-            // Load the settings and the mods
-            Mods.Load(out UserConfig, GameDirectory);
+            // Load the game config and the mods
+            Mods.Load(out GameConfig, ManagerConfig.GameDirectory);
 
             // Detect the current game
-            if (GameDirectory != "")
+            if (ManagerConfig.GameDirectory != "")
             {
                 foreach (var game in Games.List)
                 {
-                    if (File.Exists(Path.Combine(GameDirectory, $"{game.ExecutableName}.exe")))
+                    if (File.Exists(Path.Combine(ManagerConfig.GameDirectory, $"{game.ExecutableName}.exe")))
                     {
                         CurrentGame = game;
                         break;
@@ -108,11 +113,17 @@ namespace BananaModManager.NewUI
             MainWindow.Activate();
         }
 
-        public static void SaveConfig()
+        public static void SaveGameConfig()
         {
-            if (GameDirectory != "")
-                Mods.Save(UserConfig, GameDirectory);
+            if (ManagerConfig.GameDirectory != "")
+                Mods.Save(GameConfig, ManagerConfig.GameDirectory);
         }
+
+        public static void SaveManagerConfig()
+        {
+            File.WriteAllText(ManagerConfigFile, ManagerConfig.Serialize());
+        }
+
         public static void Restart()
         {
             Process.Start(Process.GetCurrentProcess().MainModule.FileName);
@@ -121,7 +132,7 @@ namespace BananaModManager.NewUI
 
         public static string PathConvert(string path)
         {
-            return Path.Combine(GameDirectory, path);
+            return Path.Combine(ManagerConfig.GameDirectory, path);
         }
     }
 }

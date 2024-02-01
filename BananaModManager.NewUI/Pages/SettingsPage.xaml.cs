@@ -23,37 +23,33 @@ public sealed partial class SettingsPage : Page
         InitializeComponent();
 
         // Load the defaults!
-        TextBoxGameDirectory.Text = App.GameDirectory;
-        ToggleOneClick.IsOn = App.UserConfig.OneClick;
-        ComboTheme.SelectedIndex = (int) App.UserConfig.Theme;
-        ToggleLegacyLayout.IsOn = App.UserConfig.LegacyLayout;
+        TextBoxGameDirectory.Text = App.ManagerConfig.GameDirectory;
+        ToggleOneClick.IsOn = App.ManagerConfig.OneClick;
+        ComboTheme.SelectedIndex = (int) App.ManagerConfig.Theme;
+        ToggleLegacyLayout.IsOn = App.ManagerConfig.LegacyLayout;
 
         // Set the same status text
         var isDefaultGame = App.CurrentGame == Games.Default;
         TextGameDirectoryStatus.Text = isDefaultGame ? "No game is detected!" : $"\"{App.CurrentGame.Title}\" is detected!";
         TextGameDirectoryStatus.Foreground = isDefaultGame ? new SolidColorBrush(Colors.Red) : new SolidColorBrush(Colors.Lime);
 
-        // Disable the cards if the game directory is not set
-        // We save all the other BMM settings on the game directory
+        // Disable the following cards if the game directory is not set
         if (isDefaultGame)
         {
-            CardOneClick.IsEnabled = false;
-            CardTheme.IsEnabled = false;
-            CardLegacyLayout.IsEnabled = false;
             CardUpdateModLoader.IsEnabled = false;
         }
     }
     private void ToggleOneClick_OnToggled(object sender, RoutedEventArgs e)
     {
         // If unchanged then don't do anything
-        if (App.UserConfig.OneClick == ToggleOneClick.IsOn)
+        if (App.ManagerConfig.OneClick == ToggleOneClick.IsOn)
             return;
 
         // Otherwise change the setting
-        App.UserConfig.OneClick = ToggleOneClick.IsOn;
+        App.ManagerConfig.OneClick = ToggleOneClick.IsOn;
 
         // Actually install the support
-        if (App.UserConfig.OneClick)
+        if (App.ManagerConfig.OneClick)
         {
             // Try to create a registry entry for One-Click install
             GameBanana.InstallOneClick();
@@ -65,37 +61,37 @@ public sealed partial class SettingsPage : Page
         }
 
         // Save the changes
-        App.SaveConfig();
+        App.SaveManagerConfig();
     }
     private void ToggleLegacyLayout_OnToggled(object sender, RoutedEventArgs e)
     {
         // If unchanged then don't do anything
-        if (App.UserConfig.LegacyLayout == ToggleLegacyLayout.IsOn)
+        if (App.ManagerConfig.LegacyLayout == ToggleLegacyLayout.IsOn)
             return;
 
         // Otherwise change the setting
-        App.UserConfig.LegacyLayout = ToggleLegacyLayout.IsOn;
+        App.ManagerConfig.LegacyLayout = ToggleLegacyLayout.IsOn;
 
         // Apply the changes
         App.MainWindow.ApplyManagerConfig();
 
         // Save the changes
-        App.SaveConfig();
+        App.SaveManagerConfig();
     }
     private void ComboTheme_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         // If unchanged then don't do anything
-        if (App.UserConfig.Theme == (Theme) ComboTheme.SelectedIndex)
+        if (App.ManagerConfig.Theme == ComboTheme.SelectedIndex)
             return;
 
         // Otherwise change the setting
-        App.UserConfig.Theme = (Theme) ComboTheme.SelectedIndex;
+        App.ManagerConfig.Theme = ComboTheme.SelectedIndex;
 
         // Apply the changes
         App.MainWindow.ApplyManagerConfig();
 
         // Save the changes
-        App.SaveConfig();
+        App.SaveManagerConfig();
     }
     private async void ButtonPickFolder_Click(object sender, RoutedEventArgs e)
     {
@@ -127,14 +123,14 @@ public sealed partial class SettingsPage : Page
     private async Task SaveGameDirectory(string value)
     {
         // If unchanged then don't do anything
-        if (App.GameDirectory == value)
+        if (App.ManagerConfig.GameDirectory == value)
             return;
 
         // Otherwise change the setting
-        App.GameDirectory = value;
+        App.ManagerConfig.GameDirectory = value;
 
         // Save the changes
-        await File.WriteAllTextAsync(App.DirectoryFile, App.GameDirectory);
+        App.SaveManagerConfig();
 
         // Restart!
         App.Restart();
@@ -148,7 +144,6 @@ public sealed partial class SettingsPage : Page
     {
         // Manually triggering the update process
         Update.UpdateModLoader();
-        App.SaveConfig();
 
         // Holy shit louis we are done
         await ModernMessageBox.Show("It's all done!", "Wow that was fast!");

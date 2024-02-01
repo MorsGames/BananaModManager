@@ -39,7 +39,7 @@ public sealed partial class ModsPage : Page
     {
         // Load the enabled mods!
         var order = 1;
-        foreach (var mod in App.UserConfig.ActiveMods.Select(x => Mods.List[x]))
+        foreach (var mod in App.GameConfig.ActiveMods.Select(x => Mods.List[x]))
         {
             mod.Enabled = true;
             AddMod(mod, order);
@@ -429,12 +429,12 @@ public sealed partial class ModsPage : Page
     private void Save()
     {
         // Update the active games list
-        App.UserConfig.ActiveMods = ModsTableList.Where(x => x.Enabled).Select(x => x.Mod.Info.Id).ToList();
+        App.GameConfig.ActiveMods = ModsTableList.Where(x => x.Enabled).Select(x => x.Mod.Info.Id).ToList();
         foreach (var tableItem in ModsTableList)
         {
             tableItem.Mod.Enabled = tableItem.Enabled;
         }
-        App.SaveConfig();
+        App.SaveGameConfig();
         ReorderList();
     }
     private void Play()
@@ -494,8 +494,8 @@ public sealed partial class ModsPage : Page
             DataGridMods.SelectedIndex = 0;
             var id = selection.Mod.Info.Id;
             Mods.List.Remove(id);
-            App.UserConfig.ActiveMods.Remove(id);
-            App.UserConfig.ModConfigs.Remove(id);
+            App.GameConfig.ActiveMods.Remove(id);
+            App.GameConfig.ModConfigs.Remove(id);
 
             // Force save
             Save();

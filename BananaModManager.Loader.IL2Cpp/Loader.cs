@@ -33,7 +33,7 @@ namespace BananaModManager.Loader.IL2Cpp
         public static extern System.IntPtr GetModuleHandle(string lpModuleName);
 
         private static List<Mod> _mods;
-        private static UserConfig _userConfig;
+        private static GameConfig _gameConfig;
         private static string ClientID = null;
         private static string SpeedrunHash = null;
 
@@ -52,7 +52,7 @@ namespace BananaModManager.Loader.IL2Cpp
         {
             try
             {
-                Startup.StartModLoader(out _mods, out _userConfig, out _currentGame);
+                Startup.StartModLoader(out _mods, out _gameConfig, out _currentGame);
 
                 Console.WriteLine($"Setting up the hooks...");
 
@@ -89,7 +89,7 @@ namespace BananaModManager.Loader.IL2Cpp
                 // Discord RPC Setup
                 try
                 {
-                    if (_userConfig.DiscordRPC || ClientID != null)
+                    if (_gameConfig.DiscordRPC || ClientID != null)
                     {
                         switch (_currentGame.AppID)
                         {
@@ -124,10 +124,10 @@ namespace BananaModManager.Loader.IL2Cpp
                     {
                         Thread.Sleep(12000);
 
-                        if (_mods.Count > 0 && !_userConfig.SpeedrunMode || SpeedrunHash != null)
+                        if (_mods.Count > 0 && !_gameConfig.SpeedrunMode || SpeedrunHash != null)
                         {
                             LeaderboardsDelegateInstance = Dummy;
-                            if (_userConfig.LegacyMode)
+                            if (_gameConfig.LegacyMode)
                             {
                                 // Old
                                 ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0xa9d990), LeaderboardsDelegateInstance);
@@ -141,10 +141,10 @@ namespace BananaModManager.Loader.IL2Cpp
                             // Block checking 0x4BD1A0
 
                         }
-                        if (!_userConfig.SaveMode)
+                        if (!_gameConfig.SaveMode)
                         {
                             SaveDelegateInstance = Dummy2;
-                            if (_userConfig.LegacyMode)
+                            if (_gameConfig.LegacyMode)
                             {
                                 // Old
                                 ClassInjector.Detour.Detour(IntPtr.Add(GetModuleHandle("GameAssembly.dll"), 0xE5B820), SaveDelegateInstance);
@@ -185,7 +185,7 @@ namespace BananaModManager.Loader.IL2Cpp
                 }*/
 
                 // Calculate the hashes to display in the speedrun mode
-                if (_userConfig.SpeedrunMode)
+                if (_gameConfig.SpeedrunMode)
                 {
                     Console.WriteLine("Passing mod names to Speedrun Mode display...");
 
@@ -288,11 +288,11 @@ namespace BananaModManager.Loader.IL2Cpp
         {
             foreach (var method in UpdateMethods) method.Invoke(null, null);
             // If F11 is pressed, restart and toggle Speedrun Mode
-            if (AppInput.GetKeyDown(KeyCode.F11) && _userConfig.FastRestart == true)
+            if (AppInput.GetKeyDown(KeyCode.F11) && _gameConfig.FastRestart == true)
             {
-                _userConfig.SpeedrunMode = !_userConfig.SpeedrunMode;
+                _gameConfig.SpeedrunMode = !_gameConfig.SpeedrunMode;
 
-                Mods.Save(_userConfig, "");
+                Mods.Save(_gameConfig, "");
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = $"steam://rungameid/{_currentGame.AppID}",
@@ -300,7 +300,7 @@ namespace BananaModManager.Loader.IL2Cpp
                 });
                 Process.GetCurrentProcess().Kill();
             }
-            if (_userConfig.DiscordRPC)
+            if (_gameConfig.DiscordRPC)
             {
                     switch (ClientID)
                     {
@@ -328,7 +328,7 @@ namespace BananaModManager.Loader.IL2Cpp
         {
             foreach (var method in GUIMethods) method.Invoke(null, null);
 
-            if (!_userConfig.SpeedrunMode)
+            if (!_gameConfig.SpeedrunMode)
                 return;
 
             try

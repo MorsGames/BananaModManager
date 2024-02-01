@@ -32,13 +32,13 @@ namespace BananaModManager.Shared
                 ShowWindow(handle, SW_SHOW);
         }
 
-        public static void StartModLoader(out List<Mod> mods, out UserConfig userConfig, out Game currentGame)
+        public static void StartModLoader(out List<Mod> mods, out GameConfig gameConfig, out Game currentGame)
         {
-            Mods.Load(out userConfig, "");
+            Mods.Load(out gameConfig, "");
 
-            var activeMods = userConfig.ActiveMods;
+            var activeMods = gameConfig.ActiveMods;
 
-            if (userConfig.ConsoleWindow)
+            if (gameConfig.ConsoleWindow)
                 ShowConsoleWindow();
 
             Console.ForegroundColor = ConsoleColor.Yellow;
@@ -64,7 +64,7 @@ namespace BananaModManager.Shared
                 foreach (var mod in activeMods.Select(modId => Mods.List[modId]))
                 {
                     if (Convert.ToInt32(mod.Info.Priority) != priorityCheck) continue;
-                    if (userConfig.SpeedrunMode && currentGame.SpeedrunModeSupport)
+                    if (gameConfig.SpeedrunMode && currentGame.SpeedrunModeSupport)
                     {
                         var Hash = "";
                         byte[] hashvalue;
@@ -102,7 +102,7 @@ namespace BananaModManager.Shared
                     Console.WriteLine("Loading " + mod.Info.Title + " (" + mod + ")");
 
                     // Load the config dictionary
-                    var config = Mods.LoadModConfig(mod.Info, userConfig,
+                    var config = Mods.LoadModConfig(mod.Info, gameConfig,
                         Mods.LoadDefaultModConfig(mod.Directory));
 
                     // We need to convert it before we can pass it on
