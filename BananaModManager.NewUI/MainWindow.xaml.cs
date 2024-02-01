@@ -75,6 +75,86 @@ public sealed partial class MainWindow : Window
             NavViewItemMods.Visibility = Visibility.Collapsed;
             NavViewItemGameConfig.Visibility = Visibility.Collapsed;
         }
+
+        UpdateProfilesList();
+    }
+    public void UpdateProfilesList()
+    {
+        // Load the profiles (UI calls them games)
+        // If there are no profiles then hide the tab
+        if (App.ManagerConfig.GameDirectories.Count <= 1)
+        {
+            NavViewItemProfiles.Visibility = Visibility.Collapsed;
+        }
+        // Otherwise...
+        else
+        {
+            NavViewItemProfiles.Visibility = Visibility.Visible;
+            var itemsList = new List<NavigationViewItem>();
+
+            // Add the header
+            var header = new NavigationViewItem()
+            {
+                Content = "Switch game:",
+                SelectsOnInvoked = false,
+                IsEnabled = false,
+                Margin = new Thickness(0, -4, 0, -4)
+            };
+            itemsList.Add(header);
+
+            // Go through each profile
+            for (var i = 0; i < App.ManagerConfig.GameDirectories.Count; i++)
+            {
+                var gameDir = App.ManagerConfig.GameDirectories[i];
+
+                // Get the name
+                var gameName = "Unknown Game";
+                if (gameDir != "")
+                {
+                    foreach (var game in Games.List)
+                    {
+                        if (File.Exists(Path.Combine(gameDir, $"{game.ExecutableName}.exe")))
+                        {
+                            gameName = game.Title;
+                            break;
+                        }
+                    }
+                }
+                var menuItem = new NavigationViewItem
+                {
+                    Content = gameName,
+                    SelectsOnInvoked = false,
+                };
+
+                if (i == App.ManagerConfig.CurrentProfileIndex)
+                {
+                    menuItem.Icon = new FontIcon()
+                    {
+                        Glyph = "\uE73E"
+                    };
+                }
+
+                // Weird C# quirk requires us to do this
+                var index = i;
+
+                // Add the handler
+                menuItem.Tapped += (o, args) => MenuItemOnTapped(o, args, index);
+
+                // Add it to the list :D
+                itemsList.Add(menuItem);
+            }
+
+            NavViewItemProfiles.MenuItemsSource = itemsList;
+        }
+    }
+
+    private void MenuItemOnTapped(object sender, TappedRoutedEventArgs e, int index)
+    {
+        if (App.ManagerConfig.CurrentProfileIndex == index)
+            return;
+        App.ManagerConfig.CurrentProfileIndex = index;
+        App.SaveManagerConfig();
+        App.Restart();
     }
 
     // Apply the manager settings
@@ -197,7 +277,7 @@ public sealed partial class MainWindow : Window
         }
 
         // Check if a path is entered. If not, this is the first time we are opening this app!!! Probably
-        if (App.ManagerConfig.GameDirectory == "")
+        if (App.ManagerConfig.GetGameDirectory() == "" && App.ManagerConfig.GameDirectories.Count == 1)
         {
             // Show the welcome message
             var dialog = new ContentDialog
@@ -210,8 +290,9 @@ public sealed partial class MainWindow : Window
                 DefaultButton = ContentDialogButton.Primary,
                 Content = new WelcomeDialogContent()
             };
-
             await dialog.ShowAsync();
+
+            await ModernMessageBox.Show("To get started, click \"Change Path\" and enter the path to the folder containing the game's files.", "Important!", "Okay, okay, I got it!");
         }
         // Show a message when an invalid game is detected
         else if (App.CurrentGame == Games.Default)

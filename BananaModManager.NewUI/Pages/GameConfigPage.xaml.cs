@@ -131,6 +131,6 @@ public sealed partial class GameConfigPage : Page
     private void CardOpenModsFolder_OnClick(object sender, RoutedEventArgs e)
     {
         // Open the mods folder
-        Process.Start("explorer", System.IO.Path.Combine(App.ManagerConfig.GameDirectory, "mods"));
+        Process.Start("explorer", System.IO.Path.Combine(App.ManagerConfig.GetGameDirectory(), "mods"));
     }
 }

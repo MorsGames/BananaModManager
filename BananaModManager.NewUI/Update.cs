@@ -271,7 +271,7 @@ namespace BananaModManager.NewUI
                     {
                         FileName = App.PathConvert("Il2CppDumper\\Il2CppDumper.exe"),
                         Arguments = $"\"GameAssembly.dll\" {game.ExecutableName}\"_Data\\il2cpp_data\\Metadata\\global-metadata.dat\"",
-                        WorkingDirectory = App.ManagerConfig.GameDirectory
+                        WorkingDirectory = App.ManagerConfig.GetGameDirectory()
                     };
                     var process = Process.Start(processStartInfo);
                     process?.WaitForExit();
@@ -281,7 +281,7 @@ namespace BananaModManager.NewUI
                 {
                     FileName = App.PathConvert("Il2CppAssemblyUnhollower\\AssemblyUnhollower.exe"),
                     Arguments = "--input=\"Il2CppDumper\\DummyDll\" --output=\"managed\" --mscorlib=\"mono\\Managed\\mscorlib.dll\"",
-                    WorkingDirectory = App.ManagerConfig.GameDirectory
+                    WorkingDirectory = App.ManagerConfig.GetGameDirectory()
                 };
                 var process2 = Process.Start(process2StartInfo);
                 process2?.WaitForExit();

@@ -71,6 +71,7 @@
                         </AnimatedIcon>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Content="Switch Game" Icon="More" SelectsOnInvoked="False" x:Name="NavViewItemProfiles"/>
             </NavigationView.MenuItems>
 
             <NavigationView.FooterMenuItems>

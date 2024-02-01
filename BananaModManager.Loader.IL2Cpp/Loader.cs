@@ -91,7 +91,7 @@ namespace BananaModManager.Loader.IL2Cpp
                 {
                     if (_gameConfig.DiscordRPC || ClientID != null)
                     {
-                        switch (_currentGame.AppID)
+                        switch (_currentGame.SteamAppID)
                         {
                             case "1061730":
                                 ClientID = "1095161758357930164";
@@ -295,7 +295,7 @@ namespace BananaModManager.Loader.IL2Cpp
                 Mods.Save(_gameConfig, "");
                 Process.Start(new ProcessStartInfo
                 {
-                    FileName = $"steam://rungameid/{_currentGame.AppID}",
+                    FileName = $"steam://rungameid/{_currentGame.SteamAppID}",
                     UseShellExecute = true
                 });
                 Process.GetCurrentProcess().Kill();

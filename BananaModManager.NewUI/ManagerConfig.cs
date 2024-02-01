@@ -1,11 +1,20 @@
-﻿namespace BananaModManager.NewUI;
+﻿using System.Collections.Generic;
+
+namespace BananaModManager.NewUI;
 
 public class ManagerConfig
 {
+        public string GetGameDirectory() => GameDirectories[CurrentProfileIndex];
+
         /// <summary>
-        /// The directory of the game
+        /// List of directories of the games
         /// </summary>
-        public string GameDirectory { get; set; } = "";
+        public List<string> GameDirectories { get; set; } = new() { "" };
+
+        /// <summary>
+        /// Current game
+        /// </summary>
+        public int CurrentProfileIndex { get; set; } = 0;
 
         ///<summary>
         ///     Enables One-Click support on GameBanana. Adding "bananamodmanager:" before any valid mod URL will also prompt the One-Click installation.

@@ -4,25 +4,24 @@ namespace BananaModManager.Shared
 {
     public static class Games
     {
-        public static Game Default = new()
-        {
-            Title = "No Game",
-        };
+        public static Game Default = new();
         public static Game BananaBlitzHD = new()
         {
+            GameID = "BananaBlitzHD",
             Title = "Super Monkey Ball: Banana Blitz HD",
             ExecutableName = "SMBBBHD",
             ExecutablePath = "SMBBBHD\\",
-            AppID = "1061730",
+            SteamAppID = "1061730",
             Managed = true,
             X64 = false
         };
         public static Game BananaMania = new()
         {
+            GameID = "BananaMania",
             Title = "Super Monkey Ball: Banana Mania",
             ExecutableName = "smbbm",
             ExecutablePath = "smbbm\\",
-            AppID = "1316910",
+            SteamAppID = "1316910",
             Managed = false,
             X64 = true,
             SpeedrunModeSupport = true,
@@ -78,10 +77,11 @@ namespace BananaModManager.Shared
         };
         public static Game Paperball = new()
         {
+            GameID = "Paperball",
             Title = "Paperball",
             ExecutableName = "Paperball",
             ExecutablePath = "Paperball\\",
-            AppID = "1198510",
+            SteamAppID = "1198510",
             Managed = true,
             X64 = true
         };

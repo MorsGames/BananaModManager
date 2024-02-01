@@ -93,14 +93,14 @@ namespace BananaModManager.NewUI
             }
 
             // Load the game config and the mods
-            Mods.Load(out GameConfig, ManagerConfig.GameDirectory);
+            Mods.Load(out GameConfig, ManagerConfig.GetGameDirectory());
 
             // Detect the current game
-            if (ManagerConfig.GameDirectory != "")
+            if (ManagerConfig.GetGameDirectory() != "")
             {
                 foreach (var game in Games.List)
                 {
-                    if (File.Exists(Path.Combine(ManagerConfig.GameDirectory, $"{game.ExecutableName}.exe")))
+                    if (File.Exists(Path.Combine(ManagerConfig.GetGameDirectory(), $"{game.ExecutableName}.exe")))
                     {
                         CurrentGame = game;
                         break;
@@ -115,8 +115,8 @@ namespace BananaModManager.NewUI
 
         public static void SaveGameConfig()
         {
-            if (ManagerConfig.GameDirectory != "")
-                Mods.Save(GameConfig, ManagerConfig.GameDirectory);
+            if (ManagerConfig.GetGameDirectory() != "")
+                Mods.Save(GameConfig, ManagerConfig.GetGameDirectory());
         }
 
         public static void SaveManagerConfig()
@@ -132,7 +132,7 @@ namespace BananaModManager.NewUI
 
         public static string PathConvert(string path)
         {
-            return Path.Combine(ManagerConfig.GameDirectory, path);
+            return Path.Combine(ManagerConfig.GetGameDirectory(), path);
         }
     }
 }

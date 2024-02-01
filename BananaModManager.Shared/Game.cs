@@ -8,10 +8,15 @@ namespace BananaModManager.Shared
     /// </summary>
     public class Game
     {
+        // <summary>
+        //     ID used to identify the game.
+        // </summary>
+        public string GameID = "Unknown";
+
         /// <summary>
         ///     Steam app ID of the game. Used to launch the game.
         /// </summary>
-        public string AppID = "0";
+        public string SteamAppID = "0";
 
         /// <summary>
         ///     The executable name of the mod.
@@ -28,7 +33,7 @@ namespace BananaModManager.Shared
         /// <summary>
         ///     Title of the game.
         /// </summary>
-        public string Title = "Unnamed Game";
+        public string Title = "No Game";
 
         /// <summary>
         ///     Whether if the game uses Mono or IL2CPP.
@@ -88,7 +93,7 @@ namespace BananaModManager.Shared
         {
             Process.Start(new ProcessStartInfo
             {
-                FileName = "steam://rungameid/" + AppID,
+                FileName = "steam://rungameid/" + SteamAppID,
                 UseShellExecute = true
             });
         }

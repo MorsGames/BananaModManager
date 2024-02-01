@@ -7,14 +7,14 @@
     <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
 
         <TextBlock Margin="0,0,0,12" TextWrapping="Wrap" >
-            BananaModManager is a mod loader and manager for Super Monkey Ball games. It currently supports the following games:
+            BananaModManager is a mod loader and manager that supports the following games:
         </TextBlock>
 
         <StackPanel Margin="16,0,0,16" x:Name="PanelGames" >
         </StackPanel>
 
         <TextBlock Margin="0,0,0,16" TextWrapping="Wrap" >
-            To get started, pick the path to the folder containing the game's files, and the mod loader will be installed if a game is detected. Once that's done, you're good to go! You can now download mods and start playing!
+            To get started, click "Change Path" and enter the path to the folder containing the game's files. Once that's done, you're good to go!
         </TextBlock>
 
         <Expander
@@ -26,13 +26,13 @@
             <Expander.Content>
                 <StackPanel>
                     <TextBlock Margin="0,-8,0,8" TextWrapping="Wrap" >
-                        - You can download and install mods directly by extracting them into the "mods" folder present in the game's directory.
+                        1. You can download and install mods directly by extracting them into the "mods" folder present in the game's directory.
                     </TextBlock>
                     <TextBlock Margin="0,0,0,8" TextWrapping="Wrap" >
-                        - You can enable the "GameBanana One-Click support" feature, then install mods directly from GameBanana.
+                        2. You can enable the "GameBanana One-Click support" feature, then install mods directly from GameBanana.
                     </TextBlock>
                     <TextBlock TextWrapping="Wrap" >
-                        - With SMB Banana Mania, you can go to the "Game Config" tab and click "Download and Update Speedrun Legal Mods" button to automatically download all mods that are allowed in the the Speedrun Mode. This is recommended even if you're not a speedrunner of the game, as it contains some really good hand picked mods.
+                        3. With SMB Banana Mania, you can go to the "Game Config" tab and click "Download and Update Speedrun Legal Mods" button to automatically download all mods that are allowed in the the Speedrun Mode. This is recommended even if you're not a speedrunner of the game, as it contains some really good hand picked mods.
                     </TextBlock>
                 </StackPanel>
             </Expander.Content>
