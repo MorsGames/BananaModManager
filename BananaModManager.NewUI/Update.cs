@@ -7,7 +7,6 @@ using System.Net;
 using System.Threading.Tasks;
 using BananaModManager.Shared;
 using Microsoft.UI.Xaml.Controls;
-using Newtonsoft.Json;
 
 namespace BananaModManager.NewUI
 {
@@ -62,8 +61,8 @@ namespace BananaModManager.NewUI
                 {
                     // Get the latest release info from GitHub's API
                     wc.Headers.Add("user-agent", "request");
-                    var jsondata = wc.DownloadString(new System.Uri("https://api.github.com/repos/MorsGames/BananaModManager/releases/latest"));
-                    var parsedJson = JsonConvert.DeserializeObject<Release>(jsondata);
+                    var jsonData = wc.DownloadString(new System.Uri("https://api.github.com/repos/MorsGames/BananaModManager/releases/latest"));
+                    var parsedJson = jsonData.Deserialize<Release>();
                     // Create a temp "New" folder to store the new version of BMM
                     if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\New\\"))
                         Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\New\\");
@@ -93,7 +92,7 @@ namespace BananaModManager.NewUI
                     // Get the latest release info from GitHub's API
                     wc.Headers.Add("user-agent", "request");
                     var jsonData = wc.DownloadString(new System.Uri("https://api.github.com/repos/MorsGames/BananaModManager/releases/latest"));
-                    var parsedJson = JsonConvert.DeserializeObject<Release>(jsonData);
+                    var parsedJson = jsonData.Deserialize<Release>();
 
                     // Delete leftover if it's there for some reason
                     var legalModsPath = App.PathConvert("LegalMods.zip");
@@ -181,129 +180,134 @@ namespace BananaModManager.NewUI
             }
         }
 
-        public static void UpdateModLoader()
+        public static async void UpdateModLoader()
         {
-            var game = App.CurrentGame;
-
-            // No game, no setup.
-            if (game == Games.Default)
-                return;
-
-            // TODO: Don't hardcode the names like this...
-            // Copy the ini files for doorstop
-            File.Copy(game.Managed ? "Loader\\doorstop_config_mono.ini" : "Loader\\doorstop_config_il2cpp.ini", App.PathConvert("doorstop_config.ini"), true);
-
-            // Copy the mod loader DLL files
-            File.Copy("Loader\\DiscordRPC.dll", App.PathConvert("DiscordRPC.dll"), true);
-            File.Copy("Loader\\BananaModManager.Shared.dll", App.PathConvert("BananaModManager.Shared.dll"), true);
-            if (game.X64)
+            try
             {
-                File.Copy("Loader\\x64\\winhttp.dll", App.PathConvert("winhttp.dll"), true);
-                File.Copy("Loader\\x64\\BananaModManager.Detours.dll", App.PathConvert("BananaModManager.Detours.dll"), true);
-            }
-            else
-            {
-                File.Copy("Loader\\x86\\winhttp.dll", App.PathConvert("winhttp.dll"), true);
-                File.Copy("Loader\\x86\\BananaModManager.Detours.dll", App.PathConvert("BananaModManager.Detours.dll"), true);
-            }
-            if (game.Managed)
-            {
-                File.Copy("Loader\\BananaModManager.Loader.Mono.dll", App.PathConvert("BananaModManager.Loader.Mono.dll"), true);
-                File.Copy("Loader\\System.Text.Json.dll", App.PathConvert("System.Text.Json.dll"), true);
-                File.Copy("Loader\\System.Memory.dll", App.PathConvert("System.Memory.dll"), true);
-            }
-            else
-            {
-                File.Copy("Loader\\BananaModManager.Loader.IL2Cpp.dll", App.PathConvert("BananaModManager.Loader.IL2Cpp.dll"), true);
+                var game = App.CurrentGame;
 
-                // Copy the mono files
-                var sourceDirectory = "Loader\\mono";
-                var destinationDirectory = App.PathConvert("mono");
+                // No game, no setup.
+                if (game == Games.Default)
+                    return;
 
-                // Get all files in the source directory and its subdirectories
-                var files = Directory.GetFiles(sourceDirectory, "*.*", SearchOption.AllDirectories);
+                // TODO: Don't hardcode the names like this...
+                // Copy the ini files for doorstop
+                File.Copy(game.Managed ? "Loader\\doorstop_config_mono.ini" : "Loader\\doorstop_config_il2cpp.ini", App.PathConvert("doorstop_config.ini"), true);
 
-                // Copy each file to the destination directory
-                foreach (var filePath in files)
+                // Copy the mod loader DLL files
+                File.Copy("Loader\\BananaModManager.Shared.dll", App.PathConvert("BananaModManager.Shared.dll"), true);
+                if (game.X64)
                 {
-                    // Create the destination path by replacing the source directory with the destination directory
-                    var destinationPath = Path.Combine(destinationDirectory, filePath.Substring(sourceDirectory.Length + 1));
-
-                    // Ensure the destination directory exists
-                    Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
-
-                    // Perform the file copy
-                    File.Copy(filePath, destinationPath, true);
+                    File.Copy("Loader\\x64\\winhttp.dll", App.PathConvert("winhttp.dll"), true);
+                    File.Copy("Loader\\x64\\BananaModManager.Detours.dll", App.PathConvert("BananaModManager.Detours.dll"), true);
                 }
-            }
-
-
-            // Check if the game is managed or already decompiled.
-            if (game.Managed || Directory.Exists(App.PathConvert("managed")))
-            {
-                // If so we can skip the rest
-                return;
-            }
-
-            // Otherwise, we are gaming
-            var tempPath = Path.Combine(Path.GetTempPath(), "BananaModManager");
-            Directory.CreateDirectory(tempPath);
-
-            // Download the necessary tools
-            if (!Directory.Exists("Il2CppDumper"))
-            {
-                var zipPath = Path.Combine(tempPath, "Il2CppDumper-v6.6.5.zip");
-                using var client = new WebClient();
-                client.DownloadFile("https://github.com/Perfare/Il2CppDumper/releases/download/v6.6.5/Il2CppDumper-v6.6.5.zip", zipPath);
-                ZipFile.ExtractToDirectory(zipPath, App.PathConvert("Il2CppDumper"));
-            }
-            if (!Directory.Exists("Il2CppAssemblyUnhollower"))
-            {
-                var zipPath = Path.Combine(tempPath, "Il2CppAssemblyUnhollower.0.4.15.4.zip");
-                using var client = new WebClient();
-                client.DownloadFile("https://github.com/knah/Il2CppAssemblyUnhollower/releases/download/v0.4.15.4/Il2CppAssemblyUnhollower.0.4.15.4.zip", zipPath);
-                ZipFile.ExtractToDirectory(zipPath, App.PathConvert("Il2CppAssemblyUnhollower"));
-            }
-
-            // Run the tools if needed
-            if (!Directory.Exists(App.PathConvert("Il2CppDumper\\DummyDll")))
-            {
-                var processStartInfo = new ProcessStartInfo
+                else
                 {
-                    FileName = App.PathConvert("Il2CppDumper\\Il2CppDumper.exe"),
-                    Arguments = $"\"GameAssembly.dll\" {game.ExecutableName}\"_Data\\il2cpp_data\\Metadata\\global-metadata.dat\"",
+                    File.Copy("Loader\\x86\\winhttp.dll", App.PathConvert("winhttp.dll"), true);
+                    File.Copy("Loader\\x86\\BananaModManager.Detours.dll", App.PathConvert("BananaModManager.Detours.dll"), true);
+                }
+                if (game.Managed)
+                {
+                    File.Copy("Loader\\BananaModManager.Loader.Mono.dll", App.PathConvert("BananaModManager.Loader.Mono.dll"), true);
+                }
+                else
+                {
+                    File.Copy("Loader\\DiscordRPC.dll", App.PathConvert("DiscordRPC.dll"), true);
+                    File.Copy("Loader\\BananaModManager.Loader.IL2Cpp.dll", App.PathConvert("BananaModManager.Loader.IL2Cpp.dll"), true);
+
+                    // Copy the mono files
+                    var sourceDirectory = "Loader\\mono";
+                    var destinationDirectory = App.PathConvert("mono");
+
+                    // Get all files in the source directory and its subdirectories
+                    var files = Directory.GetFiles(sourceDirectory, "*.*", SearchOption.AllDirectories);
+
+                    // Copy each file to the destination directory
+                    foreach (var filePath in files)
+                    {
+                        // Create the destination path by replacing the source directory with the destination directory
+                        var destinationPath = Path.Combine(destinationDirectory, filePath.Substring(sourceDirectory.Length + 1));
+
+                        // Ensure the destination directory exists
+                        Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
+
+                        // Perform the file copy
+                        File.Copy(filePath, destinationPath, true);
+                    }
+                }
+
+
+                // Check if the game is managed or already decompiled.
+                if (game.Managed || Directory.Exists(App.PathConvert("managed")))
+                {
+                    // If so we can skip the rest
+                    return;
+                }
+
+                // Otherwise, we are gaming
+                var tempPath = Path.Combine(Path.GetTempPath(), "BananaModManager");
+                Directory.CreateDirectory(tempPath);
+
+                // Download the necessary tools
+                if (!Directory.Exists("Il2CppDumper"))
+                {
+                    var zipPath = Path.Combine(tempPath, "Il2CppDumper-v6.6.5.zip");
+                    using var client = new WebClient();
+                    client.DownloadFile("https://github.com/Perfare/Il2CppDumper/releases/download/v6.6.5/Il2CppDumper-v6.6.5.zip", zipPath);
+                    ZipFile.ExtractToDirectory(zipPath, App.PathConvert("Il2CppDumper"));
+                }
+                if (!Directory.Exists("Il2CppAssemblyUnhollower"))
+                {
+                    var zipPath = Path.Combine(tempPath, "Il2CppAssemblyUnhollower.0.4.15.4.zip");
+                    using var client = new WebClient();
+                    client.DownloadFile("https://github.com/knah/Il2CppAssemblyUnhollower/releases/download/v0.4.15.4/Il2CppAssemblyUnhollower.0.4.15.4.zip", zipPath);
+                    ZipFile.ExtractToDirectory(zipPath, App.PathConvert("Il2CppAssemblyUnhollower"));
+                }
+
+                // Run the tools if needed
+                if (!Directory.Exists(App.PathConvert("Il2CppDumper\\DummyDll")))
+                {
+                    var processStartInfo = new ProcessStartInfo
+                    {
+                        FileName = App.PathConvert("Il2CppDumper\\Il2CppDumper.exe"),
+                        Arguments = $"\"GameAssembly.dll\" {game.ExecutableName}\"_Data\\il2cpp_data\\Metadata\\global-metadata.dat\"",
+                        WorkingDirectory = App.GameDirectory
+                    };
+                    var process = Process.Start(processStartInfo);
+                    process?.WaitForExit();
+                }
+
+                var process2StartInfo = new ProcessStartInfo
+                {
+                    FileName = App.PathConvert("Il2CppAssemblyUnhollower\\AssemblyUnhollower.exe"),
+                    Arguments = "--input=\"Il2CppDumper\\DummyDll\" --output=\"managed\" --mscorlib=\"mono\\Managed\\mscorlib.dll\"",
                     WorkingDirectory = App.GameDirectory
                 };
-                var process = Process.Start(processStartInfo);
-                process?.WaitForExit();
+                var process2 = Process.Start(process2StartInfo);
+                process2?.WaitForExit();
+
+                // Overwrite dummy mono files with actual ones
+                foreach (var path in Directory.GetFiles(App.PathConvert("mono\\Managed"), "*.dll", SearchOption.AllDirectories))
+                {
+                    var lastIndexOfManaged = path.LastIndexOf("mono\\Managed", StringComparison.Ordinal);
+                    var newPath = path.Substring(0, lastIndexOfManaged) + "managed" + path.Substring(lastIndexOfManaged + "mono\\Managed".Length);
+                    File.Copy(path, newPath, true);
+                }
+                /*foreach (var path in Directory.GetFiles("Il2CppAssemblyUnhollower", "*.dll", SearchOption.AllDirectories))
+                {
+                    var newPath = path.Replace("Il2CppAssemblyUnhollower", "managed");
+                    File.Copy(path, newPath, true);
+                }*/
+
+                // Delete stuff we don't need
+                Directory.Delete(App.PathConvert("Il2CppDumper"), true);
+                Directory.Delete(App.PathConvert("Il2CppAssemblyUnhollower"), true);
+                Directory.Delete(tempPath, true);
             }
-
-            var process2StartInfo = new ProcessStartInfo
+            catch (Exception e)
             {
-                FileName = App.PathConvert("Il2CppAssemblyUnhollower\\AssemblyUnhollower.exe"),
-                Arguments = "--input=\"Il2CppDumper\\DummyDll\" --output=\"managed\" --mscorlib=\"mono\\Managed\\mscorlib.dll\"",
-                WorkingDirectory = App.GameDirectory
-            };
-            var process2 = Process.Start(process2StartInfo);
-            process2?.WaitForExit();
-
-            // Overwrite dummy mono files with actual ones
-            foreach (var path in Directory.GetFiles(App.PathConvert("mono\\Managed"), "*.dll", SearchOption.AllDirectories))
-            {
-                var lastIndexOfManaged = path.LastIndexOf("mono\\Managed", StringComparison.Ordinal);
-                var newPath = path.Substring(0, lastIndexOfManaged) + "managed" + path.Substring(lastIndexOfManaged + "mono\\Managed".Length);
-                File.Copy(path, newPath, true);
+                await ModernMessageBox.Show(e.ToString(), "Error!");
             }
-            /*foreach (var path in Directory.GetFiles("Il2CppAssemblyUnhollower", "*.dll", SearchOption.AllDirectories))
-            {
-                var newPath = path.Replace("Il2CppAssemblyUnhollower", "managed");
-                File.Copy(path, newPath, true);
-            }*/
-
-            // Delete stuff we don't need
-            Directory.Delete(App.PathConvert("Il2CppDumper"), true);
-            Directory.Delete(App.PathConvert("Il2CppAssemblyUnhollower"), true);
-            Directory.Delete(tempPath, true);
         }
     }
 }

@@ -42,7 +42,7 @@ namespace BananaModManager.Shared
                 ShowConsoleWindow();
 
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("BananaModManager by Mors, iswimfly, and co.");
+            Console.WriteLine("BananaModManager by Mors (feat. iswimfly).");
             Console.ForegroundColor = ConsoleColor.White;
 
             // Get the current game
@@ -53,9 +53,9 @@ namespace BananaModManager.Shared
                     currentGame = game;
             }
 
-            Console.WriteLine("Detected " + currentGame.Title + " (" + (currentGame.Managed ? "Mono" : "ILCpp") + ")");
+            Console.WriteLine($"Detected {currentGame.Title} ({(currentGame.Managed ? "Mono" : "ILCpp")} {(currentGame.X64 ? "x64" : "x86")})");
 
-            Console.WriteLine("Found " + activeMods.Count + " active mods out of " + Mods.List.Count + ".");
+            Console.WriteLine($"Found {activeMods.Count} active mods out of {Mods.List.Count}.");
 
             mods = new List<Mod>();
             int priorityCheck = 0;
@@ -64,7 +64,7 @@ namespace BananaModManager.Shared
                 foreach (var mod in activeMods.Select(modId => Mods.List[modId]))
                 {
                     if (Convert.ToInt32(mod.Info.Priority) != priorityCheck) continue;
-                    if (userConfig.SpeedrunMode)
+                    if (userConfig.SpeedrunMode && currentGame.SpeedrunModeSupport)
                     {
                         string Hash = "";
                         byte[] hashvalue;
@@ -84,14 +84,14 @@ namespace BananaModManager.Shared
                         if (!currentGame.Whitelist.Contains(Hash) && currentGame.WhitelistNames.Contains(mod.Info.DLLFile))
                         {
                             Console.BackgroundColor = ConsoleColor.DarkRed;
-                            Console.WriteLine("Nice try! " + mod.Info.Title + "'s Hash is different. The file is not the speedrun-legal version!");
+                            Console.WriteLine($"Nice try! {mod.Info.Title}'s Hash is different. The file is not the speedrun-legal version!");
                             Console.BackgroundColor = ConsoleColor.Black;
                             continue;
                         }
                         if (!currentGame.WhitelistNames.Contains(mod.Info.DLLFile))
                         {
                             Console.BackgroundColor = ConsoleColor.DarkYellow;
-                            Console.WriteLine("Skipped loading " + mod.Info.Title + ". It's not whitelisted for the speedrun mode!");
+                            Console.WriteLine($"Skipped loading {mod.Info.Title}. It's not whitelisted for the speedrun mode!");
                             Console.BackgroundColor = ConsoleColor.Black;
                             continue;
                         }

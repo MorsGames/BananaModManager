@@ -21,7 +21,6 @@ using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using BananaModManager.Shared;
-using Newtonsoft.Json;
 using Path = System.IO.Path;
 
 // To learn more about WinUI, the WinUI project structure,

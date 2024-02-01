@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 
 namespace BananaModManager.Shared
 {
@@ -70,7 +69,7 @@ namespace BananaModManager.Shared
             var text = File.ReadAllText(file);
 
             // Deserialize the string
-            var modInfo = JsonSerializer.Deserialize<ModInfo>(text);
+            var modInfo = text.Deserialize<ModInfo>();
             return modInfo;
         }
 
@@ -135,9 +134,8 @@ namespace BananaModManager.Shared
                 return new Dictionary<string, ConfigItem>();
             }
 
-            var defaultConfig =
-                JsonSerializer.Deserialize<Dictionary<string, ConfigItem>>(
-                    File.ReadAllText(file));
+            var defaultConfigJson = File.ReadAllText(file);
+            var defaultConfig = defaultConfigJson.Deserialize<Dictionary<string, ConfigItem>>();
             foreach (var element in defaultConfig)
             {
                 var configItem = element.Value;
@@ -160,15 +158,15 @@ namespace BananaModManager.Shared
             {
                 var configFilePath = Path.Combine(gameDirectory, Folder, ConfigFile);
                 if (File.Exists(configFilePath))
-                    userConfig = JsonSerializer.Deserialize<UserConfig>(File.ReadAllText(configFilePath)) ??
+                    userConfig = File.ReadAllText(configFilePath).Deserialize<UserConfig>() ??
                                  new UserConfig();
                 else
                     userConfig = new UserConfig();
             }
             // At any error it's better to start fresh then to silently crash.
-            catch
+            catch (Exception e)
             {
-                MessageBox.Show("An error occured when reading your settings.", "Error!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
+                MessageBox.Show($"An error has occured when reading your settings: {e.Message}", "Error!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
                 userConfig = new UserConfig();
             }
             return userConfig;
@@ -190,7 +188,7 @@ namespace BananaModManager.Shared
             }
 
             // Serialize and save it
-            var configJson = JsonSerializer.Serialize(userConfig);
+            var configJson = userConfig.Serialize();
             File.WriteAllText(Path.Combine(gameDirectory, Folder, ConfigFile), configJson);
         }
 
@@ -220,19 +218,13 @@ namespace BananaModManager.Shared
         /// <returns>Converted result.</returns>
         public static object ConvertJsonValue(object value)
         {
-            if (value is JsonElement jsonElement)
+            // Check if the value is a number
+            if (value is byte or sbyte or short or ushort or int or uint or long or ulong or double or decimal)
             {
-                var kind = jsonElement.ValueKind;
-                value = kind switch
-                {
-                    JsonValueKind.Number => jsonElement.GetSingle(),
-                    JsonValueKind.String => jsonElement.GetString(),
-                    JsonValueKind.True => true,
-                    JsonValueKind.False => false,
-                    _ => null
-                };
+                // Convert the value to a float and return it
+                return Convert.ToSingle(value);
             }
-
+            // Return the value as is
             return value;
         }
     }

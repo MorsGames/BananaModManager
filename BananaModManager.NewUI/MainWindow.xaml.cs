@@ -21,7 +21,6 @@ using BananaModManager.Shared;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml.Media.Animation;
-using Newtonsoft.Json;
 using WinRT.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -152,7 +151,7 @@ public sealed partial class MainWindow : Window
             {
                 wc.Headers.Add("user-agent", "request");
                 var jsonData = wc.DownloadString(new System.Uri("https://api.github.com/repos/MorsGames/BananaModManager/releases/latest"));
-                var parsedJson = JsonConvert.DeserializeObject<Release>(jsonData);
+                var parsedJson = jsonData.Deserialize<Release>();
                 var bmmVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
                 if (parsedJson.tag_name != $"v{bmmVersion}")
                 {

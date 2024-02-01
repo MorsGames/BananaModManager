@@ -76,7 +76,16 @@ namespace BananaModManager.Shared
                 "BMOnline.Mod.dll"
             }
         };
+        public static Game Paperball = new()
+        {
+            Title = "Paperball",
+            ExecutableName = "Paperball",
+            ExecutablePath = "Paperball\\",
+            AppID = "1198510",
+            Managed = true,
+            X64 = true
+        };
 
-        public static List<Game> List = new List<Game> {BananaBlitzHD, BananaMania};
+        public static List<Game> List = new List<Game> {BananaBlitzHD, BananaMania, Paperball};
     }
 }

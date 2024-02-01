@@ -208,7 +208,7 @@ REM ============================================================================
 echo. 
 echo Ding ding ding! We are done!
 
-%SystemRoot%\explorer.exe "%loaderDestinationFolder%"
+REM %SystemRoot%\explorer.exe "%loaderDestinationFolder%"
 
 set /P "=Press any key to continue... " <nul
 pause >nul
