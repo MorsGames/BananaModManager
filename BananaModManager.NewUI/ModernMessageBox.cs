@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-namespace BananaModManager.NewUI;
+namespace BananaModManager;
 
 public static class ModernMessageBox
 {

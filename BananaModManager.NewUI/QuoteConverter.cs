@@ -1,8 +1,7 @@
 ﻿using System;
-using Windows.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Data;
 
-namespace BananaModManager.NewUI;
+namespace BananaModManager;
 
 // This is so dumb
 public class QuoteConverter : IValueConverter

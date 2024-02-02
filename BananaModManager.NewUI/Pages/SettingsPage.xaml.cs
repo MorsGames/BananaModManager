@@ -1,20 +1,14 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Core;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Pickers;
-using Windows.UI.Core;
 using BananaModManager.Shared;
-using CommunityToolkit.WinUI;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 
-namespace BananaModManager.NewUI;
+namespace BananaModManager;
 
 /// <summary>
 ///     The page with settings shared across all games OR specific to the mod manager

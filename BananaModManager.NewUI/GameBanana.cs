@@ -10,7 +10,7 @@ using BananaModManager.Shared;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Win32;
 
-namespace BananaModManager.NewUI;
+namespace BananaModManager;
 
 public static class GameBanana
 {

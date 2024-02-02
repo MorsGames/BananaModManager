@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BananaModManager.NewUI;
+namespace BananaModManager;
 
 public class ManagerConfig
 {

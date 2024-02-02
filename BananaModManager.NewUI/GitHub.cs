@@ -3,7 +3,7 @@
 // ReSharper disable InconsistentNaming
 // ReSharper disable IdentifierTypo
 
-namespace BananaModManager.NewUI;
+namespace BananaModManager;
 
 public class Release
 {

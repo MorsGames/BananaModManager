@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -8,7 +7,7 @@ using System.Threading.Tasks;
 using BananaModManager.Shared;
 using Microsoft.UI.Xaml.Controls;
 
-namespace BananaModManager.NewUI;
+namespace BananaModManager;
 
 public class Update
 {

@@ -1,6 +1,6 @@
 ﻿using BananaModManager.Shared;
 
-namespace BananaModManager.NewUI;
+namespace BananaModManager;
 
 public class ModsTableItem
 {

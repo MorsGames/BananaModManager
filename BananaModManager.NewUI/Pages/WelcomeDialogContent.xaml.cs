@@ -1,7 +1,7 @@
-using Microsoft.UI.Xaml.Controls;
 using BananaModManager.Shared;
+using Microsoft.UI.Xaml.Controls;
 
-namespace BananaModManager.NewUI;
+namespace BananaModManager;
 
 /// <summary>
 ///     The popup you get when you first run BananaModManager

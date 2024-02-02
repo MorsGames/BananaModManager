@@ -2,7 +2,7 @@ using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-namespace BananaModManager.NewUI;
+namespace BananaModManager;
 
 /// <summary>
 ///     The page where you set game specific settings

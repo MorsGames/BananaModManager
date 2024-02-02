@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace BananaModManager.NewUI;
+namespace BananaModManager;
 
 public static class MinWindowSize
 {
