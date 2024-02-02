@@ -110,7 +110,6 @@
     <Compile Include="ConfigItem.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Games.cs" />
-    <Compile Include="GitHub.cs" />
     <Compile Include="JsonParser.cs" />
     <Compile Include="JsonWriter.cs" />
     <Compile Include="Startup.cs" />
