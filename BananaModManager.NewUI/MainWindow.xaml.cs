@@ -42,7 +42,9 @@ public sealed partial class MainWindow : Window
         Title = $"BananaModManager {versionString}";
 
         // Get the app window
-        _appWindow = GetAppWindowForCurrentWindow();
+        var hWnd = WindowNative.GetWindowHandle(this);
+        var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+        _appWindow = AppWindow.GetFromWindowId(windowId);
 
         // Set the icon
         _appWindow.SetIcon("AppIcon.ico");
@@ -63,6 +65,9 @@ public sealed partial class MainWindow : Window
             Height = (int) (oldSize.Height)
         });
 
+        // Set the minimum size
+        MinWindowSize.Set(hWnd, 800, 600);
+
         // Load the manager settings and apply!
         ApplyManagerConfig();
 
@@ -75,6 +80,7 @@ public sealed partial class MainWindow : Window
 
         UpdateProfilesList();
     }
+
     public void UpdateProfilesList()
     {
         // Load the profiles (UI calls them games)
@@ -187,14 +193,6 @@ public sealed partial class MainWindow : Window
                 _titleBar.ButtonForegroundColor = Colors.White;
                 break;
         }
-    }
-
-    // Retrieve the AppWindow instance associated with the current window
-    private AppWindow GetAppWindowForCurrentWindow()
-    {
-        var hWnd = WindowNative.GetWindowHandle(this);
-        var wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-        return AppWindow.GetFromWindowId(wndId);
     }
 
     // Handles the loaded event of the navigation view
