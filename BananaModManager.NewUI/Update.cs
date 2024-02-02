@@ -41,9 +41,9 @@ namespace BananaModManager.NewUI
                 var yes = true;
                 if (yes)
                 {
-                var updatedStartInfo = new ProcessStartInfo(actualdirectory + "\\BananaModManager.exe");
-                Process.Start(updatedStartInfo);
-                Process.GetCurrentProcess().Kill();
+                    var updatedStartInfo = new ProcessStartInfo(actualdirectory + "\\BananaModManager.exe");
+                    Process.Start(updatedStartInfo);
+                    Process.GetCurrentProcess().Kill();
                 }
 
             }

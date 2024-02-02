@@ -15,6 +15,7 @@
     <AssemblyVersion>0.9.13.0</AssemblyVersion>
     <FileVersion>0.9.13.0</FileVersion>
     <NeutralLanguage>en</NeutralLanguage>
+    <ApplicationIcon>AppIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="AboutPage.xaml" />
@@ -110,6 +111,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Loader\x86\winhttp.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AppIcon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
