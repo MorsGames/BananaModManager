@@ -237,31 +237,11 @@ public sealed partial class MainWindow : Window
                     // If so go ahead!
                     if (question == ContentDialogResult.Primary)
                     {
-                        // Run before updating to make sure that the folder is clean for updating
-                        try
-                        {
-                            var newPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "New\\");
-                            if (Directory.Exists(newPath))
-                            {
-                                Directory.Delete(newPath, true);
-                            }
-                            var downloadPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Download.zip");
-                            if (File.Exists(downloadPath))
-                            {
-                                File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Download.zip"));
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            await ModernMessageBox.Show(e.ToString(), "Error!");
-                        }
-                        await Update.Download();
-                        var startInfo = new ProcessStartInfo($"{AppDomain.CurrentDomain.BaseDirectory}\\New\\BananaModManager.exe")
-                        {
-                            Arguments = "--update"
-                        };
-                        Process.Start(startInfo);
-                        Process.GetCurrentProcess().Kill();
+                        // Download the update and run the executable.
+                        await Update.DownloadAndRun();
+
+                        // We need to close the current process so the updater can update
+                        Environment.Exit(0);
                     }
                 }
             }

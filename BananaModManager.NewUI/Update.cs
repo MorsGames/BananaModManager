@@ -16,34 +16,47 @@ namespace BananaModManager.NewUI
         {
             try
             {
-                // Set directories for later use
-                var newDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                var actualdirectory = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).ToString()).ToString();
-                // Unzip the files and copy them
-                File.Copy(newDirectory + "\\Download.zip", actualdirectory + "\\Download.zip");
-                var archive = ZipFile.OpenRead(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).ToString() + "\\Download.zip");
-                foreach (var entry in archive.Entries)
+                // Set the directory values for later use
+                var currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                var parentDirectory = Directory.GetParent(currentDirectory).ToString();
+
+                // The zip file path values
+                var zipFile = Path.Combine(currentDirectory, "Download.zip");
+
+                // Unzip the zip file
+                using (var archive = ZipFile.OpenRead(zipFile))
                 {
-                    if (entry.FullName.EndsWith("/") || entry.FullName.EndsWith("\\"))
+                    // Go through each file
+                    foreach (var entry in archive.Entries)
                     {
-                        var entryFullName = entry.FullName.Replace('/', '\\');
-                        var entryFullpath = Path.Combine(actualdirectory + "\\" + entryFullName);
-                        if (!Directory.Exists(entryFullpath))
-                            Directory.CreateDirectory(entryFullpath);
-                    }
-                    else
-                    {
-                        var entryFullName = entry.FullName.Replace('/', '\\');
-                        entry.ExtractToFile(Path.Combine(actualdirectory + "\\" + entryFullName), true);
+                        // If it's a folder
+                        if (entry.FullName.EndsWith("/") || entry.FullName.EndsWith("\\"))
+                        {
+                            var entryFullName = entry.FullName.Replace('/', '\\');
+                            var entryFullPath = Path.Combine(parentDirectory, entryFullName);
+                            if (!Directory.Exists(entryFullPath))
+                                Directory.CreateDirectory(entryFullPath);
+                        }
+                        // If it's a file
+                        else
+                        {
+                            var entryFullName = entry.FullName.Replace('/', '\\');
+                            var entryFullPath = Path.Combine(parentDirectory, entryFullName);
+                            entry.ExtractToFile(entryFullPath, true);
+                        }
                     }
                 }
+
                 // Without this BMM gets called a Trojan for remote executing another program soooo
                 var yes = true;
                 if (yes)
                 {
-                    var updatedStartInfo = new ProcessStartInfo(actualdirectory + "\\BananaModManager.exe");
+                    // Run the new version
+                    var updatedStartInfo = new ProcessStartInfo(Path.Combine(parentDirectory, "BananaModManager.exe"));
                     Process.Start(updatedStartInfo);
-                    Process.GetCurrentProcess().Kill();
+
+                    // Bye bye!
+                    Environment.Exit(0);
                 }
 
             }
@@ -53,28 +66,61 @@ namespace BananaModManager.NewUI
                 MessageBox.Show(e.ToString(), "Error!");
             }
         }
-        public static async Task Download()
+        public static async Task DownloadAndRun()
         {
-            using (var wc = new WebClient())
+            // Commonly used paths
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            var tempDir = Path.Combine(baseDir, "UpdateFiles");
+            var zipFile = Path.Combine(tempDir, "Download.zip");
+
+            try
             {
-                try
+                // We need a temp folder to store the new version of BMM
+                // If it exists, delete its contents
+                if (Directory.Exists(tempDir))
+                {
+                    foreach (var file in Directory.GetFiles(tempDir))
+                    {
+                        File.Delete(file);
+                    }
+                    foreach (var subfolder in Directory.GetDirectories(tempDir))
+                    {
+                        Directory.Delete(subfolder, true);
+                    }
+                }
+                // Otherwise, create it
+                else
+                {
+                    Directory.CreateDirectory(tempDir);
+                }
+
+                // This is where we download the zip file for the update
+                using (var client = new WebClient())
                 {
                     // Get the latest release info from GitHub's API
-                    wc.Headers.Add("user-agent", "request");
-                    var jsonData = wc.DownloadString(new System.Uri("https://api.github.com/repos/MorsGames/BananaModManager/releases/latest"));
+                    client.Headers.Add("user-agent", "request");
+                    var jsonData = client.DownloadString(new Uri("https://api.github.com/repos/MorsGames/BananaModManager/releases/latest"));
                     var parsedJson = jsonData.Deserialize<Release>();
-                    // Create a temp "New" folder to store the new version of BMM
-                    if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\New\\"))
-                        Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\New\\");
-                    wc.DownloadFile(parsedJson.assets[0].browser_download_url, AppDomain.CurrentDomain.BaseDirectory + "\\New\\Download.zip");
-                    ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\New\\Download.zip", AppDomain.CurrentDomain.BaseDirectory + "\\New");
-                }
-                catch (Exception e)
-                {
-                    await ModernMessageBox.Show(e.ToString(), "Error!");
-                }
-            }
 
+                    // Download the zip file
+                    client.DownloadFile(parsedJson.assets[0].browser_download_url, zipFile);
+                }
+
+                // Extract it!
+                ZipFile.ExtractToDirectory(zipFile, tempDir);
+
+                // Run the executable so it can do the update stuff
+                var exePath = Path.Combine(tempDir, "BananaModManager.exe");
+                var startInfo = new ProcessStartInfo(exePath)
+                {
+                    Arguments = "--update"
+                };
+                Process.Start(startInfo);
+            }
+            catch (Exception e)
+            {
+                await ModernMessageBox.Show(e.ToString(), "Error!");
+            }
         }
 
         public static async Task UpdateSpeedrunLegalMods()
@@ -91,7 +137,7 @@ namespace BananaModManager.NewUI
                 {
                     // Get the latest release info from GitHub's API
                     wc.Headers.Add("user-agent", "request");
-                    var jsonData = wc.DownloadString(new System.Uri("https://api.github.com/repos/MorsGames/BananaModManager/releases/latest"));
+                    var jsonData = wc.DownloadString(new Uri("https://api.github.com/repos/MorsGames/BananaModManager/releases/latest"));
                     var parsedJson = jsonData.Deserialize<Release>();
 
                     // Delete leftover if it's there for some reason
@@ -235,7 +281,6 @@ namespace BananaModManager.NewUI
                         File.Copy(filePath, destinationPath, true);
                     }
                 }
-
 
                 // Check if the game is managed or already decompiled.
                 if (game.Managed || Directory.Exists(App.PathConvert("managed")))

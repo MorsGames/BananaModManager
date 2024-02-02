@@ -1,6 +1,4 @@
 using System.Diagnostics;
-using ABI.Microsoft.UI.Xaml.Shapes;
-using BananaModManager.Shared;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
