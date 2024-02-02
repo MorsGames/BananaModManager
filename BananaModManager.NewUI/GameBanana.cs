@@ -7,14 +7,14 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BananaModManager.Shared;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.Win32;
 
 namespace BananaModManager.NewUI;
 
 public static class GameBanana
 {
-    // Borrowed code to get title of html page
-    public static string GetModTitle(string link)
+    private static string GetModTitle(string link)
     {
         try
         {
@@ -28,12 +28,11 @@ public static class GameBanana
             {
                 return m[0].Value.Replace("<title>", "").Replace("</title>", "");
             }
-            else
-                return "";
+            return "";
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Could not connect. Error:" + ex.Message);
+            Console.WriteLine($"Could not connect. Error:{ex.Message}");
             return "";
         }
     }
@@ -41,7 +40,7 @@ public static class GameBanana
     // This enables one-click capability by writing registry entries to redirect "bananamodmanager:" links to BMM.
     public static async void InstallOneClick()
     {
-        var ExeDirectory = Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, ".exe");
+        var exeDirectory = Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, ".exe");
         var protocol = $"bananamodmanager";
         try
         {
@@ -49,7 +48,7 @@ public static class GameBanana
             reg.SetValue("", $"URL:{protocol}");
             reg.SetValue("URL Protocol", "");
             reg = reg.CreateSubKey(@"shell\open\command");
-            reg.SetValue("", $"\"{ExeDirectory}\" -download \"%1\"");
+            reg.SetValue("", $"\"{exeDirectory}\" -download \"%1\"");
             reg.Close();
 
             await ModernMessageBox.Show("GameBanana 1-Click support has been installed!", "Done!");
@@ -74,28 +73,33 @@ public static class GameBanana
         }
     }
 
-    public static async Task InstallMod(string downloadUrl, string modID)
+    public static async Task InstallMod(string downloadUrl, string modID, WebClient client)
     {
-        var modsDirectory = AppDomain.CurrentDomain.BaseDirectory + "mods\\";
-        using (var client = new WebClient())
+        var modsDirectory = App.PathConvert("mods\\");
+        using (client)
         {
             var moreFiles = false;
+
             // Isolate the File ID for API usage
             var fileID = downloadUrl.Split(',');
             fileID[0] = fileID[0].Replace("https://gamebanana.com/mmdl/", "");
+
             // GameBanana API requests
             // Get the name of the archive
             var fileName = client.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=File&itemid={fileID[0]}&fields=file&format=json_min");
+
             // Get the entire archive contents
             var fileContents = client.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=File&itemid={fileID[0]}&fields=Metadata%28%29.aArchiveFilesList%28%29&format=json_min&flags=JSON_UNESCAPED_SLASHES");
+
             // Remove the extra json junk
             char[] stuff = {'[', ']', '"', '"', '`', '\'', '"'};
             fileContents = fileContents.Trim(stuff);
+
             // Sort through the files and find the DLL
             var files = fileContents.Split(',');
-            var DLL = "";
+            var dll = "";
             var folder = "";
-            var DLLFolder = "";
+            var dllFolder = "";
             foreach (var i in files)
             {
                 var file = i;
@@ -103,28 +107,30 @@ public static class GameBanana
                 {
                     file = file.Replace(character.ToString(), "");
                 }
+
                 // If it has a directory, remove it
-                if (file.Contains("/") || file.Contains ("\\"))
+                if (file.Contains('/') || file.Contains ('\\'))
                 {
                     foreach (var character in file)
                     {
-                        if (character == '\\')
+                        switch (character)
                         {
-                            folder = file.Substring(0, file.IndexOf('\\'));
-                            file = file.Substring(file.IndexOf('\\') + 1);
-                        }
-                        if (character == '/')
-                        {
-                            folder = file.Substring(0, file.IndexOf('/'));
-                            file = file.Substring(file.IndexOf('/') + 1);
+                            case '\\':
+                                folder = file.Substring(0, file.IndexOf('\\'));
+                                file = file.Substring(file.IndexOf('\\') + 1);
+                                break;
+                            case '/':
+                                folder = file.Substring(0, file.IndexOf('/'));
+                                file = file.Substring(file.IndexOf('/') + 1);
+                                break;
                         }
                     }
                 }
                 // Check the extension
                 if (file.Contains(".dll") || file.Contains(".DLL"))
                 {
-                    DLLFolder = folder;
-                    DLL = file;
+                    dllFolder = folder;
+                    dll = file;
                 }
                 if (!file.Contains(".dll") && !file.Contains(".DLL") && !file.Contains(".json") && !file.Contains(".JSON"))
                 {
@@ -135,40 +141,31 @@ public static class GameBanana
             {
                 fileName = fileName.Replace(character.ToString(), "");
             }
-            string modName;
-            // Grab the mod name from the title of the main page
-            if (client.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=Mod&itemid={modID}&fields=Game%28%29.name&format=json_min").Contains("Mania"))
-            {
-                // Banana Mania Mod Names
-                modName = GetModTitle("https://gamebanana.com/mods/" + modID).Remove(GetModTitle("https://gamebanana.com/mods/" + modID).Length - 40, 40);
-            }
-            else
-            {
-                // BBHD Mod Names
-                modName = GetModTitle("https://gamebanana.com/mods/" + modID).Remove(GetModTitle("https://gamebanana.com/mods/" + modID).Length - 44, 44);
-            }
+            var modName = GetModName(modID, client);
 
             try
             {
+                var fullPath = Path.Combine(modsDirectory, fileName);
+
                 // Check that the zip hasn't already been downloaded
                 if (Directory.GetFiles(modsDirectory, fileName).Length > 0)
                 {
-                    File.Delete(modsDirectory + fileName);
+                    File.Delete(fullPath);
                 }
                 // Download the zip
-                client.DownloadFile(downloadUrl, modsDirectory + fileName);
+                client.DownloadFile(downloadUrl, fullPath);
                 // Check if the mod is installed and prompt to overwrite
-                var ExistingVersions = Directory.GetFiles(modsDirectory, DLL, SearchOption.AllDirectories);
+                var existingVersions = Directory.GetFiles(modsDirectory, dll, SearchOption.AllDirectories);
 
-                if (ExistingVersions.Length != 0)
+                if (existingVersions.Length != 0)
                 {
-                    if (MessageBox.Show("It appears you have a version of this mod installed! Would you like to overwrite/update it?", "Overwrite?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == MessageBoxResult.Yes)
+                    if (await ModernMessageBox.Show("It appears you have a version of this mod installed! Would you like to overwrite or update it?", "Overwrite?", "Yes", "No") == ContentDialogResult.Primary)
                     {
                         try
                         {
                             // Find directory of the DLL regardless of folder name and delete the contents.
-                            var path = Directory.GetFiles(modsDirectory, DLL, SearchOption.AllDirectories);
-                            Directory.Delete(path[0].Remove(path[0].Length - DLL.Length, DLL.Length), true);
+                            var path = Directory.GetFiles(modsDirectory, dll, SearchOption.AllDirectories);
+                            Directory.Delete(path[0].Remove(path[0].Length - dll.Length, dll.Length), true);
                         }
                         catch (Exception e)
                         {
@@ -178,9 +175,9 @@ public static class GameBanana
                     // If the user says no, just delete the downloaded zip.
                     else
                     {
-                        if (File.Exists(modsDirectory + fileName))
+                        if (File.Exists(fullPath))
                         {
-                            File.Delete(modsDirectory + fileName);
+                            File.Delete(fullPath);
                         }
                         return;
                     }
@@ -188,42 +185,42 @@ public static class GameBanana
                 // Create the directory for the mod
                 else
                 {
-                    Directory.CreateDirectory(modsDirectory + modName);
+                    Directory.CreateDirectory(Path.Combine(modsDirectory, modName));
                 }
                 // Check for only DLL files and json files
-                var zip = ZipFile.OpenRead(modsDirectory + fileName);
+                var zip = ZipFile.OpenRead(fullPath);
                 foreach (var entry in zip.Entries)
                 {
                     // Extract from the zip
-                    if (!File.Exists(modsDirectory + modName + "\\" + entry.Name) && !entry.FullName.EndsWith("/"))
+                    if (!File.Exists($"{modsDirectory}{modName}\\{entry.Name}") && !entry.FullName.EndsWith("/"))
                     {
                         // Check if there's an extra folder in the file's path
-                        if (DLLFolder != "" && entry.FullName.Contains(DLLFolder))
+                        if (dllFolder != "" && entry.FullName.Contains(dllFolder))
                         {
                             // Check if the directory needs to be created
-                            if (entry.FullName.Contains("/") || entry.FullName.Contains("\\") && !entry.FullName.EndsWith("/"))
+                            if (entry.FullName.Contains('/') || entry.FullName.Contains('\\') && !entry.FullName.EndsWith("/"))
                             {
-                                if (!Directory.Exists(modsDirectory + modName + "\\" + Path.GetDirectoryName(entry.FullName.Substring(DLLFolder.Length + 1))))
+                                if (!Directory.Exists($"{modsDirectory}{modName}\\{Path.GetDirectoryName(entry.FullName.Substring(dllFolder.Length + 1))}"))
                                 {
-                                    Directory.CreateDirectory(modsDirectory + modName + "\\" + Path.GetDirectoryName(entry.FullName.Substring(DLLFolder.Length + 1)));
+                                    Directory.CreateDirectory($"{modsDirectory}{modName}\\{Path.GetDirectoryName(entry.FullName.Substring(dllFolder.Length + 1))}");
                                 }
                             }
                             // If it's not a folder, extract it
                             if (!entry.FullName.EndsWith("/"))
                             {
-                                entry.ExtractToFile(modsDirectory + modName + "\\" + entry.FullName.Substring(DLLFolder.Length + 1));
+                                entry.ExtractToFile($"{modsDirectory}{modName}\\{entry.FullName.Substring(dllFolder.Length + 1)}");
                             }
                         }
                         // If there isn't an extra folder, just extract
                         else
                         {
-                            if (!Directory.Exists(modsDirectory + modName + "\\" + Path.GetDirectoryName(entry.FullName)))
+                            if (!Directory.Exists($"{modsDirectory}{modName}\\{Path.GetDirectoryName(entry.FullName)}"))
                             {
-                                Directory.CreateDirectory(modsDirectory + modName + "\\" + Path.GetDirectoryName(entry.FullName));
+                                Directory.CreateDirectory($"{modsDirectory}{modName}\\{Path.GetDirectoryName(entry.FullName)}");
                             }
                             if (!entry.FullName.EndsWith("/"))
                             {
-                                entry.ExtractToFile(modsDirectory + modName + "\\" + entry.FullName.Substring(DLLFolder.Length));
+                                entry.ExtractToFile($"{modsDirectory}{modName}\\{entry.FullName.Substring(dllFolder.Length)}");
                             }
                         }
                     }
@@ -232,15 +229,15 @@ public static class GameBanana
                 if (moreFiles)
                 {
                     // WE DID IT!
-                    await ModernMessageBox.Show($"\"{modName}\" has been installed! Following this message box, the directory for {modName} will be opened. Please install the additional files to their appropriate directory. If you're stuck, try checking the GameBanana page for the mod or looking for a \"readme.txt\" file.", "Additional Files Detected!");
+                    await ModernMessageBox.Show($"\"{modName}\" has been installed!\n\nFollowing this message box, the directory for \"{modName}\\\" will be opened. Please install the additional files to their appropriate directory. If you're stuck, try checking the GameBanana page for the mod or looking for a \"readme.txt\" file.", "Additional Files Detected!");
                     GC.WaitForPendingFinalizers();
-                    File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName);
-                    Process.Start(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + modName);
+                    File.Delete($"{AppDomain.CurrentDomain.BaseDirectory}\\mods\\{fileName}");
+                    Process.Start($"{AppDomain.CurrentDomain.BaseDirectory}\\mods\\{modName}");
                 }
                 else
                 {
                     // Remove the zip
-                    File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName);
+                    File.Delete($"{AppDomain.CurrentDomain.BaseDirectory}\\mods\\{fileName}");
                     // WE DID IT!
                     await ModernMessageBox.Show($"\"{modName}\" has been installed!", "Success!");
                 }
@@ -249,11 +246,29 @@ public static class GameBanana
             catch (Exception e)
             {
                 MessageBox.Show($"An error has occured: {e.Message}");
-                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName))
+                if (File.Exists($"{AppDomain.CurrentDomain.BaseDirectory}\\mods\\{fileName}"))
                 {
-                    File.Delete(AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + fileName);
+                    File.Delete($"{AppDomain.CurrentDomain.BaseDirectory}\\mods\\{fileName}");
                 }
             }
         }
+    }
+    public static string GetModName(string modID, WebClient client)
+    {
+
+        string modName;
+        var title = GetModTitle($"https://gamebanana.com/mods/{modID}");
+        // Grab the mod name from the title of the main page
+        if (client.DownloadString($"https://api.gamebanana.com/Core/Item/Data?itemtype=Mod&itemid={modID}&fields=Game%28%29.name&format=json_min").Contains("Mania"))
+        {
+            // Banana Mania Mod Names
+            modName = title.Remove(title.Length - 40, 40);
+        }
+        else
+        {
+            // BBHD Mod Names
+            modName = title.Remove(title.Length - 44, 44);
+        }
+        return modName;
     }
 }

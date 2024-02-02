@@ -299,18 +299,51 @@ public sealed partial class MainWindow : Window
         {
             await ModernMessageBox.Show("Make sure to enter a valid game path in the settings.", "Invalid game selected!");
         }
-        // We need to setup the game if it is not!
-        else if (!File.Exists(App.PathConvert("BananaModManager.Shared.dll")))
+        // The game is valid, we can continue
+        else
         {
-            await ModernMessageBox.Show("It seems like the mod loader is not installed! We will be doing that now.", "Umm...", "Alright!");
-            Update.UpdateModLoader();
-            App.SaveGameConfig();
-            await ModernMessageBox.Show("It's all done! Now you're ready to go and get some mods!", "Yay!!!");
-        }
-        // Show a message telling the users to install some mods!
-        else if (Mods.List.Count == 0)
-        {
-            await ModernMessageBox.Show("Just so you know, you don't have any mods installed right now! Go and get some first!", "No mods installed!");
+            // If one click is enabled AND there's a mod incoming then boy o boy!
+            if (App.ManagerConfig.OneClick && App.GameBananaModId != "")
+            {
+                // Create the WebClient
+                var client = new WebClient();
+
+                using (client)
+                {
+                    // Ask the big question
+                    var question = await ModernMessageBox.Show($"Do you want to download and install the mod \"{GameBanana.GetModName(App.GameBananaModId, client)}\" to \"{App.CurrentGame.Title}\"?", "Download mod?",
+                        "Yes", "No");
+
+                    // She said yes!!!!
+                    if (question == ContentDialogResult.Primary)
+                    {
+                        await GameBanana.InstallMod(App.GameBananaDownloadURL, App.GameBananaModId, client);
+                        if (App.KeepRunningAfterModInstall)
+                            App.Restart();
+                        else
+                            Environment.Exit(0);
+                    }
+                    else
+                    {
+                        if (!App.KeepRunningAfterModInstall)
+                            Environment.Exit(0);
+                    }
+                }
+            }
+
+            // We need to setup the game if it is not!
+            if (!File.Exists(App.PathConvert("BananaModManager.Shared.dll")))
+            {
+                await ModernMessageBox.Show("It seems like the mod loader is not installed! We will be doing that now.", "Umm...", "Alright!");
+                Update.UpdateModLoader();
+                App.SaveGameConfig();
+                await ModernMessageBox.Show("It's all done! Now you're ready to go and get some mods!", "Yay!!!");
+            }
+            // Show a message telling the users to install some mods!
+            else if (Mods.List.Count == 0)
+            {
+                await ModernMessageBox.Show("Just so you know, you don't have any mods installed right now! Go and get some first!", "No mods installed!");
+            }
         }
     }
 

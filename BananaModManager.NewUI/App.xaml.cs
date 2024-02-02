@@ -15,6 +15,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -33,11 +34,16 @@ namespace BananaModManager.NewUI
     /// </summary>
     public partial class App : Application
     {
-        public static GameConfig GameConfig;
-        public static ManagerConfig ManagerConfig;
-        public static MainWindow MainWindow;
-        public static Game CurrentGame = Games.Default;
-        public static readonly string ManagerConfigFile = "BananaModManager.json";
+        public static MainWindow MainWindow { get; private set; }
+        public static string ManagerConfigFile => "BananaModManager.json";
+        public static GameConfig GameConfig { get; private set; }
+        public static ManagerConfig ManagerConfig { get; private set; }
+        public static Game CurrentGame { get; private set; } = Games.Default;
+        public static string GameBananaDownloadURL { get; private set; } = "";
+        public static string GameBananaModId { get; private set; } = "";
+        public static bool KeepRunningAfterModInstall { get; private set; } = false;
+
+        private static Mutex _mutex = new Mutex(true, "BananaModManager");
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -45,6 +51,10 @@ namespace BananaModManager.NewUI
         /// </summary>
         public App()
         {
+            // Change the working directory AS SOON AS POSSIBLE
+            // For some reason one click links set it to... system32? lol ok;
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+
             this.InitializeComponent();
         }
 
@@ -52,21 +62,20 @@ namespace BananaModManager.NewUI
         /// Invoked when the application is launched.
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
-        protected async override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            var arguments = args.Arguments.Split(' ');
+            var arguments = Environment.GetCommandLineArgs();
 
-            if (arguments.Length > 0)
+            if (arguments.Length > 1)
             {
-                if (arguments[0] == "-download")
+                if (arguments[1] == "-download")
                 {
-                    var modInfo = arguments[1].Split(',');
-                    var downloadURL = modInfo[0].Remove(0,17);
-                    var modID = modInfo[1];
-                    await GameBanana.InstallMod(downloadURL, modID);
+                    var modInfo = arguments[2].Split(',');
+                    GameBananaDownloadURL = modInfo[0].Remove(0,17);
+                    GameBananaModId = modInfo[1];
 
                 }
-                if (arguments[0] == "--update")
+                if (arguments[1] == "--update")
                 {
                     try
                     {
@@ -78,13 +87,42 @@ namespace BananaModManager.NewUI
                         MessageBox.Show(e.ToString());
                     }
                     Environment.Exit(0);
+                    return;
+                }
+            }
+
+            if (!_mutex.WaitOne(TimeSpan.Zero, true))
+            {
+                // Normally just show an error message
+                if (GameBananaModId == "")
+                {
+                    MessageBox.Show("Another instance of the application is already running.", "BananaModManager", MessageBoxButtons.Ok, MessageBoxIcon.Error);
+                    Environment.Exit(0);
+                    return;
+                }
+                // If this instance is launched by GameBanana, close the older one!
+                else
+                {
+                    var currentProcess = Process.GetCurrentProcess();
+                    var processes = Process.GetProcessesByName(currentProcess.ProcessName);
+
+                    foreach (var process in processes)
+                    {
+                        if (process.Id == currentProcess.Id)
+                            continue;
+
+                        process.CloseMainWindow();
+                        process.WaitForExit();
+                    }
+
+                    KeepRunningAfterModInstall = true;
                 }
             }
 
             // Load the manager config
             if (File.Exists(ManagerConfigFile))
             {
-                var configFile = await File.ReadAllTextAsync(ManagerConfigFile);
+                var configFile = File.ReadAllText(ManagerConfigFile);
                 ManagerConfig = configFile.Deserialize<ManagerConfig>();
             }
             else
@@ -93,7 +131,9 @@ namespace BananaModManager.NewUI
             }
 
             // Load the game config and the mods
-            Mods.Load(out GameConfig, ManagerConfig.GetGameDirectory());
+            var gameConfig = GameConfig;
+            Mods.Load(out gameConfig, ManagerConfig.GetGameDirectory());
+            GameConfig = gameConfig;
 
             // Detect the current game
             if (ManagerConfig.GetGameDirectory() != "")
@@ -111,6 +151,7 @@ namespace BananaModManager.NewUI
             // Create the main window
             MainWindow = new MainWindow();
             MainWindow.Activate();
+            _mutex.ReleaseMutex();
         }
 
         public static void SaveGameConfig()
