@@ -17,33 +17,24 @@ public class Update
         {
             // Set the directory values for later use
             var currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            var parentDirectory = Directory.GetParent(currentDirectory).ToString();
+            var parentDirectory = Directory.GetParent(Directory.GetParent(currentDirectory).ToString()).ToString();
 
-            // The zip file path values
-            var zipFile = Path.Combine(currentDirectory, "Download.zip");
+            // Define the zip file name and path
+            const string zipFileName = "Download.zip";
+            var zipFilePath = Path.Combine(currentDirectory, zipFileName);
 
-            // Unzip the zip file
-            using (var archive = ZipFile.OpenRead(zipFile))
+            // Check if the zip file exists
+            if (File.Exists(zipFilePath))
             {
-                // Go through each file
-                foreach (var entry in archive.Entries)
-                {
-                    // If it's a folder
-                    if (entry.FullName.EndsWith("/") || entry.FullName.EndsWith("\\"))
-                    {
-                        var entryFullName = entry.FullName.Replace('/', '\\');
-                        var entryFullPath = Path.Combine(parentDirectory, entryFullName);
-                        if (!Directory.Exists(entryFullPath))
-                            Directory.CreateDirectory(entryFullPath);
-                    }
-                    // If it's a file
-                    else
-                    {
-                        var entryFullName = entry.FullName.Replace('/', '\\');
-                        var entryFullPath = Path.Combine(parentDirectory, entryFullName);
-                        entry.ExtractToFile(entryFullPath, true);
-                    }
-                }
+                // Open the zip file and extract it to the parent directory
+                using var zipFile = ZipFile.OpenRead(zipFilePath);
+                zipFile.ExtractToDirectory(parentDirectory, true);
+            }
+            else
+            {
+                // Print an error message
+                MessageBox.Show($"The zip file {zipFileName} was not found in {currentDirectory}");
+                return;
             }
 
             // Without this BMM gets called a Trojan for remote executing another program soooo
