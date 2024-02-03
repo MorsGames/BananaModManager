@@ -354,7 +354,7 @@ namespace BananaModManager.Loader.IL2Cpp
 
             // Draw the title and mod loader version
             DrawTextOutline(new Rect(Screen.width - offset.x - offset2 + _modListSlide, offset.y, Screen.width, style.fontSize),
-                $"Loaded Mods (v{Assembly.LoadFile($"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}\\BananaModManager.exe").GetName().Version}):", (int)Mathf.Ceil(ratio), style);
+                $"Loaded Mods (v{LoaderVersion.String}):", (int)Mathf.Ceil(ratio), style);
 
             // Change the font size and add extra offset for the rest
             style.fontSize = Math.Max(12, (int)(16.0f * ratio));

@@ -150,7 +150,7 @@ public sealed partial class SettingsPage : Page
     private async void ButtonUpdateModLoader_Click(object sender, RoutedEventArgs e)
     {
         // Manually triggering the update process
-        Update.UpdateModLoader();
+        await Update.UpdateModLoader();
 
         // Holy shit louis we are done
         await ModernMessageBox.Show("It's all done!", "Wow that was fast!");

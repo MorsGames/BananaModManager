@@ -216,7 +216,7 @@ public class Update
         }
     }
 
-    public static async void UpdateModLoader()
+    public static async Task UpdateModLoader()
     {
         try
         {
