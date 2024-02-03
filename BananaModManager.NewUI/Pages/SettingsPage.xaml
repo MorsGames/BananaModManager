@@ -59,7 +59,16 @@
                             SelectionMode="Single"
                             SelectionChanged="ListViewProfiles_OnSelectionChanged"/>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Margin="0,8,0,0">
-                            <Button x:Name="ButtonAdd" Content="Add" Margin="0,0,8,0" Click="ButtonAdd_OnClick" />
+                            <Button x:Name="ButtonAdd" Content="Add" Margin="0,0,8,0">
+                                <Button.Flyout>
+                                    <Flyout>
+                                        <StackPanel>
+                                            <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Text="Are you sure you want to add a new game profile?" Margin="0,0,0,12" />
+                                            <Button Click="ButtonAddYes_OnClick" Content="Yes!" />
+                                        </StackPanel>
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
                             <Button x:Name="ButtonRemove" Content="Remove" Margin="0,0,8,0" >
                                 <Button.Flyout>
                                     <Flyout>
@@ -70,7 +79,7 @@
                                     </Flyout>
                                 </Button.Flyout>
                             </Button>
-                            <Button x:Name="ButtonChangePath" Content="Change Path" Margin="0,0,8,0" Click="ButtonChangePath_OnClick">
+                            <Button x:Name="ButtonChangePath" Content="Change Path" Margin="0,0,8,0" Click="ButtonChangePath_OnClick" Style="{StaticResource AccentButtonStyle}">
                                 <Button.Flyout>
                                     <Flyout>
                                         <StackPanel>

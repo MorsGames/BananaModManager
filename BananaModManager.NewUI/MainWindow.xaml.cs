@@ -30,7 +30,7 @@ public sealed partial class MainWindow : Window
 {
     private AppWindow _appWindow;
     private AppWindowTitleBar _titleBar;
-    private const string _namespaceString = "BananaModManager.NewUI.";
+    private const string _namespaceString = "BananaModManager.";
 
     public MainWindow()
     {
@@ -220,12 +220,12 @@ public sealed partial class MainWindow : Window
     private async Task FirstTimeSetup()
     {
         // FIRST do the update check
-        using (var wc = new WebClient())
+        using (var client = new WebClient())
         {
             try
             {
-                wc.Headers.Add("user-agent", "request");
-                var jsonData = wc.DownloadString(new System.Uri("https://api.github.com/repos/MorsGames/BananaModManager/releases/latest"));
+                client.Headers.Add("user-agent", "request");
+                var jsonData = client.DownloadString(new System.Uri("https://api.github.com/repos/MorsGames/BananaModManager/releases/latest"));
                 var parsedJson = jsonData.Deserialize<Release>();
                 var bmmVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
                 if (parsedJson.tag_name != $"v{bmmVersion}")

@@ -155,11 +155,12 @@ public sealed partial class SettingsPage : Page
         // Holy shit louis we are done
         await ModernMessageBox.Show("It's all done!", "Wow that was fast!");
     }
-    private void ButtonAdd_OnClick(object sender, RoutedEventArgs e)
+    private void ButtonAddYes_OnClick(object sender, RoutedEventArgs e)
     {
         App.ManagerConfig.GameDirectories.Add("");
         UpdateProfilesList();
         App.SaveManagerConfig();
+        ButtonAdd.Flyout.Hide();
     }
     private void UpdateProfilesList()
     {
