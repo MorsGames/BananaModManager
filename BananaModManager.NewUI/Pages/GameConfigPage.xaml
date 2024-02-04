@@ -27,11 +27,18 @@
                 <ToggleSwitch Name="ToggleConsole" Toggled="ToggleConsole_OnToggled"/>
             </toolkit:SettingsCard>
 
+            <toolkit:SettingsCard x:Name="CardDiscordRPC" Description="When enabled, your friends will be able to see more information about what game mode you're playing on Discord!" Header="Discord Rich Presence">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE76E;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <ToggleSwitch x:Name="ToggleDiscordRPC" Toggled="ToggleDiscordRPC_OnToggled"/>
+            </toolkit:SettingsCard>
+
             <toolkit:SettingsCard x:Name="CardSpeedrunMode" Description="Enables the leaderboards, but only allows whitelisted mods, and displays active mods on the screen." Header="Enable Speedrun Mode">
                 <toolkit:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE7C1;" />
                 </toolkit:SettingsCard.HeaderIcon>
-                <ToggleSwitch x:Name="ToggleSpeedrunMode" Toggled="ToggleSpeedrunMode_OnToggled" IsOn="True"/>
+                <ToggleSwitch x:Name="ToggleSpeedrunMode" Toggled="ToggleSpeedrunMode_OnToggled"/>
             </toolkit:SettingsCard>
 
             <toolkit:SettingsCard x:Name="CardFastRestart" Description="When enabled, pressing F11 while the game is open will fast restart the game, toggling Speedrun Mode in the process." Header="Add fast restart keybind to the Speedrun Mode">
@@ -41,18 +48,11 @@
                 <ToggleSwitch x:Name="ToggleFastRestart" Toggled="ToggleFastRestart_OnToggled"/>
             </toolkit:SettingsCard>
 
-            <toolkit:SettingsCard x:Name="CardSaveMode" Description="When enabled, the game will automatically save your best clear times of each stage." Header="Auto-save clear times">
+            <toolkit:SettingsCard x:Name="CardDisableSaves" Description="When enabled, the game will not automatically save your best clear times." Header="Disable saving clear times">
                 <toolkit:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE74E;" />
                 </toolkit:SettingsCard.HeaderIcon>
-                <ToggleSwitch x:Name="ToggleSaveMode" Toggled="ToggleSaveMode_OnToggled"/>
-            </toolkit:SettingsCard>
-
-            <toolkit:SettingsCard x:Name="CardDiscordRPC" Description="When enabled, your friends will be able to see more information about what game mode you're playing on Discord!" Header="Discord Rich Presence">
-                <toolkit:SettingsCard.HeaderIcon>
-                    <FontIcon Glyph="&#xE76E;" />
-                </toolkit:SettingsCard.HeaderIcon>
-                <ToggleSwitch x:Name="ToggleDiscordRPC" Toggled="ToggleDiscordRPC_OnToggled"/>
+                <ToggleSwitch x:Name="ToggleDisableSaves" Toggled="ToggleDisableSaves_OnToggled"/>
             </toolkit:SettingsCard>
 
             <toolkit:SettingsCard x:Name="CardLegacyMode" Description="When enabled, Speedrun Mode and Save Mode will work on version 1.0.0 of the game. If unsure, leave this unchecked." Header="Enable 1.0.0 support">

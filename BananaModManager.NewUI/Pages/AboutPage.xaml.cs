@@ -20,7 +20,34 @@ public sealed partial class AboutPage : Page
         TextVersion.Text += versionString;
 
         // Set the credits part
-        TextBoxCredits.Text = "--------------------------\nOpen Source Projects Used:\n--------------------------\n\n- UnityDoorstop:\nhttps://github.com/NeighTools/UnityDoorstop\n\n- Il2CppDumper:\nhttps://github.com/Perfare/Il2CppDumper\n\n- Il2CppAssemblyUnhollower:\nhttps://github.com/knah/Il2CppAssemblyUnhollower\n\n\n\"I really love bananas!\" -A wise man";
+        TextBoxCredits.Text =
+@"--------------------------
+Open Source Projects Used:
+--------------------------
+
+- UnityDoorstop:
+https://github.com/NeighTools/UnityDoorstop
+
+- Il2CppDumper:
+https://github.com/Perfare/Il2CppDumper
+
+- Il2CppAssemblyUnhollower:
+https://github.com/knah/Il2CppAssemblyUnhollower
+
+- Mono:
+https://github.com/mono/mono
+
+- DiscordRichPresence:
+https://github.com/Lachee/discord-rpc-csharp
+
+- Windows App SDK:
+https://github.com/microsoft/windowsappsdk
+
+- Windows Community Toolkit:
+https://github.com/CommunityToolkit/Windows
+
+
+""I really love bananas!"" -A wise man";
     }
     private async void ButtonShowWelcome_OnClick(object sender, RoutedEventArgs e)
     {

@@ -26,7 +26,7 @@ public static class Games
         X64 = true,
         SpeedrunModeSupport = true,
         FastRestartSupport = true,
-        SaveModeSupport = true,
+        DisableSavesSupport = true,
         DiscordRPCSupport = true,
         LegacyModeSupport = true,
 

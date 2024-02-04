@@ -15,14 +15,17 @@ public sealed partial class GameConfigPage : Page
 
         // Load the defaults!
         ToggleConsole.IsOn = App.GameConfig.ConsoleWindow;
+        ToggleDiscordRPC.IsOn = App.GameConfig.DiscordRPC;
         ToggleSpeedrunMode.IsOn = App.GameConfig.SpeedrunMode;
         ToggleFastRestart.IsOn = App.GameConfig.FastRestart;
-        ToggleSaveMode.IsOn = App.GameConfig.SaveMode;
-        ToggleDiscordRPC.IsOn = App.GameConfig.DiscordRPC;
+        ToggleDisableSaves.IsOn = App.GameConfig.DisableSaves;
         ToggleLegacyMode.IsOn = App.GameConfig.LegacyMode;
 
         // Hide the cards the game doesn't support
-        // If the game doesn't support any of them then the page is hidden entirely
+        if (!App.CurrentGame.DiscordRPCSupport)
+        {
+            CardDiscordRPC.Visibility = Visibility.Collapsed;
+        }
         if (!App.CurrentGame.SpeedrunModeSupport)
         {
             CardSpeedrunMode.Visibility = Visibility.Collapsed;
@@ -32,13 +35,9 @@ public sealed partial class GameConfigPage : Page
         {
             CardFastRestart.Visibility = Visibility.Collapsed;
         }
-        if (!App.CurrentGame.SaveModeSupport)
+        if (!App.CurrentGame.DisableSavesSupport)
         {
-            CardSaveMode.Visibility = Visibility.Collapsed;
-        }
-        if (!App.CurrentGame.DiscordRPCSupport)
-        {
-            CardDiscordRPC.Visibility = Visibility.Collapsed;
+            CardDisableSaves.Visibility = Visibility.Collapsed;
         }
         if (!App.CurrentGame.LegacyModeSupport)
         {
@@ -81,14 +80,14 @@ public sealed partial class GameConfigPage : Page
         // Save the changes
         App.SaveGameConfig();
     }
-    private void ToggleSaveMode_OnToggled(object sender, RoutedEventArgs e)
+    private void ToggleDisableSaves_OnToggled(object sender, RoutedEventArgs e)
     {
         // If unchanged then don't do anything
-        if (App.GameConfig.SaveMode == ToggleSaveMode.IsOn)
+        if (App.GameConfig.DisableSaves == ToggleDisableSaves.IsOn)
             return;
 
         // Otherwise change the setting
-        App.GameConfig.SaveMode = ToggleSaveMode.IsOn;
+        App.GameConfig.DisableSaves = ToggleDisableSaves.IsOn;
 
         // Save the changes
         App.SaveGameConfig();

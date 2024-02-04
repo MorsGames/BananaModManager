@@ -62,11 +62,10 @@ public partial class App : Application
                 try
                 {
                     Update.DoUpdate();
-                    Update.UpdateModLoader();
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show(e.ToString());
+                    MessageBox.Show(e.ToString(), "Error!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
                 }
                 Environment.Exit(0);
                 return;
@@ -113,9 +112,12 @@ public partial class App : Application
         }
 
         // Load the game config and the mods
-        var gameConfig = GameConfig;
-        Mods.Load(out gameConfig, ManagerConfig.GetGameDirectory());
-        GameConfig = gameConfig;
+        if (ManagerConfig.GetGameDirectory() != "")
+        {
+            var gameConfig = GameConfig;
+            Mods.Load(out gameConfig, ManagerConfig.GetGameDirectory());
+            GameConfig = gameConfig;
+        }
 
         // Detect the current game
         if (ManagerConfig.GetGameDirectory() != "")

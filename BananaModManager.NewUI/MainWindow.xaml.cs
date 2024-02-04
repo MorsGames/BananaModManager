@@ -47,7 +47,7 @@ public sealed partial class MainWindow : Window
         _appWindow = AppWindow.GetFromWindowId(windowId);
 
         // Set the icon
-        _appWindow.SetIcon("AppIcon.ico");
+        _appWindow.SetIcon("ProgramIcon.ico");
 
         // Hide system title bar
         _titleBar = _appWindow.TitleBar;
@@ -309,15 +309,22 @@ public sealed partial class MainWindow : Window
             // We need to setup the game if it is not!
             if (!File.Exists(App.PathConvert("BananaModManager.Shared.dll")))
             {
-                await ModernMessageBox.Show("It seems like the mod loader is not installed! We will be doing that now.", "Umm...", "Alright!");
-                Update.UpdateModLoader();
-                App.SaveGameConfig();
-                await ModernMessageBox.Show("It's all done! Now you're ready to go and get some mods!", "Yay!!!");
+                await ModernMessageBox.Show("It seems like the mod loader is not installed! We will be doing that now.", "Mod loader not found", "Alright!");
+                try
+                {
+                    Update.UpdateModLoader();
+                    App.SaveGameConfig();
+                    await ModernMessageBox.Show("It's all done! Now you're ready to go and get some mods!", "Yay!!!");
+                }
+                catch (Exception e)
+                {
+                    await ModernMessageBox.Show(e.ToString(), "Error!");
+                }
             }
             // Show a message telling the users to install some mods!
             else if (Mods.List.Count == 0)
             {
-                await ModernMessageBox.Show("Just so you know, you don't have any mods installed right now! Go and get some first!", "No mods installed!");
+                await ModernMessageBox.Show("Just so you know, you don't have any mods installed right now! Go and get some first!", "No mods are installed!");
             }
         }
     }

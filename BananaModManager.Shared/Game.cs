@@ -58,7 +58,7 @@ public class Game
     /// <summary>
     ///     If the game supports automatic saving of the clear times.
     /// </summary>
-    public bool SaveModeSupport = false;
+    public bool DisableSavesSupport = false;
 
     /// <summary>
     ///     If the game supports Discord RPC.

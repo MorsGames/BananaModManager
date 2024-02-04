@@ -136,7 +136,6 @@ public static class Startup
         Console.BackgroundColor = ConsoleColor.Black;
 
         File.WriteAllText(logFile, e.ToString());
-        MessageBox.Show(e.ToString(), "BananaModManager Error!", MessageBoxButtons.Ok,
-            MessageBoxIcon.Error);
+        MessageBox.Show(e.ToString(), "Error!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
     }
 }

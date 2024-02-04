@@ -59,7 +59,7 @@
             <NavigationView.MenuItems>
                 <NavigationViewItem x:Name="NavViewItemMods" Icon="Home" Content="Mods List" Tag="ModsPage"/>
                 <NavigationViewItem x:Name="NavViewItemGameConfig" Icon="Repair" Content="Game Config" Tag="GameConfigPage"/>
-                <NavigationViewItem Content="BananaModManager Settings" Tag="SettingsPage">
+                <NavigationViewItem Content="Manager Settings" Tag="SettingsPage">
                     <NavigationViewItem.Icon>
                         <AnimatedIcon>
                             <AnimatedIcon.Source>

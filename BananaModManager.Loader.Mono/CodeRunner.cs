@@ -14,21 +14,33 @@ public class CodeRunner : MonoBehaviour
 
     private void Update()
     {
-        foreach (var method in UpdateMethods) method.Invoke(null, null);
+        foreach (var method in UpdateMethods)
+        {
+            method.Invoke(null, null);
+        }
     }
 
     private void FixedUpdate()
     {
-        foreach (var method in FixedUpdateMethods) method.Invoke(null, null);
+        foreach (var method in FixedUpdateMethods)
+        {
+            method.Invoke(null, null);
+        }
     }
 
     private void LateUpdate()
     {
-        foreach (var method in LateUpdateMethods) method.Invoke(null, null);
+        foreach (var method in LateUpdateMethods)
+        {
+            method.Invoke(null, null);
+        }
     }
 
     private void OnGUI()
     {
-        foreach (var method in GUIMethods) method.Invoke(null, null);
+        foreach (var method in GUIMethods)
+        {
+            method.Invoke(null, null);
+        }
     }
 }

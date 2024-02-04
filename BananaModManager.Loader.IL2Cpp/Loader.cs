@@ -8,16 +8,12 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using BananaModManager.Shared;
 using Flash2;
-using HarmonyLib;
 using UnhollowerBaseLib;
 using UnhollowerBaseLib.Runtime;
 using UnhollowerRuntimeLib;
 using UnityEngine;
-using Framework.UI;
-using UnityEngine.SceneManagement;
 using Console = System.Console;
 using ConsoleColor = System.ConsoleColor;
-using Delegate = System.Delegate;
 using Exception = System.Exception;
 using IntPtr = System.IntPtr;
 using Math = System.Math;
@@ -114,8 +110,6 @@ namespace BananaModManager.Loader.IL2Cpp
 
                 SpeedrunHash = AntiCheat.SpeedrunModeCode(_mods);
 
-                // Set default presence
-
                 Console.WriteLine("All done!");
 
                 new Thread(() =>
@@ -141,7 +135,7 @@ namespace BananaModManager.Loader.IL2Cpp
                             // Block checking 0x4BD1A0
 
                         }
-                        if (!_gameConfig.SaveMode)
+                        if (_gameConfig.DisableSaves)
                         {
                             SaveDelegateInstance = Dummy2;
                             if (_gameConfig.LegacyMode)
@@ -164,25 +158,6 @@ namespace BananaModManager.Loader.IL2Cpp
                     }
 
                 }).Start();
-
-                // Add the asset bundles into the dictionary
-                /*foreach (var mod in Mods)
-                {
-                    foreach (var assetBundle in mod.Info.AssetBundles)
-                    {
-                        Console.WriteLine("Found asset bundle: " + assetBundle);
-                        AssetBundles.Add(assetBundle, Path.Combine(mod.Directory.FullName, assetBundle));
-                    }
-                }
-
-                // Patch them all
-                Console.WriteLine("Patching the asset bundles.");
-                var harmony = Harmony.CreateAndPatchAll(typeof(AssetBundleCachePatch));
-
-                foreach (var patchedMethod in harmony.GetPatchedMethods())
-                {
-                    Console.WriteLine("Patched method: " + patchedMethod.Name);
-                }*/
 
                 // Calculate the hashes to display in the speedrun mode
                 if (_gameConfig.SpeedrunMode)
@@ -218,7 +193,7 @@ namespace BananaModManager.Loader.IL2Cpp
         public static void Dummy2()
         {
             Console.BackgroundColor = ConsoleColor.DarkGreen;
-            Console.WriteLine("Save Mode is disabled. Best clears will not save.");
+            Console.WriteLine("Best clear times will not save.");
             Console.BackgroundColor = ConsoleColor.Black;
         }
 
@@ -229,55 +204,58 @@ namespace BananaModManager.Loader.IL2Cpp
             Object.DontDestroyOnLoad(obj);
 
             ClassInjector.RegisterTypeInIl2Cpp<CodeRunner>();
+            obj.AddComponent(Il2CppType.Of<CodeRunner>());
 
-            var runner = new CodeRunner(obj.AddComponent(Il2CppType.Of<CodeRunner>()).Pointer);
             var priorityCheck = 0;
             while (priorityCheck < 6)
             {
                 // Go through each mod
                 foreach (var mod in _mods)
                 {
+                    // If not the correct priority
+                    if (priorityCheck != Convert.ToInt32(mod.Info.Priority))
+                        continue;
 
-                    if (priorityCheck == Convert.ToInt32(mod.Info.Priority))
+                    // Register the types
+                    if (mod.Types != null)
                     {
-                        // Register the types
-                        if (mod.Types != null)
+                        foreach (var usedType in mod.Types)
                         {
-                            foreach (var usedType in mod.Types)
-                            {
-                                ClassInjector.RegisterTypeInIl2Cpp(usedType);
-                            }
+                            ClassInjector.RegisterTypeInIl2Cpp(usedType);
                         }
+                    }
 
-                        // Check each class if there's an assembly
-                        if (mod.GetAssembly() == null)
+                    // Check each class if there's an assembly
+                    var assembly = mod.GetAssembly();
+
+                    if (assembly == null)
+                        continue;
+
+                    // Go through each class
+                    foreach (var type in assembly.GetTypes())
+                    {
+                        // Only look for one that's called "Main"
+                        if (type.Name != "Main")
                             continue;
 
-                        foreach (var type in mod.GetAssembly().GetTypes())
-                        {
-                            // Only look for one that's called "Main"
-                            if (type.Name != "Main")
-                                continue;
+                        // Add it to the code runner
+                        type.GetMethod("OnModStart")?.Invoke(null, null);
 
-                            // Add it to the code runner
-                            type.GetMethod("OnModStart")?.Invoke(null, null);
+                        var update = type.GetMethod("OnModUpdate");
+                        if (update != null)
+                            UpdateMethods.Add(update);
 
-                            var update = type.GetMethod("OnModUpdate");
-                            if (update != null)
-                                UpdateMethods.Add(update);
+                        var fixedUpdate = type.GetMethod("OnModFixedUpdate");
+                        if (fixedUpdate != null)
+                            FixedUpdateMethods.Add(fixedUpdate);
 
-                            var fixedUpdate = type.GetMethod("OnModFixedUpdate");
-                            if (fixedUpdate != null)
-                                FixedUpdateMethods.Add(fixedUpdate);
+                        var lateUpdate = type.GetMethod("OnModLateUpdate");
+                        if (lateUpdate != null)
+                            LateUpdateMethods.Add(lateUpdate);
 
-                            var lateUpdate = type.GetMethod("OnModLateUpdate");
-                            if (lateUpdate != null)
-                                LateUpdateMethods.Add(lateUpdate);
-
-                            var gui = type.GetMethod("OnModGUI");
-                            if (gui != null)
-                                GUIMethods.Add(gui);
-                        }
+                        var gui = type.GetMethod("OnModGUI");
+                        if (gui != null)
+                            GUIMethods.Add(gui);
                     }
                 }
                 priorityCheck++;
@@ -286,9 +264,12 @@ namespace BananaModManager.Loader.IL2Cpp
 
         public static void InvokeUpdate()
         {
-            foreach (var method in UpdateMethods) method.Invoke(null, null);
+            foreach (var method in UpdateMethods)
+            {
+                method.Invoke(null, null);
+            }
             // If F11 is pressed, restart and toggle Speedrun Mode
-            if (AppInput.GetKeyDown(KeyCode.F11) && _gameConfig.FastRestart == true)
+            if (AppInput.GetKeyDown(KeyCode.F11) && _gameConfig.FastRestart)
             {
                 _gameConfig.SpeedrunMode = !_gameConfig.SpeedrunMode;
 
@@ -300,15 +281,14 @@ namespace BananaModManager.Loader.IL2Cpp
                 });
                 Process.GetCurrentProcess().Kill();
             }
+
+            // Discord rich presence
             if (_gameConfig.DiscordRPC)
             {
                     switch (ClientID)
                     {
                         case "1094498140335378472":
-                            BananaManiaRPC();
-                            break;
-                        case "1095161758357930164":
-                            BananaBlitzHDRPC();
+                            DiscordRichPresence.BananaManiaRPC(_discordClient);
                             break;
                     }
             }
@@ -316,17 +296,26 @@ namespace BananaModManager.Loader.IL2Cpp
 
         public static void InvokeFixedUpdate()
         {
-            foreach (var method in FixedUpdateMethods) method.Invoke(null, null);
+            foreach (var method in FixedUpdateMethods)
+            {
+                method.Invoke(null, null);
+            }
         }
 
         public static void InvokeLateUpdate()
         {
-            foreach (var method in LateUpdateMethods) method.Invoke(null, null);
+            foreach (var method in LateUpdateMethods)
+            {
+                method.Invoke(null, null);
+            }
         }
 
         public static void InvokeGUI()
         {
-            foreach (var method in GUIMethods) method.Invoke(null, null);
+            foreach (var method in GUIMethods)
+            {
+                method.Invoke(null, null);
+            }
 
             if (!_gameConfig.SpeedrunMode)
                 return;
@@ -341,7 +330,7 @@ namespace BananaModManager.Loader.IL2Cpp
             }
 
             // Only draw when not outside the screen
-            if (!(_modListSlide < 1f))
+            if (_modListSlide >= 1f)
                 return;
 
             var style = new GUIStyle();
@@ -403,306 +392,6 @@ namespace BananaModManager.Loader.IL2Cpp
 
             GUI.Label(r, t, style);
         }
-        public static void BananaManiaRPC()
-        {
-            try
-            {
-                // MainGame Character Dictionary - Character.eKind => Character Name
-                var characters = new Dictionary<Chara.eKind, string>();
-                characters.Add(Chara.eKind.Aiai, "Aiai");
-                characters.Add(Chara.eKind.Meemee, "Meemee");
-                characters.Add(Chara.eKind.Baby, "Baby");
-                characters.Add(Chara.eKind.Gongon, "Gongon");
-                characters.Add(Chara.eKind.Yanyan, "Yanyan");
-                characters.Add(Chara.eKind.Doctor, "Doctor");
-                characters.Add(Chara.eKind.Jam, "Jam");
-                characters.Add(Chara.eKind.Jet, "Jet");
-                characters.Add(Chara.eKind.Sonic, "Sonic");
-                characters.Add(Chara.eKind.Tails, "Tails");
-                characters.Add(Chara.eKind.Kiryu, "Kiryu");
-                characters.Add(Chara.eKind.Beat, "Beat");
-                characters.Add(Chara.eKind.Dlc01, "Hello Kitty");
-                characters.Add(Chara.eKind.Dlc02, "Morgana");
-                characters.Add(Chara.eKind.Dlc03, "Suezo");
-                characters.Add(Chara.eKind.GameGear, "the Game Gear");
-                characters.Add(Chara.eKind.SegaSaturn, "the Sega Saturn");
-                characters.Add(Chara.eKind.Dreamcast, "the Sega Dreamcast");
 
-                // Race Course Dict - Find Course GameObject.name => Course Name
-                var races = new Dictionary<PgRaceDefine.ePgRaceCourseKind, string>();
-                races.Add(PgRaceDefine.ePgRaceCourseKind.JungleCircuit, "Jungle Circuit");
-                races.Add(PgRaceDefine.ePgRaceCourseKind.CaptivatingBananaRoad, "Charming Banana Road");
-                races.Add(PgRaceDefine.ePgRaceCourseKind.AquaOfRoad, "Aqua Offroad");
-                races.Add(PgRaceDefine.ePgRaceCourseKind.LovelyAmusementPark, "Lovely Heart Ring");
-                races.Add(PgRaceDefine.ePgRaceCourseKind.FrozenHighway, "Frozen Highway");
-                races.Add(PgRaceDefine.ePgRaceCourseKind.TicktackGearSlope, "Clock Tower Hill");
-                races.Add(PgRaceDefine.ePgRaceCourseKind.SkyDownTown, "Sky Downtown");
-                races.Add(PgRaceDefine.ePgRaceCourseKind.AtchitchiCircuit, "Cannonball Circuit");
-                races.Add(PgRaceDefine.ePgRaceCourseKind.PipeWarpTunnel, "Pipe Warp Tunnel");
-                races.Add(PgRaceDefine.ePgRaceCourseKind.SinkingStreet, "Submarine Street");
-                races.Add(PgRaceDefine.ePgRaceCourseKind.SpeedDessert, "Speed Desert");
-                races.Add(PgRaceDefine.ePgRaceCourseKind.SpaceColony, "Starlight Highway");
-
-                // Billiards Dict - Find Billiards.eRule => Rules Full Name
-                var billiardsRules = new Dictionary<PartyGameDef.Billiards.eRule, string>();
-                billiardsRules.Add(PartyGameDef.Billiards.eRule.NineBall, "US Nine-Ball");
-                billiardsRules.Add(PartyGameDef.Billiards.eRule.JapanNineBall, "Japan Nine-Ball");
-                billiardsRules.Add(PartyGameDef.Billiards.eRule.Rotation, "Rotation");
-                billiardsRules.Add(PartyGameDef.Billiards.eRule.EightBall, "Eight-Ball");
-
-                // Boat Dict - Find Course GameObject.name => Course Name
-                var boatCourses = new Dictionary<string, string>();
-                boatCourses.Add("BoatCourse01(Clone)", "Flower Garden Path");
-                boatCourses.Add("BoatCourse02(Clone)", "Wooden Arch River");
-                boatCourses.Add("BoatCourse03(Clone)", "Water Dragon Route");
-
-                // Shot Dict - Find Stage GameObject.name => Stage Name
-                var shotStages = new Dictionary<string, string>();
-                shotStages.Add("ShotBg01(Clone)", "Jungle Wars");
-                shotStages.Add("ShotBg02(Clone)", "Ocean Attack");
-                shotStages.Add("ShotBg03(Clone)", "Planet Monkeys");
-
-                // Dogfight Dict - Find Stage GameObject.name => Stage Name
-                var dogfightStages = new Dictionary<string, string>();
-                dogfightStages.Add("DogfightStage01(Clone)", "Turtle Island");
-                dogfightStages.Add("DogfightStage02(Clone)", "Midair Battlefield");
-                dogfightStages.Add("DogfightStage03(Clone)", "Space Monkey Wars");
-
-                // Baseball Dict - GameObject.name => Stadium Name
-                var baseballStadium = new Dictionary<string, string>();
-                baseballStadium.Add("BaseballStage01(Clone)", "Banana Stadium");
-                baseballStadium.Add("BaseballStage02(Clone)", "Monkey Dome");
-
-                // Tennis Dict - bgObj.name => Court Name
-                var tennisCourts = new Dictionary<string, string>();
-                tennisCourts.Add("TennisCourt01(Clone)", "Monkey Jungle");
-                tennisCourts.Add("TennisCourt02(Clone)", "Kingdom Stadium");
-                tennisCourts.Add("TennisCourt03(Clone)", "Paradise Street");
-
-                var scene = SceneManager.GetActiveScene().name;
-                switch (scene)
-                {
-                    case "Title":
-                        _discordClient.SetPresence(new RichPresence()
-                        {
-                            Details = "At the Title Screen!"
-                        });
-                        break;
-                    case "MainMenu":
-                        _discordClient.SetPresence(new RichPresence()
-                        {
-                            Details = "Browsing the Main Menu!"
-                        });
-                        break;
-                    default:
-                        if (SceneManager.GetSceneByName("PgRace").isLoaded)
-                        {
-                            if (GameObject.FindObjectOfType<PgRaceSequence>() == null) return;
-                            var raceKind = GameObject.FindObjectOfType<PgRaceCourse>()._courseKind_k__BackingField;
-                            _discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = "Currently playing Monkey Race!",
-                                State = $"Racing on {races[raceKind]}."
-                            });
-                            return;
-                        }
-                        if (SceneManager.GetSceneByName("PgFight").isLoaded)
-                        {
-                            if (GameObject.FindObjectOfType<PgFightSequence>() == null) return;
-                            var fightCount = GameObject.FindObjectOfType<PgFightSequence>().m_mainCnt;
-                            _discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = "Currently playing Monkey Fight!",
-                                State = $"Fighting in Round {fightCount + 1}"
-                            });
-                            return;
-                        }
-                        if (SceneManager.GetSceneByName("PgTarget").isLoaded)
-                        {
-                            if (GameObject.FindObjectOfType<PgTargetSequence>() == null) return;
-                            var roundCount = GameObject.FindObjectOfType<PgTargetSequence>()._currentRoundIndex_k__BackingField;
-                            _discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = "Currently playing Monkey Target!",
-                                State = $"Flying through Round {roundCount + 1}"
-                            });
-                            return;
-                        }
-                        if (SceneManager.GetSceneByName("PgBilliards").isLoaded)
-                        {
-                            if (GameObject.FindObjectOfType<PgBilliardsSequence>() == null) return;
-                            _discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = "Currently playing Monkey Billiards!",
-                                State = $"Playing {billiardsRules[GameObject.FindObjectOfType<PgBilliardsRuleInfo>().m_Rule]}."
-                            });
-                            return;
-                        }
-                        if (SceneManager.GetSceneByName("PgBowling").isLoaded)
-                        {
-                            if (GameObject.FindObjectOfType<PgBowlingSequence>() == null) return;
-                            _discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = "Currently playing Monkey Bowling!"
-                            });
-                            return;
-                        }
-                        if (SceneManager.GetSceneByName("PgGolf").isLoaded)
-                        {
-                            if (GameObject.FindObjectOfType<PgGolfSequence>().m_golfMode == null) return;
-                            var holeCount = Object.FindObjectOfType<PgGolfSequence>().m_golfMode.m_holeNo;
-                            _discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = "Currently playing Monkey Golf!",
-                                State = $"Currently on Hole {holeCount + 1}."
-                            });
-                            return;
-                        }
-                        if (SceneManager.GetSceneByName("PgBoat").isLoaded)
-                        {
-                            // PgBoatSequence._course_k__BackingField
-                            if (GameObject.FindObjectOfType<PgBoatSequence>() == null) return;
-                            _discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = "Currently playing Monkey Boat!",
-                                State = $"On the waters of {boatCourses[GameObject.FindObjectOfType<PgBoatCourse>().name]}."
-                            });
-                            return;
-                        }
-                        if (SceneManager.GetSceneByName("PgShot").isLoaded)
-                        {
-                            if (GameObject.FindObjectOfType<PgShotSequence>() == null) return;
-                            var stageName = Object.FindObjectOfType<PgShotSequence>().bgObj.name;
-                            _discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = "Currently playing Monkey Shot!",
-                                State = $"Shooting through {shotStages[stageName]}.",
-                            });
-                        }
-                        if (SceneManager.GetSceneByName("PgDogfight").isLoaded)
-                        {
-                            if (GameObject.FindObjectOfType<PgDogfightSequence>() == null) return;
-                            _discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = "Currently playing Monkey Dogfight!",
-                                State = $"In aerial combat on {dogfightStages[GameObject.FindObjectOfType<PgDogfightSequence>().m_CurrentStageObj.name]}"
-                            });
-                            return;
-                        }
-                        if (SceneManager.GetSceneByName("PgFutsal").isLoaded)
-                        {
-                            if (GameObject.FindObjectOfType<PgFutsalGameInfo>() == null) return;
-                            var lScore = (int)GameObject.FindObjectOfType<PgFutsalGameInfo>().score[0];
-                            var rScore = (int)GameObject.FindObjectOfType<PgFutsalGameInfo>().score[1];
-                            _discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = "Currently playing Monkey Soccer!",
-                                State = $"Current Game: {lScore} - {rScore}"
-                            });
-                            return;
-                        }
-                        if (SceneManager.GetSceneByName("PgBaseball").isLoaded)
-                        {
-                            if (GameObject.FindObjectOfType<PgBaseballSequence>().gameData.oneTeamData == null) return;
-                            var lScore = GameObject.FindObjectOfType<PgBaseballSequence>().gameData.oneTeamData.totalScore;
-                            var rScore = GameObject.FindObjectOfType<PgBaseballSequence>().gameData.twoTeamData.totalScore;
-                            _discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = $"Playing Monkey Baseball at {baseballStadium[GameObject.FindObjectOfType<PgBaseballStage>().name]}!",
-                                State = $"Current Game Score: {lScore} - {rScore}"
-                            });
-                            return;
-                        }
-                        if (SceneManager.GetSceneByName("PgTennis").isLoaded)
-                        {
-                            if (GameObject.FindObjectOfType<PgTennisScore>().m_PointCount == null) return;
-                            var lScore = GameObject.Find("Score0").GetComponent<PgTennisScore>().m_PointCount.count.ToString().Remove(0, 1);
-                            var rScore = GameObject.Find("Score1").GetComponent<PgTennisScore>().m_PointCount.count.ToString().Remove(0, 1);
-                            _discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = $"Playing Monkey Tennis on {tennisCourts[GameObject.FindObjectOfType<PgTennisCourt>().name]}!",
-                                State = $" Current Game Score: {lScore} - {rScore}"
-                            });
-                            return;
-                        }
-                        if (SceneManager.GetSceneByName("MainGame").isLoaded)
-                        {
-                            var modeName = "";
-                            var stageName = "";
-                            if (GameObject.FindObjectOfType<MainGameStage>() == null) return;
-                            var MGS = GameObject.FindObjectOfType<MainGameStage>().gameObject;
-                            if (GameObject.FindObjectOfType<Player>() == null) return;
-                            var mode = MGS.GetComponent<MainGameStage>().m_GameKind.ToString();
-                            switch (mode)
-                            {
-                                case "Story":
-                                    modeName = $"In Story Mode: {GameObject.Find("Text_world").GetComponent<RubyTextMeshProUGUI>().m_text}";
-                                    break;
-                                case "Challenge":
-                                    modeName = $"In {GameObject.Find("Text_world").GetComponent<RubyTextMeshProUGUI>().m_text}";
-                                    break;
-                                case "Practice":
-                                    modeName = "In Practice Mode:";
-                                    break;
-                                case "TimeAttack":
-                                    modeName = $"Ranking Challenge: {GameObject.Find("Text_world").GetComponent<RubyTextMeshProUGUI>().m_text}";
-                                    break;
-                                case "Reverse":
-                                    modeName = "In Reverse Mode:";
-                                    break;
-                                case "Rotten":
-                                    modeName = "In Dark Banana Mode:";
-                                    break;
-                                case "Golden":
-                                    modeName = "In Golden Banana Mode:";
-                                    break;
-                            }
-                            stageName = MGS.GetComponent<MainGameStage>().m_mgStageDatum.stageName;
-                            // Set Presence Details as {Mode}: {Stage Name}
-                            // Set Presence State as "Playing as {Character}
-                            var player = GameObject.Find("Player(Clone)");
-                            // Every stage name is stored in all caps
-                            _discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = $"{modeName} {CapitalizeStageName(stageName)}",
-                                State = $"Playing as {characters[(player.GetComponent<Player>().charaKind)]}"
-                            });
-                        }
-                        break;
-                }
-            }
-            catch
-            {
-
-            }
-        }
-        private static void BananaBlitzHDRPC()
-        {
-
-        }
-        private static string CapitalizeStageName(string stageName)
-        {
-            var i = 0;
-            var capital = true;
-            var corrected = "";
-            while (i < stageName.Length)
-            {
-                if (capital)
-                {
-                    corrected += stageName[i];
-                }
-                else
-                {
-                    corrected += stageName[i].ToString().ToLower();
-                }
-                if (stageName[i] == ' ' || stageName[i] == '-')
-                {
-                    capital = true;
-                }
-                else capital = false;
-                i++;
-            }
-            return corrected;
-        }
     }
-    }
+}

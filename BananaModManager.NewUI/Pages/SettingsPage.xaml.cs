@@ -150,10 +150,15 @@ public sealed partial class SettingsPage : Page
     private async void ButtonUpdateModLoader_Click(object sender, RoutedEventArgs e)
     {
         // Manually triggering the update process
-        await Update.UpdateModLoader();
-
-        // Holy shit louis we are done
-        await ModernMessageBox.Show("It's all done!", "Wow that was fast!");
+        try
+        {
+            Update.UpdateModLoader();
+            await ModernMessageBox.Show("It's all done!", "Wow that was fast!");
+        }
+        catch (Exception exception)
+        {
+            await ModernMessageBox.Show(exception.ToString(), "Error!");
+        }
     }
     private void ButtonAddYes_OnClick(object sender, RoutedEventArgs e)
     {

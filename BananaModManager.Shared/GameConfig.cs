@@ -10,13 +10,12 @@ public class GameConfig
     /// <summary>
     ///     List of all currently enabled mods, in a specific order.
     /// </summary>
-    public List<string> ActiveMods { get; set; } = new List<string>();
+    public List<string> ActiveMods { get; set; } = new();
 
     /// <summary>
     ///     Config values of all mods.
     /// </summary>
-    public Dictionary<string, Dictionary<string, object>> ModConfigs { get; set; } =
-        new Dictionary<string, Dictionary<string, object>>();
+    public Dictionary<string, Dictionary<string, object>> ModConfigs { get; set; } = new();
 
     /// <summary>
     ///     Displays the console window.
@@ -26,17 +25,17 @@ public class GameConfig
     /// <summary>
     ///     Enables the leaderboards, a whitelist for the approved mods, and displays all the active mods on screen.
     /// </summary>
-    public bool SpeedrunMode { get; set; } = true;
+    public bool SpeedrunMode { get; set; } = false;
 
     /// <summary>
     ///     Enables fast restarting and toggling Speedrun Mode by pressing F12, a quicker way to toggle Speedrun Mode for speedrunners.
     /// </summary>
-    public bool FastRestart { get; set; } = true;
+    public bool FastRestart { get; set; } = false;
 
     /// <summary>
     ///     Enables/Disables saving the game (For prevention of overwriting times).
     /// </summary>
-    public bool SaveMode { get; set; } = true;
+    public bool DisableSaves { get; set; } = false;
 
     /// <summary>
     ///     Enables Discord Rich Presence support

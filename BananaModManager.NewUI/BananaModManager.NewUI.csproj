@@ -2,6 +2,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+    <PreserveCompilationContext>false</PreserveCompilationContext>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>BananaModManager</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -15,7 +16,7 @@
     <AssemblyVersion>0.9.13.0</AssemblyVersion>
     <FileVersion>0.9.13.0</FileVersion>
     <NeutralLanguage>en</NeutralLanguage>
-    <ApplicationIcon>AppIcon.ico</ApplicationIcon>
+    <ApplicationIcon>ProgramIcon.ico</ApplicationIcon>
     <AssemblyName>BananaModManager</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
@@ -114,7 +115,7 @@
     <None Update="Loader\x86\winhttp.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AppIcon.ico">
+    <None Update="ProgramIcon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Loader\mono\MonoBleedingEdge\EmbedRuntime\libmono-btls-shared.dll">

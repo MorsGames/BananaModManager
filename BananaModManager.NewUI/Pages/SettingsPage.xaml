@@ -124,7 +124,7 @@
                 <ToggleSwitch Name="ToggleLegacyLayout" Toggled="ToggleLegacyLayout_OnToggled"/>
             </toolkit:SettingsCard>
 
-            <toolkit:SettingsCard x:Name="CardUpdateModLoader" Description="Required after a manual update!" Header="Update the mod loader">
+            <toolkit:SettingsCard x:Name="CardUpdateModLoader" Description="Required after an update to the mod manager!" Header="Update the mod loader">
                 <toolkit:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE777;" />
                 </toolkit:SettingsCard.HeaderIcon>

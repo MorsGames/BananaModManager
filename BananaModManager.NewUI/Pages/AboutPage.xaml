@@ -26,7 +26,7 @@
 
             <TextBlock Text="A mod loader and manager for Super Monkey Ball games made in Unity." Style="{StaticResource BodyTextBlockStyle}" FontSize="16" TextWrapping="Wrap" Margin="0,0,0,32"/>
 
-            <TextBox x:Name="TextBoxCredits" TextWrapping="Wrap" AcceptsReturn="True" IsReadOnly="True" Style="{StaticResource MonospaceStyle}" SelectionHighlightColor="#7F6E00" Height="256" Margin="0,0,0,16"/>
+            <TextBox x:Name="TextBoxCredits" TextWrapping="Wrap" AcceptsReturn="True" IsReadOnly="True" Style="{StaticResource MonospaceStyle}" SelectionHighlightColor="#7F6E00" Height="240" Margin="0,0,0,16"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
                 <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/MorsGames/BananaModManager" Margin="8, 0"/>

@@ -83,7 +83,22 @@ if %errorlevel% neq 0 (
 REM Copy all the files to the destination folder
 
 echo Copying files to %newUIDestinationFolder%...
-xcopy /Y /E /I /Q /EXCLUDE:PublishExclude.txt "%newUIProjectName%\bin\%newUIConfiguration%\%newUIPlatform%\%newUIFramework%\%newUIRuntime%\*" "%newUIDestinationFolder%"
+xcopy /Y /E /I /Q "%newUIProjectName%\bin\%newUIConfiguration%\%newUIPlatform%\%newUIFramework%\%newUIRuntime%\*" "%newUIDestinationFolder%"
+
+
+rem Loop through the exclusion list and delete the specified files
+
+for %%i in (
+    WindowsAppRuntime.png
+    BananaModManager.pdb
+) do (
+    del /Q "%newUIDestinationFolder%\%%i" > nul 2>&1
+)
+for %%i in (
+    fa-IR fi-FI fr-CA fr-FR gl-ES he-IL hi-IN hr-HR hu-HU id-ID is-IS it-IT ja-JP ka-GE kk-KZ ko-KR lt-LT lv-LV ms-MY nb-NO nl-NL nn-NO pl-PL pt-BR pt-PT ro-RO ru-RU sk-SK sl-SI sq-AL sr-Cyrl-RS sr-Latn-RS sv-SE th-TH tr-TR uk-UA vi-VN zh-CN zh-TW af-ZA ar-SA az-Latn-AZ bg-BG bs-Latn-BA ca-ES cs-CZ cy-GB da-DK de-DE el-GR en-GB es-ES es-MX et-EE eu-ES
+) do (
+    rmdir /S /Q "%newUIDestinationFolder%\%%i" > nul 2>&1
+)
 
 
 

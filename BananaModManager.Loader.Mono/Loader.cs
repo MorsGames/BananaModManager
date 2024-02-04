@@ -22,7 +22,7 @@ public static class Loader
             {
                 try
                 {
-                    Thread.Sleep(8000);
+                    Thread.Sleep(12000);
                     Console.WriteLine("Initializing the mods...");
 
                     CreateCodeRunner();
@@ -43,24 +43,53 @@ public static class Loader
     private static void CreateCodeRunner()
     {
         var obj = new GameObject("BananaModManagerCodeRunner");
-        var runner = obj.AddComponent<CodeRunner>();
         Object.DontDestroyOnLoad(obj);
 
-        foreach (var type in _mods.Where(mod => mod.GetAssembly() != null).SelectMany(mod => mod.GetAssembly().GetTypes()))
+        var runner = obj.AddComponent<CodeRunner>();
+
+        var priorityCheck = 0;
+        while (priorityCheck < 6)
         {
-            type.GetMethod("OnModStart")?.Invoke(null, null);
+            foreach (var mod in _mods)
+            {
+                // If not the correct priority
+                if (priorityCheck != Convert.ToInt32(mod.Info.Priority))
+                    continue;
 
-            var update = type.GetMethod("OnModUpdate");
-            if (update != null) runner.UpdateMethods.Add(update);
+                // Check each class if there's an assembly
+                var assembly = mod.GetAssembly();
 
-            var fixedUpdate = type.GetMethod("OnModFixedUpdate");
-            if (fixedUpdate != null) runner.FixedUpdateMethods.Add(fixedUpdate);
+                if (assembly == null)
+                    continue;
 
-            var lateUpdate = type.GetMethod("OnModLateUpdate");
-            if (lateUpdate != null) runner.LateUpdateMethods.Add(lateUpdate);
+                // Go through each class
+                foreach (var type in assembly.GetTypes())
+                {
+                    // Only look for one that's called "Main"
+                    if (type.Name != "Main")
+                        continue;
 
-            var gui = type.GetMethod("OnModGUI");
-            if (gui != null) runner.GUIMethods.Add(gui);
+                    // Add it to the code runner
+                    type.GetMethod("OnModStart")?.Invoke(null, null);
+
+                    var update = type.GetMethod("OnModUpdate");
+                    if (update != null)
+                        runner.UpdateMethods.Add(update);
+
+                    var fixedUpdate = type.GetMethod("OnModFixedUpdate");
+                    if (fixedUpdate != null)
+                        runner.FixedUpdateMethods.Add(fixedUpdate);
+
+                    var lateUpdate = type.GetMethod("OnModLateUpdate");
+                    if (lateUpdate != null)
+                        runner.LateUpdateMethods.Add(lateUpdate);
+
+                    var gui = type.GetMethod("OnModGUI");
+                    if (gui != null)
+                        runner.GUIMethods.Add(gui);
+                }
+            }
+            priorityCheck++;
         }
     }
 }

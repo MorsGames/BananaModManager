@@ -33,7 +33,7 @@ public class Update
             else
             {
                 // Print an error message
-                MessageBox.Show($"The zip file {zipFileName} was not found in {currentDirectory}");
+                MessageBox.Show($"The zip file {zipFileName} is not found in {currentDirectory}.", "Error!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
                 return;
             }
 
@@ -53,7 +53,7 @@ public class Update
         catch (Exception e)
         {
             // Old school message box on purpose, as we want this error to show before the UI has loaded
-            MessageBox.Show(e.ToString(), "Error!");
+            MessageBox.Show(e.ToString(), "Error!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
         }
     }
     public static async Task DownloadAndRun()
@@ -98,6 +98,9 @@ public class Update
 
             // Extract it!
             ZipFile.ExtractToDirectory(zipFile, tempDir);
+
+            // Say we are done
+            await ModernMessageBox.Show("After the installation is complete, remember to manually update the mod loader for each of your games by clicking the \"Update Mod Loader\" button in the settings menu.", "The update has been successfully downloaded!", "Sure thing, boss!");
 
             // Run the executable so it can do the update stuff
             var exePath = Path.Combine(tempDir, "BananaModManager.exe");
@@ -216,155 +219,148 @@ public class Update
         }
     }
 
-    public static async Task UpdateModLoader()
+    public static void UpdateModLoader()
     {
-        try
+        var game = App.CurrentGame;
+
+        // No game, no setup
+        if (game == Games.Default)
+            return;
+
+        // The folder where all the loader files are located before copying
+        const string loaderDir = "Loader";
+
+        // Copy the ini files for doorstop
+        var sourceDoorstopFile = game.Managed ? "doorstop_config_mono.ini" : "doorstop_config_il2cpp.ini";
+        const string targetDoorstopFile = "doorstop_config.ini";
+        File.Copy(
+            Path.Combine(loaderDir, sourceDoorstopFile),
+            App.PathConvert(targetDoorstopFile), true);
+
+        // Copy the library shared between all
+        const string sharedFile = "BananaModManager.Shared.dll";
+        File.Copy(
+            Path.Combine(loaderDir, sharedFile),
+            App.PathConvert(sharedFile), true);
+
+        // The architecture specific stuff
+        var architectureFolder = game.X64 ? "x64" : "x86";
+
+        // Copy the doorstop entry point file
+        const string doorstopEntryFile = "winhttp.dll";
+        File.Copy(
+            Path.Combine(loaderDir, architectureFolder, doorstopEntryFile),
+            App.PathConvert(doorstopEntryFile), true);
+
+        // Copy the detours library
+        const string detoursFile = "BananaModManager.Detours.dll";
+        File.Copy(
+            Path.Combine(loaderDir, architectureFolder, detoursFile),
+            App.PathConvert(detoursFile), true);
+
+        // Copy the Mono / IL2Cpp specific loader library
+        var loaderFile = game.Managed ? "BananaModManager.Loader.Mono.dll" : "BananaModManager.Loader.IL2Cpp.dll";
+        File.Copy(
+            Path.Combine(loaderDir, loaderFile),
+            App.PathConvert(loaderFile), true);
+
+        // Following is only for IL2Cpp games
+        if (!game.Managed)
         {
-            var game = App.CurrentGame;
-
-            // No game, no setup
-            if (game == Games.Default)
-                return;
-
-            // The folder where all the loader files are located before copying
-            const string loaderDir = "Loader";
-
-            // Copy the ini files for doorstop
-            var sourceDoorstopFile = game.Managed ? "doorstop_config_mono.ini" : "doorstop_config_il2cpp.ini";
-            const string targetDoorstopFile = "doorstop_config.ini";
+            // Copy the Discord RPC library
+            const string discordRPCFile = "DiscordRPC.dll";
             File.Copy(
-                Path.Combine(loaderDir, sourceDoorstopFile),
-                App.PathConvert(targetDoorstopFile), true);
+                Path.Combine(loaderDir, discordRPCFile),
+                App.PathConvert(discordRPCFile), true);
 
-            // Copy the library shared between all
-            const string sharedFile = "BananaModManager.Shared.dll";
-            File.Copy(
-                Path.Combine(loaderDir, sharedFile),
-                App.PathConvert(sharedFile), true);
+            // Copy the mono files
+            const string monoDir = "mono";
+            var sourceDirectory = Path.Combine(loaderDir, monoDir);
+            var destinationDirectory = App.PathConvert(monoDir);
 
-            // The architecture specific stuff
-            var architectureFolder = game.X64 ? "x64" : "x86";
+            // Get all files in the source directory and its subdirectories
+            var files = Directory.GetFiles(sourceDirectory, "*.*", SearchOption.AllDirectories);
 
-            // Copy the doorstop entry point file
-            const string doorstopEntryFile = "winhttp.dll";
-            File.Copy(
-                Path.Combine(loaderDir, architectureFolder, doorstopEntryFile),
-                App.PathConvert(doorstopEntryFile), true);
-
-            // Copy the detours library
-            const string detoursFile = "BananaModManager.Detours.dll";
-            File.Copy(
-                Path.Combine(loaderDir, architectureFolder, detoursFile),
-                App.PathConvert(detoursFile), true);
-
-            // Copy the Mono / IL2Cpp specific loader library
-            var loaderFile = game.Managed ? "BananaModManager.Loader.Mono.dll" : "BananaModManager.Loader.IL2Cpp.dll";
-            File.Copy(
-                Path.Combine(loaderDir, loaderFile),
-                App.PathConvert(loaderFile), true);
-
-            // Following is only for IL2Cpp games
-            if (!game.Managed)
+            // Copy each file to the destination directory
+            foreach (var filePath in files)
             {
-                // Copy the Discord RPC library
-                const string discordRPCFile = "DiscordRPC.dll";
-                File.Copy(
-                    Path.Combine(loaderDir, discordRPCFile),
-                    App.PathConvert(discordRPCFile), true);
+                // Create the destination path by replacing the source directory with the destination directory
+                var destinationPath = Path.Combine(destinationDirectory, filePath.Substring(sourceDirectory.Length + 1));
 
-                // Copy the mono files
-                const string monoDir = "mono";
-                var sourceDirectory = Path.Combine(loaderDir, monoDir);
-                var destinationDirectory = App.PathConvert(monoDir);
+                // Ensure the destination directory exists
+                Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
 
-                // Get all files in the source directory and its subdirectories
-                var files = Directory.GetFiles(sourceDirectory, "*.*", SearchOption.AllDirectories);
-
-                // Copy each file to the destination directory
-                foreach (var filePath in files)
-                {
-                    // Create the destination path by replacing the source directory with the destination directory
-                    var destinationPath = Path.Combine(destinationDirectory, filePath.Substring(sourceDirectory.Length + 1));
-
-                    // Ensure the destination directory exists
-                    Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
-
-                    // Perform the file copy
-                    File.Copy(filePath, destinationPath, true);
-                }
+                // Perform the file copy
+                File.Copy(filePath, destinationPath, true);
             }
+        }
 
-            // Check if the game is managed or already decompiled.
-            if (game.Managed || Directory.Exists(App.PathConvert("managed")))
+        // Check if the game is managed or already decompiled.
+        if (game.Managed || Directory.Exists(App.PathConvert("managed")))
+        {
+            // If so we can skip the rest
+            return;
+        }
+
+        // Otherwise, we are gaming
+        var tempPath = Path.Combine(Path.GetTempPath(), "BananaModManager");
+        Directory.CreateDirectory(tempPath);
+
+        // We will need these in a bit
+        var dumperDir = App.PathConvert("Il2CppDumper");
+        var unhollowerDir = App.PathConvert("Il2CppAssemblyUnhollower");
+
+        // Download the necessary tools
+        if (!Directory.Exists(dumperDir))
+        {
+            var zipPath = Path.Combine(tempPath, "Il2CppDumper-v6.6.5.zip");
+            using var client = new WebClient();
+            client.DownloadFile("https://github.com/Perfare/Il2CppDumper/releases/download/v6.6.5/Il2CppDumper-v6.6.5.zip", zipPath);
+            ZipFile.ExtractToDirectory(zipPath, dumperDir);
+        }
+        if (!Directory.Exists(unhollowerDir))
+        {
+            var zipPath = Path.Combine(tempPath, "Il2CppAssemblyUnhollower.0.4.15.4.zip");
+            using var client = new WebClient();
+            client.DownloadFile("https://github.com/knah/Il2CppAssemblyUnhollower/releases/download/v0.4.15.4/Il2CppAssemblyUnhollower.0.4.15.4.zip", zipPath);
+            ZipFile.ExtractToDirectory(zipPath, unhollowerDir);
+        }
+
+        // Run the tools if needed
+        if (!Directory.Exists(Path.Combine(dumperDir, "DummyDll")))
+        {
+            var processStartInfo = new ProcessStartInfo
             {
-                // If so we can skip the rest
-                return;
-            }
-
-            // Otherwise, we are gaming
-            var tempPath = Path.Combine(Path.GetTempPath(), "BananaModManager");
-            Directory.CreateDirectory(tempPath);
-
-            // We will need these in a bit
-            var dumperDir = App.PathConvert("Il2CppDumper");
-            var unhollowerDir = App.PathConvert("Il2CppAssemblyUnhollower");
-
-            // Download the necessary tools
-            if (!Directory.Exists(dumperDir))
-            {
-                var zipPath = Path.Combine(tempPath, "Il2CppDumper-v6.6.5.zip");
-                using var client = new WebClient();
-                client.DownloadFile("https://github.com/Perfare/Il2CppDumper/releases/download/v6.6.5/Il2CppDumper-v6.6.5.zip", zipPath);
-                ZipFile.ExtractToDirectory(zipPath, dumperDir);
-            }
-            if (!Directory.Exists(unhollowerDir))
-            {
-                var zipPath = Path.Combine(tempPath, "Il2CppAssemblyUnhollower.0.4.15.4.zip");
-                using var client = new WebClient();
-                client.DownloadFile("https://github.com/knah/Il2CppAssemblyUnhollower/releases/download/v0.4.15.4/Il2CppAssemblyUnhollower.0.4.15.4.zip", zipPath);
-                ZipFile.ExtractToDirectory(zipPath, unhollowerDir);
-            }
-
-            // Run the tools if needed
-            if (!Directory.Exists(Path.Combine(dumperDir, "DummyDll")))
-            {
-                var processStartInfo = new ProcessStartInfo
-                {
-                    FileName = Path.Combine(dumperDir, "Il2CppDumper.exe"),
-                    Arguments = $"\"GameAssembly.dll\" {game.ExecutableName}\"_Data\\il2cpp_data\\Metadata\\global-metadata.dat\"",
-                    WorkingDirectory = App.ManagerConfig.GetGameDirectory()
-                };
-                var process = Process.Start(processStartInfo);
-                // NOT ASYNC!!!
-                process?.WaitForExit();
-            }
-
-            var process2StartInfo = new ProcessStartInfo
-            {
-                FileName = Path.Combine(unhollowerDir, "AssemblyUnhollower.exe"),
-                Arguments = "--input=\"Il2CppDumper\\DummyDll\" --output=\"managed\" --mscorlib=\"mono\\Managed\\mscorlib.dll\"",
+                FileName = Path.Combine(dumperDir, "Il2CppDumper.exe"),
+                Arguments = $"\"GameAssembly.dll\" {game.ExecutableName}\"_Data\\il2cpp_data\\Metadata\\global-metadata.dat\"",
                 WorkingDirectory = App.ManagerConfig.GetGameDirectory()
             };
-            var process2 = Process.Start(process2StartInfo);
-            // NOT ASYNC!!!
-            process2?.WaitForExit();
-
-            // Overwrite dummy mono files with actual ones
-            foreach (var path in Directory.GetFiles(App.PathConvert("mono\\Managed"), "*.dll", SearchOption.AllDirectories))
-            {
-                var lastIndexOfManaged = path.LastIndexOf("mono\\Managed", StringComparison.Ordinal);
-                var newPath = path.Substring(0, lastIndexOfManaged) + "managed" + path.Substring(lastIndexOfManaged + "mono\\Managed".Length);
-                File.Copy(path, newPath, true);
-            }
-
-            // Delete the stuff we don't need
-            Directory.Delete(dumperDir, true);
-            Directory.Delete(unhollowerDir, true);
-            Directory.Delete(tempPath, true);
+            var process = Process.Start(processStartInfo);
+            process?.WaitForExit();
         }
-        catch (Exception e)
+
+        var process2StartInfo = new ProcessStartInfo
         {
-            await ModernMessageBox.Show(e.ToString(), "Error!");
+            FileName = Path.Combine(unhollowerDir, "AssemblyUnhollower.exe"),
+            Arguments = "--input=\"Il2CppDumper\\DummyDll\" --output=\"managed\" --mscorlib=\"mono\\Managed\\mscorlib.dll\"",
+            WorkingDirectory = App.ManagerConfig.GetGameDirectory()
+        };
+        var process2 = Process.Start(process2StartInfo);
+        process2?.WaitForExit();
+
+        // Overwrite dummy mono files with actual ones
+        foreach (var path in Directory.GetFiles(App.PathConvert("mono\\Managed"), "*.dll", SearchOption.AllDirectories))
+        {
+            var lastIndexOfManaged = path.LastIndexOf("mono\\Managed", StringComparison.Ordinal);
+            var newPath = path.Substring(0, lastIndexOfManaged) + "managed" + path.Substring(lastIndexOfManaged + "mono\\Managed".Length);
+            File.Copy(path, newPath, true);
         }
+
+        // Delete the stuff we don't need
+        Directory.Delete(dumperDir, true);
+        Directory.Delete(unhollowerDir, true);
+        Directory.Delete(tempPath, true);
+
+        // We are done!
     }
 }

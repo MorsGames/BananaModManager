@@ -169,7 +169,7 @@ public static class GameBanana
                         }
                         catch (Exception e)
                         {
-                            MessageBox.Show(e.Message);
+                            await ModernMessageBox.Show(e.Message, "Error!");
                         }
                     }
                     // If the user says no, just delete the downloaded zip.
@@ -231,13 +231,13 @@ public static class GameBanana
                     // WE DID IT!
                     await ModernMessageBox.Show($"\"{modName}\" has been installed!\n\nFollowing this message box, the directory for \"{modName}\\\" will be opened. Please install the additional files to their appropriate directory. If you're stuck, try checking the GameBanana page for the mod or looking for a \"readme.txt\" file.", "Additional Files Detected!");
                     GC.WaitForPendingFinalizers();
-                    File.Delete($"{AppDomain.CurrentDomain.BaseDirectory}\\mods\\{fileName}");
-                    Process.Start($"{AppDomain.CurrentDomain.BaseDirectory}\\mods\\{modName}");
+                    File.Delete(Path.Combine(modsDirectory, fileName));
+                    Process.Start(Path.Combine(modsDirectory, modName));
                 }
                 else
                 {
                     // Remove the zip
-                    File.Delete($"{AppDomain.CurrentDomain.BaseDirectory}\\mods\\{fileName}");
+                    File.Delete(App.PathConvert(Path.Combine(modsDirectory, fileName)));
                     // WE DID IT!
                     await ModernMessageBox.Show($"\"{modName}\" has been installed!", "Success!");
                 }
@@ -245,7 +245,7 @@ public static class GameBanana
             }
             catch (Exception e)
             {
-                MessageBox.Show($"An error has occured: {e.Message}");
+                await ModernMessageBox.Show(e.Message, "Error!");
                 if (File.Exists($"{AppDomain.CurrentDomain.BaseDirectory}\\mods\\{fileName}"))
                 {
                     File.Delete($"{AppDomain.CurrentDomain.BaseDirectory}\\mods\\{fileName}");
