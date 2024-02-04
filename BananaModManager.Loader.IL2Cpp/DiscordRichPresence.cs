@@ -101,180 +101,159 @@ namespace BananaModManager.Loader.IL2Cpp
         public static void BananaManiaRPC(DiscordRpcClient discordClient)
         {
             // TODO: This is a performance nightmare holy fuck
-            // Tried to fix a little bit but probably needs a more significant rewrite
+            // Did big improvements, but it probably still needs a more significant rewrite
             // All the FindObjectOfType calls are very heavy and tank the performance
             // Same with null comparisons to some extent
             // Either fix or split off to a separate mod ASAP
             try
             {
+                var discordRichPresence = new RichPresence();
                 var scene = SceneManager.GetActiveScene().name;
                 switch (scene)
                 {
                     case "Title":
-                        discordClient.SetPresence(new RichPresence()
-                        {
-                            Details = "At the Title Screen!"
-                        });
+                        discordRichPresence.Details = "At the Title Screen!";
                         break;
                     case "MainMenu":
-                        discordClient.SetPresence(new RichPresence()
-                        {
-                            Details = "Browsing the Main Menu!"
-                        });
+                        discordRichPresence.Details = "Browsing the Main Menu!";
                         break;
                     default:
                         if (SceneManager.GetSceneByName("PgRace").isLoaded)
                         {
-                            if (GameObject.FindObjectOfType<PgRaceSequence>() == null)
+                            var raceSequence = GameObject.FindObjectOfType<PgRaceSequence>();
+                            if (raceSequence == null)
                                 return;
-                            var raceKind = GameObject.FindObjectOfType<PgRaceCourse>()._courseKind_k__BackingField;
-                            discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = "Currently playing Monkey Race!",
-                                State = $"Racing on {Races[raceKind]}."
-                            });
-                            return;
+
+                            var raceCourse = GameObject.FindObjectOfType<PgRaceCourse>();
+                            if (raceCourse == null)
+                                return;
+
+                            var raceKind = raceCourse._courseKind_k__BackingField;
+
+                            discordRichPresence.Details = "Currently playing Monkey Race!";
+                            discordRichPresence.State = $"Racing on {Races[raceKind]}.";
                         }
-                        if (SceneManager.GetSceneByName("PgFight").isLoaded)
+                        else if (SceneManager.GetSceneByName("PgFight").isLoaded)
                         {
-                            if (GameObject.FindObjectOfType<PgFightSequence>() == null)
+                            var fightSequence = GameObject.FindObjectOfType<PgFightSequence>();
+                            if (fightSequence == null)
                                 return;
-                            var fightCount = GameObject.FindObjectOfType<PgFightSequence>().m_mainCnt;
-                            discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = "Currently playing Monkey Fight!",
-                                State = $"Fighting in Round {fightCount + 1}"
-                            });
-                            return;
+
+                            discordRichPresence.Details = "Currently playing Monkey Fight!";
+                            discordRichPresence.State = $"Fighting in Round {fightSequence.m_mainCnt + 1}";
                         }
-                        if (SceneManager.GetSceneByName("PgTarget").isLoaded)
+                        else if (SceneManager.GetSceneByName("PgTarget").isLoaded)
                         {
-                            if (GameObject.FindObjectOfType<PgTargetSequence>() == null)
+                            var targetSequence = GameObject.FindObjectOfType<PgTargetSequence>();
+                            if (targetSequence == null)
                                 return;
-                            var roundCount = GameObject.FindObjectOfType<PgTargetSequence>()._currentRoundIndex_k__BackingField;
-                            discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = "Currently playing Monkey Target!",
-                                State = $"Flying through Round {roundCount + 1}"
-                            });
-                            return;
+
+                            discordRichPresence.Details = "Currently playing Monkey Target!";
+                            discordRichPresence.State = $"Flying through Round {targetSequence._currentRoundIndex_k__BackingField + 1}";
                         }
-                        if (SceneManager.GetSceneByName("PgBilliards").isLoaded)
+                        else if (SceneManager.GetSceneByName("PgBilliards").isLoaded)
                         {
-                            if (GameObject.FindObjectOfType<PgBilliardsSequence>() == null)
+                            var billiardsSequence = GameObject.FindObjectOfType<PgBilliardsSequence>();
+                            if (billiardsSequence == null)
                                 return;
-                            discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = "Currently playing Monkey Billiards!",
-                                State = $"Playing {BilliardsRules[GameObject.FindObjectOfType<PgBilliardsRuleInfo>().m_Rule]}."
-                            });
-                            return;
+
+                            discordRichPresence.Details = "Currently playing Monkey Billiards!";
+                            discordRichPresence.State = $"Playing {BilliardsRules[GameObject.FindObjectOfType<PgBilliardsRuleInfo>().m_Rule]}.";
                         }
-                        if (SceneManager.GetSceneByName("PgBowling").isLoaded)
+                        else if (SceneManager.GetSceneByName("PgBowling").isLoaded)
                         {
-                            if (GameObject.FindObjectOfType<PgBowlingSequence>() == null)
+                            var bowlingSequence = GameObject.FindObjectOfType<PgBowlingSequence>();
+                            if (bowlingSequence == null)
                                 return;
-                            discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = "Currently playing Monkey Bowling!"
-                            });
-                            return;
+
+                            discordRichPresence.Details = "Currently playing Monkey Bowling!";
                         }
-                        if (SceneManager.GetSceneByName("PgGolf").isLoaded)
+                        else if (SceneManager.GetSceneByName("PgGolf").isLoaded)
                         {
-                            if (GameObject.FindObjectOfType<PgGolfSequence>().m_golfMode == null)
+                            var golfSequence = GameObject.FindObjectOfType<PgGolfSequence>();
+                            if (golfSequence.m_golfMode == null)
                                 return;
-                            var holeCount = Object.FindObjectOfType<PgGolfSequence>().m_golfMode.m_holeNo;
-                            discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = "Currently playing Monkey Golf!",
-                                State = $"Currently on Hole {holeCount + 1}."
-                            });
-                            return;
+
+                            var holeCount = golfSequence.m_golfMode.m_holeNo;
+                            discordRichPresence.Details = "Currently playing Monkey Golf!";
+                            discordRichPresence.State = $"Currently on Hole {holeCount + 1}.";
                         }
-                        if (SceneManager.GetSceneByName("PgBoat").isLoaded)
+                        else if (SceneManager.GetSceneByName("PgBoat").isLoaded)
                         {
-                            // PgBoatSequence._course_k__BackingField
-                            if (GameObject.FindObjectOfType<PgBoatSequence>() == null)
+                            var boatSequence = GameObject.FindObjectOfType<PgBoatSequence>();
+                            if (boatSequence == null)
                                 return;
-                            discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = "Currently playing Monkey Boat!",
-                                State = $"On the waters of {BoatCourses[GameObject.FindObjectOfType<PgBoatCourse>().name]}."
-                            });
-                            return;
+
+                            discordRichPresence.Details = "Currently playing Monkey Boat!";
+                            discordRichPresence.State = $"On the waters of {BoatCourses[GameObject.FindObjectOfType<PgBoatCourse>().name]}.";
                         }
-                        if (SceneManager.GetSceneByName("PgShot").isLoaded)
+                        else if (SceneManager.GetSceneByName("PgShot").isLoaded)
                         {
-                            if (GameObject.FindObjectOfType<PgShotSequence>() == null)
+                            var shotSequence = GameObject.FindObjectOfType<PgShotSequence>();
+                            if (shotSequence == null)
                                 return;
-                            var stageName = Object.FindObjectOfType<PgShotSequence>().bgObj.name;
-                            discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = "Currently playing Monkey Shot!",
-                                State = $"Shooting through {ShotStages[stageName]}.",
-                            });
+
+                            var stageName = shotSequence.bgObj.name;
+                            discordRichPresence.Details = "Currently playing Monkey Shot!";
+                            discordRichPresence.State = $"Shooting through {ShotStages[stageName]}.";
                         }
-                        if (SceneManager.GetSceneByName("PgDogfight").isLoaded)
+                        else if (SceneManager.GetSceneByName("PgDogfight").isLoaded)
                         {
-                            if (GameObject.FindObjectOfType<PgDogfightSequence>() == null)
+                            var dogfightSequence = GameObject.FindObjectOfType<PgDogfightSequence>();
+                            if (dogfightSequence == null)
                                 return;
-                            discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = "Currently playing Monkey Dogfight!",
-                                State = $"In aerial combat on {DogfightStages[GameObject.FindObjectOfType<PgDogfightSequence>().m_CurrentStageObj.name]}"
-                            });
-                            return;
+
+                            discordRichPresence.Details = "Currently playing Monkey Dogfight!";
+                            discordRichPresence.State = $"In aerial combat on {DogfightStages[dogfightSequence.m_CurrentStageObj.name]}";
                         }
-                        if (SceneManager.GetSceneByName("PgFutsal").isLoaded)
+                        else if (SceneManager.GetSceneByName("PgFutsal").isLoaded)
                         {
-                            if (GameObject.FindObjectOfType<PgFutsalGameInfo>() == null)
+                            var futsalGameInfo = GameObject.FindObjectOfType<PgFutsalGameInfo>();
+                            if (futsalGameInfo == null)
                                 return;
-                            var lScore = (int)GameObject.FindObjectOfType<PgFutsalGameInfo>().score[0];
-                            var rScore = (int)GameObject.FindObjectOfType<PgFutsalGameInfo>().score[1];
-                            discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = "Currently playing Monkey Soccer!",
-                                State = $"Current Game: {lScore} - {rScore}"
-                            });
-                            return;
+
+                            var lScore = (int)futsalGameInfo.score[0];
+                            var rScore = (int)futsalGameInfo.score[1];
+
+                            discordRichPresence.Details = "Currently playing Monkey Soccer!";
+                            discordRichPresence.State = $"Current Game: {lScore} - {rScore}";
                         }
-                        if (SceneManager.GetSceneByName("PgBaseball").isLoaded)
+                        else if (SceneManager.GetSceneByName("PgBaseball").isLoaded)
                         {
-                            if (GameObject.FindObjectOfType<PgBaseballSequence>().gameData.oneTeamData == null)
+                            var baseballSequence = GameObject.FindObjectOfType<PgBaseballSequence>();
+                            if (baseballSequence.gameData.oneTeamData == null)
                                 return;
-                            var lScore = GameObject.FindObjectOfType<PgBaseballSequence>().gameData.oneTeamData.totalScore;
-                            var rScore = GameObject.FindObjectOfType<PgBaseballSequence>().gameData.twoTeamData.totalScore;
-                            discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = $"Playing Monkey Baseball at {BaseballStadium[GameObject.FindObjectOfType<PgBaseballStage>().name]}!",
-                                State = $"Current Game Score: {lScore} - {rScore}"
-                            });
-                            return;
+
+                            var lScore = baseballSequence.gameData.oneTeamData.totalScore;
+                            var rScore = baseballSequence.gameData.twoTeamData.totalScore;
+
+                            discordRichPresence.Details = $"Playing Monkey Baseball at {BaseballStadium[GameObject.FindObjectOfType<PgBaseballStage>().name]}!";
+                            discordRichPresence.State = $"Current Game Score: {lScore} - {rScore}";
                         }
-                        if (SceneManager.GetSceneByName("PgTennis").isLoaded)
+                        else if (SceneManager.GetSceneByName("PgTennis").isLoaded)
                         {
-                            if (GameObject.FindObjectOfType<PgTennisScore>().m_PointCount == null)
+                            var tennisScore = GameObject.FindObjectOfType<PgTennisScore>();
+                            if (tennisScore.m_PointCount == null)
                                 return;
+
                             var lScore = GameObject.Find("Score0").GetComponent<PgTennisScore>().m_PointCount.count.ToString().Remove(0, 1);
                             var rScore = GameObject.Find("Score1").GetComponent<PgTennisScore>().m_PointCount.count.ToString().Remove(0, 1);
-                            discordClient.SetPresence(new RichPresence()
-                            {
-                                Details = $"Playing Monkey Tennis on {TennisCourts[GameObject.FindObjectOfType<PgTennisCourt>().name]}!",
-                                State = $" Current Game Score: {lScore} - {rScore}"
-                            });
-                            return;
+
+                            discordRichPresence.Details = $"Playing Monkey Tennis on {TennisCourts[GameObject.FindObjectOfType<PgTennisCourt>().name]}!";
+                            discordRichPresence.State = $" Current Game Score: {lScore} - {rScore}";
                         }
-                        if (SceneManager.GetSceneByName("MainGame").isLoaded)
+                        else if (SceneManager.GetSceneByName("MainGame").isLoaded)
                         {
-                            var modeName = "";
-                            var stageName = "";
-                            if (GameObject.FindObjectOfType<MainGameStage>() == null)
+                            var mainGameStage = GameObject.FindObjectOfType<MainGameStage>();
+                            if (mainGameStage == null)
                                 return;
-                            var MGS = GameObject.FindObjectOfType<MainGameStage>().gameObject;
+
                             if (GameObject.FindObjectOfType<Player>() == null)
                                 return;
-                            var mode = MGS.GetComponent<MainGameStage>().m_GameKind.ToString();
+
+                            var modeName = "";
+                            var stageName = "";
+                            var mode = mainGameStage.m_GameKind.ToString();
                             switch (mode)
                             {
                                 case "Story":
@@ -299,7 +278,7 @@ namespace BananaModManager.Loader.IL2Cpp
                                     modeName = "In Golden Banana Mode:";
                                     break;
                             }
-                            stageName = MGS.GetComponent<MainGameStage>().m_mgStageDatum.stageName;
+                            stageName = mainGameStage.m_mgStageDatum.stageName;
                             // Set Presence Details as {Mode}: {Stage Name}
                             // Set Presence State as "Playing as {Character}
                             var player = GameObject.Find("Player(Clone)");
@@ -312,10 +291,11 @@ namespace BananaModManager.Loader.IL2Cpp
                         }
                         break;
                 }
+                discordClient.SetPresence(discordRichPresence);
             }
             catch
             {
-
+                // Errors here are not a huge deal I guess???
             }
         }
 
