@@ -22,9 +22,9 @@ public class ManagerConfig
         public bool OneClick { get; set; } = false;
 
         /// <summary>
-        /// Activates the not so hidden dark mode
+        /// Determines which theme to use. 2 is the system default
         /// </summary>
-        public int Theme { get; set; } = 0;
+        public int Theme { get; set; } = 2;
 
         /// <summary>
         /// Modifies the layout to look a bit more like the original mod manager

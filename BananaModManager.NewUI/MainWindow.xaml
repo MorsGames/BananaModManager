@@ -32,11 +32,6 @@
                        Grid.Column="1"
                        VerticalAlignment="Center"
                        Margin="8,-2,0,0"/>
-            <!--<Image x:Name="TitleBarIcon" Source="ms-appx:///Assets/StoreLogo.png"
-                   Grid.Column="1"
-                   HorizontalAlignment="Left"
-                   Width="16" Height="16"
-                   Margin="8,0,0,0"/>-->
             <TextBlock x:Name="TitleBarTextBlock"
                        Text="BananaModManager"
                        Style="{StaticResource CaptionTextBlockStyle}"

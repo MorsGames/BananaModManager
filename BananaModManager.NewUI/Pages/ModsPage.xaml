@@ -15,20 +15,10 @@
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush x:Key="Outline" Color="#20000000" />
-                    <SolidColorBrush x:Key="AlternatingRow" Color="#10000000" />
-                    <SolidColorBrush x:Key="SidePanel" Color="#60FFFFFF" />
-                    <SolidColorBrush x:Key="SidePanelOutline" Color="#20000000" />
                     <SolidColorBrush x:Key="ColumnHeader" Color="#20000000" />
-                    <SolidColorBrush x:Key="ColumnText" Color="Black" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="Outline" Color="#20FFFFFF" />
-                    <SolidColorBrush x:Key="AlternatingRow" Color="#10FFFFFF" />
-                    <SolidColorBrush x:Key="SidePanel" Color="#08FFFFFF" />
-                    <SolidColorBrush x:Key="SidePanelOutline" Color="Transparent" />
                     <SolidColorBrush x:Key="ColumnHeader" Color="#60000000" />
-                    <SolidColorBrush x:Key="ColumnText" Color="White" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
@@ -47,8 +37,8 @@
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
                 BorderThickness="1"
-                BorderBrush="{ThemeResource Outline}"
-                Margin="24, 0, 12, 112"
+                BorderBrush="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                Margin="24, 0, 8, 112"
                 CornerRadius="8">
                 <toolkit:DataGrid
                     x:Name="DataGridMods"
@@ -60,9 +50,9 @@
                     CanUserSortColumns="True"
                     CanUserReorderColumns="True"
                     CanUserResizeColumns="True"
-                    AlternatingRowBackground="{ThemeResource AlternatingRow}"
-                    HorizontalGridLinesBrush="{ThemeResource Outline}"
-                    VerticalGridLinesBrush="{ThemeResource Outline}"
+                    AlternatingRowBackground="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    HorizontalGridLinesBrush="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    VerticalGridLinesBrush="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     GridLinesVisibility = "All"
                     CanDrag="True"
                     AllowDrop="True"
@@ -79,7 +69,7 @@
                                 <Setter.Value>
                                     <ControlTemplate TargetType="primitives:DataGridColumnHeader">
                                         <Grid Background="{ThemeResource ColumnHeader}">
-                                            <TextBlock Text="{TemplateBinding Content}" Foreground="{ThemeResource ColumnText}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="12, 0, 0, 0"/>
+                                            <TextBlock Text="{TemplateBinding Content}" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="12, 0, 0, 0"/>
                                         </Grid>
                                     </ControlTemplate>
                                 </Setter.Value>
@@ -134,11 +124,11 @@
 
         <!-- Right side content -->
         <ScrollViewer Grid.Column="1"
-                      Background="{ThemeResource SidePanel}"
+                      Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                       BorderThickness="1"
-                      BorderBrush="{ThemeResource SidePanelOutline}"
+                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                       CornerRadius="8"
-                      Margin="12 0 24 24">
+                      Margin="8 0 24 24">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>

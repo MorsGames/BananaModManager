@@ -20,56 +20,56 @@
 
         <StackPanel>
 
-            <toolkit:SettingsCard x:Name="CardConsole" Description="Show the console window when the game boots, which has debug information related to the mod loader." Header="Show the console window">
+            <toolkit:SettingsCard x:Name="CardConsole" Description="Show the console window when the game boots, which has debug information related to the mod loader" Header="Show the console window" Style="{StaticResource SettingsCardStyle}">
                 <toolkit:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE756;" />
                 </toolkit:SettingsCard.HeaderIcon>
                 <ToggleSwitch Name="ToggleConsole" Toggled="ToggleConsole_OnToggled"/>
             </toolkit:SettingsCard>
 
-            <toolkit:SettingsCard x:Name="CardDiscordRPC" Description="When enabled, your friends will be able to see more information about what game mode you're playing on Discord!" Header="Discord Rich Presence">
+            <toolkit:SettingsCard x:Name="CardDiscordRPC" Description="When enabled, your friends will be able to see more information about what game mode you're playing on Discord" Header="Discord Rich Presence" Style="{StaticResource SettingsCardStyle}">
                 <toolkit:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE76E;" />
                 </toolkit:SettingsCard.HeaderIcon>
                 <ToggleSwitch x:Name="ToggleDiscordRPC" Toggled="ToggleDiscordRPC_OnToggled"/>
             </toolkit:SettingsCard>
 
-            <toolkit:SettingsCard x:Name="CardSpeedrunMode" Description="Enables the leaderboards, but only allows whitelisted mods, and displays active mods on the screen." Header="Enable Speedrun Mode">
+            <toolkit:SettingsCard x:Name="CardSpeedrunMode" Description="Enables the leaderboards, but only allows whitelisted mods, and displays active mods on the screen" Header="Enable Speedrun Mode" Style="{StaticResource SettingsCardStyle}">
                 <toolkit:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE7C1;" />
                 </toolkit:SettingsCard.HeaderIcon>
                 <ToggleSwitch x:Name="ToggleSpeedrunMode" Toggled="ToggleSpeedrunMode_OnToggled"/>
             </toolkit:SettingsCard>
 
-            <toolkit:SettingsCard x:Name="CardFastRestart" Description="When enabled, pressing F11 while the game is open will fast restart the game, toggling Speedrun Mode in the process." Header="Add fast restart keybind to the Speedrun Mode">
+            <toolkit:SettingsCard x:Name="CardFastRestart" Description="When enabled, pressing F11 while the game is open will fast restart the game, toggling Speedrun Mode in the process" Header="Add fast restart keybind to the Speedrun Mode" Style="{StaticResource SettingsCardStyle}">
                 <toolkit:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE765;" />
                 </toolkit:SettingsCard.HeaderIcon>
                 <ToggleSwitch x:Name="ToggleFastRestart" Toggled="ToggleFastRestart_OnToggled"/>
             </toolkit:SettingsCard>
 
-            <toolkit:SettingsCard x:Name="CardDisableSaves" Description="When enabled, the game will not automatically save your best clear times." Header="Disable saving clear times">
+            <toolkit:SettingsCard x:Name="CardDisableSaves" Description="When enabled, the game will not automatically save your best clear times" Header="Disable saving clear times" Style="{StaticResource SettingsCardStyle}">
                 <toolkit:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE74E;" />
                 </toolkit:SettingsCard.HeaderIcon>
                 <ToggleSwitch x:Name="ToggleDisableSaves" Toggled="ToggleDisableSaves_OnToggled"/>
             </toolkit:SettingsCard>
 
-            <toolkit:SettingsCard x:Name="CardLegacyMode" Description="When enabled, Speedrun Mode and Save Mode will work on version 1.0.0 of the game. If unsure, leave this unchecked." Header="Enable 1.0.0 support">
+            <toolkit:SettingsCard x:Name="CardLegacyMode" Description="When enabled, Speedrun Mode and Save Mode will work on version 1.0.0 of the game" Header="Enable 1.0.0 support" Style="{StaticResource SettingsCardStyle}">
                 <toolkit:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE913;" />
                 </toolkit:SettingsCard.HeaderIcon>
                 <ToggleSwitch x:Name="ToggleLegacyMode" Toggled="ToggleLegacyMode_OnToggled"/>
             </toolkit:SettingsCard>
 
-            <toolkit:SettingsCard x:Name="CardUpdateSpeedrunMods" Description="Automatically download and install mods that are allowed in the Speedrun Mode." Header="Download and update speedrun legal mods">
+            <toolkit:SettingsCard x:Name="CardUpdateSpeedrunMods" Description="Automatically download and install mods that are allowed in the Speedrun Mode" Header="Download and update speedrun legal mods" Style="{StaticResource SettingsCardStyle}">
                 <toolkit:SettingsCard.HeaderIcon>
-                    <FontIcon Glyph="&#xE777;" />
+                    <FontIcon Glyph="&#xE896;" />
                 </toolkit:SettingsCard.HeaderIcon>
                 <Button x:Name="ButtonUpdateSpeedrunMods" Style="{StaticResource AccentButtonStyle}" Content="Download and Update Speedrun Legal Mods" Margin="0,0,0,6" Click="ButtonUpdateSpeedrunMods_Click"/>
             </toolkit:SettingsCard>
 
-            <toolkit:SettingsCard x:Name="CardOpenModsFolder" Description="Opens the mods folder in explorer." Header="Open mods folder" ActionIconToolTip="Open folder" IsClickEnabled="True" Click="CardOpenModsFolder_OnClick">
+            <toolkit:SettingsCard x:Name="CardOpenModsFolder" Description="Opens the mods folder in explorer" Header="Open mods folder" ActionIconToolTip="Open folder" IsClickEnabled="True" Click="CardOpenModsFolder_OnClick" Style="{StaticResource SettingsCardStyle}">
                 <toolkit:SettingsCard.HeaderIcon >
                     <FontIcon Glyph="&#xE838;" />
                 </toolkit:SettingsCard.HeaderIcon>

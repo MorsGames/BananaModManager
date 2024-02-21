@@ -18,7 +18,7 @@
 
     <ScrollViewer>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top">
-            <TextBlock Text="BananaModManager" Style="{StaticResource HeaderTextBlockStyle}" FontSize="72" FontWeight="Bold" Margin="0,-16,0,-8"/>
+            <TextBlock Text="BananaModManager" Style="{StaticResource HeaderTextBlockStyle}" FontSize="72" FontWeight="Bold" Margin="0,-8,0,-8"/>
 
             <TextBlock x:Name="TextVersion" Text="Version " Style="{StaticResource SubheaderTextBlockStyle}" FontSize="40" Margin="12,0,0,8"/>
 

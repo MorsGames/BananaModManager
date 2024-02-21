@@ -7,6 +7,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.System;
 using BananaModManager.Shared;
+using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Controls;
 using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.UI.Xaml;
@@ -230,6 +231,7 @@ public sealed partial class ModsPage : Page
                 }
             }
         };
+        card.Style = card.FindResource("SettingsCardStyle") as Style;
 
         card.Content = configItem.Value switch
         {

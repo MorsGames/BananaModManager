@@ -4,7 +4,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:BananaModManager.NewUI"
-    xmlns:ui="using:Windows.UI">
+    xmlns:ui="using:Windows.UI"
+    xmlns:toolkit="using:CommunityToolkit.WinUI.Controls">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -17,6 +18,13 @@
             <ui:Color x:Key="SystemAccentColorLight1">#FFDB00</ui:Color>
             <ui:Color x:Key="SystemAccentColorLight2">#FFDB00</ui:Color>
             <ui:Color x:Key="SystemAccentColorLight3">#FFDB00</ui:Color>
+
+            <Style TargetType="toolkit:SettingsCard" x:Key="SettingsCardStyle">
+                <Setter Property="Margin" Value="0,0,0,4"/>
+            </Style>
+            <Style TargetType="toolkit:SettingsExpander" x:Key="SettingsExpanderStyle">
+                <Setter Property="Margin" Value="0,0,0,4"/>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

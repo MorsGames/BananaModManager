@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
+using Windows.System;
 using Windows.Graphics;
 using BananaModManager.Shared;
 using Microsoft.UI;
@@ -58,12 +59,12 @@ public sealed partial class MainWindow : Window
         TitleBarTextBlock.Text = Title;
 
         // Resize the window
-        var oldSize = _appWindow.Size;
+        /*var oldSize = _appWindow.Size;
         _appWindow.Resize(new SizeInt32()
         {
             Width = (int) (oldSize.Width * 0.875),
             Height = (int) (oldSize.Height)
-        });
+        });*/
 
         // Set the minimum size
         MinWindowSize.Set(hWnd, 800, 600);
@@ -178,19 +179,21 @@ public sealed partial class MainWindow : Window
         }
 
         var content = (FrameworkElement) Content;
-        content.RequestedTheme = (ElementTheme) App.ManagerConfig.Theme;
         switch (App.ManagerConfig.Theme)
         {
             case 0:
-            default:
-                var color = content.ActualTheme == ElementTheme.Dark ? Colors.White : Colors.Black;
-                _titleBar.ButtonForegroundColor = color;
-                break;
-            case 1:
+                content.RequestedTheme = ElementTheme.Light;
                 _titleBar.ButtonForegroundColor = Colors.Black;
                 break;
-            case 2:
+            case 1:
+                content.RequestedTheme = ElementTheme.Dark;
                 _titleBar.ButtonForegroundColor = Colors.White;
+                break;
+            case 2:
+            default:
+                content.RequestedTheme = ElementTheme.Default;
+                var color = content.ActualTheme == ElementTheme.Dark ? Colors.White : Colors.Black;
+                _titleBar.ButtonForegroundColor = color;
                 break;
         }
     }
@@ -219,7 +222,25 @@ public sealed partial class MainWindow : Window
     }
     private async Task FirstTimeSetup()
     {
-        // FIRST do the update check
+        // First check if the user is an idiot and put the mod manager on the same folder as the game. DON'T DO THAT ANYMORE
+        foreach (var game in Games.List)
+        {
+            var exeName = $"{game.ExecutableName}.exe";
+            var currentDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            if (File.Exists(Path.Combine(currentDir, exeName)))
+            {
+                await ModernMessageBox.Show("If you're coming from an older version of BananaModManager you should download it again from the project's GitHub page and extract it to a different folder.", "Your BananaModManager installation is on the same folder as the game!", "Sorry, won't do it again!");
+
+                if (Uri.TryCreate("https://github.com/MorsGames/BananaModManager/releases", UriKind.Absolute, out var link))
+                {
+                    await Launcher.LaunchUriAsync(link);
+                }
+
+                Environment.Exit(0);
+            }
+        }
+
+        // Then do the update check
         using (var client = new WebClient())
         {
             try

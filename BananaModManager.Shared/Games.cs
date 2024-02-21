@@ -56,7 +56,9 @@ public static class Games
             // BMOnline
             "797DABD2A15D95BB390729400D2DB384353A24D5787A2F1935BFB427EF3C8E9A",
             // Online IL Battle Timer
-            "5FAE77E29ACA4A047282B21AD7F40FD1A325E1CC2047A04C1E5B6E04B1A6AEC9"
+            "5FAE77E29ACA4A047282B21AD7F40FD1A325E1CC2047A04C1E5B6E04B1A6AEC9",
+            // IL Retry
+            "237A08AF47F3DBD6D824327458F1FF5841C23F7C5024551CED836A2E5F984416"
         },
         WhitelistNames = new List<string>
         {
@@ -72,7 +74,8 @@ public static class Games
             "TrueBallCustomizer.dll",
             "BingoUI.dll",
             "OnlineILBattleTimer.dll",
-            "BMOnline.Mod.dll"
+            "BMOnline.Mod.dll",
+            "DeadLineReq.dll"
         }
     };
     public static Game Paperball = new()
