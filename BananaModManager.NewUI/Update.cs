@@ -42,7 +42,7 @@ public class Update
             if (yes)
             {
                 // Run the new version
-                var updatedStartInfo = new ProcessStartInfo(Path.Combine(parentDirectory, "BananaModManager.exe"));
+                var updatedStartInfo = new ProcessStartInfo(Path.Combine(parentDirectory, "BananaModManager.exe"), "--postUpdate");
                 Process.Start(updatedStartInfo);
 
                 // Bye bye!
@@ -91,7 +91,6 @@ public class Update
                 client.Headers.Add("user-agent", "request");
                 var jsonData = client.DownloadString(new Uri("https://api.github.com/repos/MorsGames/BananaModManager/releases/latest"));
                 var parsedJson = jsonData.Deserialize<Release>();
-
                 // Download the zip file
                 client.DownloadFile(parsedJson.assets[0].browser_download_url, zipFile);
             }

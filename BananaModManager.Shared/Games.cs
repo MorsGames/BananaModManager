@@ -64,7 +64,9 @@ public static class Games
             // NoPromptRewrite (NoPrompt but better)
             "769C6D614C8CE7E97272B9D59919A95F32889CE30DE5CD3898316DA1DDCD3DC7",
             // Custom Character Loader (Finally fixed it)
-            "D2587B4CF38C13DF3E7472342E0A5D51DE40DD3D91A7D6F235D2E5AA9C333031"
+            "72D1A4CE378E180BBB69B1D5096829754E137359080FEDBFD974AAB17B616E27",
+            // Custom Stage Loader
+            "3DE087B329C2CEBDA770DC7BADDCF805BDB61287098D80E64E1F3D5460D96239"
         },
         WhitelistNames = new List<string>
         {
@@ -84,7 +86,8 @@ public static class Games
             "DeadLineReq.dll",
             "PracticeMod.dll",
             "NoPromptRewrite.dll",
-            "CustomCharacterLoader.dll"
+            "CustomCharacterLoader.dll",
+            "BMCustomStage.dll"
         }
     };
     public static Game Paperball = new()

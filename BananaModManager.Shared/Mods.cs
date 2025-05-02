@@ -189,8 +189,8 @@ public static class Mods
 
         // Serialize and save it
         var configJson = gameConfig.Serialize();
-        File.WriteAllText(Path.Combine(gameDirectory, Folder, profileName), configJson);
         File.WriteAllText(Path.Combine(gameDirectory, Folder, "BananaModManager.json"), configJson);
+        File.WriteAllText(Path.Combine(gameDirectory, Folder, profileName), configJson);
     }
 
     /// <summary>

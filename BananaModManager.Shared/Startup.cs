@@ -81,6 +81,13 @@ public static class Startup
                         }
 
                     }
+                    List<string> updatedModList = AntiCheat.GetNewSpeedrunLegalMods();
+                    if (updatedModList != null)
+                    {
+                        currentGame.Whitelist = updatedModList;
+                    }
+
+
                     if (!currentGame.Whitelist.Contains(Hash) && currentGame.WhitelistNames.Contains(mod.Info.DLLFile))
                     {
                         Console.BackgroundColor = ConsoleColor.DarkRed;

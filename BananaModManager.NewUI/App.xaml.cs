@@ -108,7 +108,13 @@ public partial class App : Application
             ManagerConfig = configFile.Deserialize<ManagerConfig>();
             if (!configFile.Contains("ProfileName"))
             {
-                ManagerConfig.ProfileName = "";    
+                ManagerConfig.ProfileName = "Default.json";
+                File.Delete(ManagerConfigFile);
+                File.WriteAllText(ManagerConfigFile, ManagerConfig.Serialize());
+                if (File.Exists(ManagerConfig.GetGameDirectory() + "\\mods\\" + "BananaModManager.json"))
+                {
+                    File.Copy(ManagerConfig.GetGameDirectory() + "\\mods\\" + "BananaModManager.json", ManagerConfig.GetGameDirectory() + "\\mods\\" + "Default.json", true);
+                }
             }
         }
         else

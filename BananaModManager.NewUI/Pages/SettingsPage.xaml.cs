@@ -48,7 +48,7 @@ public sealed partial class SettingsPage : Page
             string[] profiles = Directory.GetFiles(App.ManagerConfig.GameDirectories[App.ManagerConfig.CurrentProfileIndex] + "\\mods", "*.json");
             foreach (string profile in profiles)
             {
-                if (!profile.Contains("BananaModManager.json"))
+                if (!profile.Contains("BananaModManager.json") && !profile.Contains("Default.json"))
                 {
                     ComboProfiles.Items.Add(profile.Substring(profile.LastIndexOf("\\") + 1, (profile.Substring(profile.LastIndexOf("\\") + 1).Length - 5)));
                 }

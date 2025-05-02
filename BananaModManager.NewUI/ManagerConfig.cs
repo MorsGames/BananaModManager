@@ -34,5 +34,5 @@ public class ManagerConfig
         /// <summary>
         /// Allows for multiple profiles to be created - they save to BananaModManager.json on save/save and play.
         /// </summary>
-        public string ProfileName {  get; set; } = string.Empty;
+        public string ProfileName {  get; set; } = "Default.json";
 }
