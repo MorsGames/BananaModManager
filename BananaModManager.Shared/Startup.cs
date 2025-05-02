@@ -59,6 +59,27 @@ public static class Startup
 
         mods = new List<Mod>();
         var priorityCheck = 0;
+
+        if (gameConfig.SpeedrunMode && currentGame.SpeedrunModeSupport)
+        {
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
+            Console.WriteLine("Attempting to grab latest hashes from GitHub...");
+            Console.BackgroundColor = ConsoleColor.Black;
+            List<string> updatedModList = AntiCheat.GetNewSpeedrunLegalMods();
+            if (updatedModList != null)
+            {
+                currentGame.Whitelist = updatedModList;
+                Console.BackgroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine("Success!");
+                Console.BackgroundColor = ConsoleColor.Black;
+            }
+            else
+            {
+                Console.BackgroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine("Failed to grab hashes from GitHub. Using hashes bundled with latest release...");
+                Console.BackgroundColor = ConsoleColor.Black;
+            }
+        }
         while (priorityCheck < 6)
         {
             foreach (var mod in activeMods.Select(modId => Mods.List[modId]))
@@ -80,11 +101,6 @@ public static class Startup
                             }
                         }
 
-                    }
-                    List<string> updatedModList = AntiCheat.GetNewSpeedrunLegalMods();
-                    if (updatedModList != null)
-                    {
-                        currentGame.Whitelist = updatedModList;
                     }
 
 
