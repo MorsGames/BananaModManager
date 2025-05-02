@@ -57,29 +57,19 @@ public static class Startup
 
         Console.WriteLine($"Found {activeMods.Count} active mods out of {Mods.List.Count}.");
 
+
+        if (gameConfig.SpeedrunMode)
+        {
+            if (currentGame.GameID == "BananaMania")
+            {
+                List<string> whitelist = new List<string>();
+                currentGame.Whitelist = File.ReadAllText(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\bmhashes").Split(',').ToList();
+                Console.WriteLine("Found the hash file for Mania. Using the updated version.");
+            }
+        }
         mods = new List<Mod>();
         var priorityCheck = 0;
 
-        if (gameConfig.SpeedrunMode && currentGame.SpeedrunModeSupport)
-        {
-            Console.BackgroundColor = ConsoleColor.DarkBlue;
-            Console.WriteLine("Attempting to grab latest hashes from GitHub...");
-            Console.BackgroundColor = ConsoleColor.Black;
-            List<string> updatedModList = AntiCheat.GetNewSpeedrunLegalMods();
-            if (updatedModList != null)
-            {
-                currentGame.Whitelist = updatedModList;
-                Console.BackgroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine("Success!");
-                Console.BackgroundColor = ConsoleColor.Black;
-            }
-            else
-            {
-                Console.BackgroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine("Failed to grab hashes from GitHub. Using hashes bundled with latest release...");
-                Console.BackgroundColor = ConsoleColor.Black;
-            }
-        }
         while (priorityCheck < 6)
         {
             foreach (var mod in activeMods.Select(modId => Mods.List[modId]))
@@ -102,7 +92,6 @@ public static class Startup
                         }
 
                     }
-
 
                     if (!currentGame.Whitelist.Contains(Hash) && currentGame.WhitelistNames.Contains(mod.Info.DLLFile))
                     {

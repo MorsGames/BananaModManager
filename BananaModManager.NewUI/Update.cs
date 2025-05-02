@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
+using System.Reflection;
 using System.Threading.Tasks;
 using BananaModManager.Shared;
 using Microsoft.UI.Xaml.Controls;
@@ -85,6 +86,7 @@ public class Update
             }
 
             // This is where we download the zip file for the update
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13;
             using (var client = new WebClient())
             {
                 // Get the latest release info from GitHub's API
@@ -216,6 +218,24 @@ public class Update
                 await ModernMessageBox.Show(e.ToString(), "Error!");
             }
         }
+
+    }
+
+    public static void GetNewSpeedrunLegalModHashes()
+    {
+        try
+        {
+            using (var wc = new WebClient())
+            {
+                System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                wc.Headers.Add("user-agent", "request");
+                wc.DownloadFile("https://raw.githubusercontent.com/MorsGames/BananaModManager/NewUI/bmmodhashes.txt", Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\bmhashes");
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("An error occurred trying to update the Banana Mania hash list! Will default to last successful download...", "Error Updating Banana Mania Hashes");
+        }
     }
 
     public static void UpdateModLoader()
@@ -297,6 +317,16 @@ public class Update
 
                 // Perform the file copy
                 File.Copy(filePath, destinationPath, true);
+            }
+        }
+
+        // Check if it's Mania and update the mod hashes if it is
+        if (game.GameID == "BananaMania")
+        {
+            GetNewSpeedrunLegalModHashes();
+            if (File.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\bmhashes"))
+            {
+                File.Copy(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\bmhashes", App.PathConvert("bmhashes"), true);
             }
         }
 

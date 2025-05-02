@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using BananaModManager.Shared;
 using Microsoft.UI.Xaml;
@@ -100,7 +101,7 @@ public partial class App : Application
                 KeepRunningAfterModInstall = true;
             }
         }
-
+        
         // Load the manager config
         if (File.Exists(ManagerConfigFile))
         {
@@ -146,6 +147,14 @@ public partial class App : Application
                 if (File.Exists(Path.Combine(ManagerConfig.GetGameDirectory(), $"{game.ExecutableName}.exe")))
                 {
                     CurrentGame = game;
+                    if (CurrentGame.GameID == "BananaMania")
+                    {
+                        Update.GetNewSpeedrunLegalModHashes();
+                        if (File.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\bmhashes"))
+                        {
+                            File.Copy(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\bmhashes", App.PathConvert("bmhashes"), true);
+                        }
+                    }
                     break;
                 }
             }
